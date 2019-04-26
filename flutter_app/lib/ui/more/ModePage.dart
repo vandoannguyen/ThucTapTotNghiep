@@ -51,7 +51,7 @@ class _MorePageState extends State<MorePage> implements MoreView {
                     children: <Widget>[
                       Card(
                         clipBehavior: Clip.antiAlias,
-                        elevation: 4,
+                        elevation: 5,
                         shape: RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(80))),
@@ -61,12 +61,14 @@ class _MorePageState extends State<MorePage> implements MoreView {
                                 "assets/images/defAvatar.png",
                                 height: 80,
                                 width: 80,
+                                fit: BoxFit.fill,
                               )
                             : FadeInImage.assetNetwork(
                                 placeholder: "assets/images/defAvatar.png",
                                 image: Common.rootUrl + Common.user["image"],
                                 height: 80,
                                 width: 80,
+                                fit: BoxFit.fill,
                               ),
                       ),
                       SizedBox(

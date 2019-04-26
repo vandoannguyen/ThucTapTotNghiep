@@ -57,11 +57,7 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
           0) {
         sp["countsp"] = 1;
         _viewmodel.listMerchandis.add(sp);
-      }
-      if (_viewmodel.listMerchandis
-              .where((element) => element["barcode"] == sp["barcode"])
-              .length >
-          0) {
+      } else {
         _viewmodel.listMerchandis = _viewmodel.listMerchandis.map((element) {
           if (element["barcode"] == sp["barcode"]) {
             element["countsp"]++;

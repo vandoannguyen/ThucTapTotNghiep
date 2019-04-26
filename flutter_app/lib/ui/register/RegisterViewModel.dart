@@ -21,6 +21,10 @@ class RegisterViewModel {
 
   bool enableEdit = true;
 
+  var personnelIsActive = true;
+
+  dynamic user = null;
+
   RegisterViewModel() {
     fcName = new FocusNode();
     fcEmail = new FocusNode();

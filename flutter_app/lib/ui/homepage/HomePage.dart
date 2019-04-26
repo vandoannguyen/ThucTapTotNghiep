@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> implements HomePageView {
     _presenter.getBills();
     _presenter.getWillBeEmpty();
     _presenter.getMerchandises();
+    _presenter.getCategories();
   }
 
   @override

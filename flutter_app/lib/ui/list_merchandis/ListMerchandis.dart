@@ -343,8 +343,10 @@ class _ListMerchandisState extends State<ListMerchandis>
     });
     _viewModel.categories[index]["selected"] = true;
     _viewModel.selectedCategory = _viewModel.categories[index];
-    _viewModel.selectedListMerchandise =
-        _viewModel.selectedCategory["listMechandise"];
+    _viewModel.selectedListMerchandise = _viewModel.merchandises
+        .where((element) =>
+            element["idCategory"] == _viewModel.selectedCategory["idCategory"])
+        .toList();
     setState(() {});
   }
 

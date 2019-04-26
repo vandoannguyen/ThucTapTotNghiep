@@ -55,7 +55,8 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
       baseView.backView(data);
     }).catchError((err) {
 //      if(err["message"])
-      print(err);
+      baseView.showSnackbar(err, "w");
+      print(err + "eeeeeeeeeeeeeeeeeeee");
     });
   }
 
@@ -103,5 +104,29 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
   void setEnableEdit() {
     _viewModel.enableEdit = true;
     baseView.updateUI({});
+  }
+
+  void updateUser() {
+    dynamic data = {
+      "idUser": _viewModel.user != null
+          ? _viewModel.user["idPersonnel"]
+          : Common.user["idUser"],
+      "username": _viewModel.usernameController.text,
+      "password": _viewModel.passwordController.text,
+      "email": _viewModel.emailController.text,
+      "name": _viewModel.fullNameController.text,
+      "image": _viewModel.avatarImage != null
+          ? _viewModel.base64Image
+          : _viewModel.user != null
+              ? _viewModel.user["image"]
+              : Common.user["image"],
+    };
+    appDataHelper.updateUser(jsonEncode(data)).then((onValue) {
+      print(onValue);
+      print("1234567890");
+      baseView.showSnackbar("Sửa thông tin thành công.", "");
+    }).catchError((err) {
+      baseView.showSnackbar(err["error"], "w");
+    });
   }
 }

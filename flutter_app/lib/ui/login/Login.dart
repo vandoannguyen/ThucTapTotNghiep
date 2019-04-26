@@ -49,9 +49,10 @@ class _LoginState extends State<Login> implements LoginView {
                   ),
                   Container(
                     height: Common.heightOfScreen / 6,
-                    child: Image.asset(
-                      "assets/images/logo.png",
-                      fit: BoxFit.fill,
+                    child: Text(
+                      "SmartShop\nĐăng nhập",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.blue, fontSize: 30),
                     ),
                   ),
                   Container(

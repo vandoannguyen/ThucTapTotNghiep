@@ -50,14 +50,16 @@ class _ShopDetailState extends State<ShopDetail> implements ShopDetailView {
       appBar: AppBar(
         actions: widget.keyCheck == "detail"
             ? <Widget>[
-                IconButton(
-                  icon: Icon(Icons.mode_edit),
-                  onPressed: () {
-                    setState(() {
-                      _viewModel.isEditEnable = true;
-                    });
-                  },
-                )
+                Common.user["idRole"] == 2
+                    ? IconButton(
+                        icon: Icon(Icons.mode_edit),
+                        onPressed: () {
+                          setState(() {
+                            _viewModel.isEditEnable = true;
+                          });
+                        },
+                      )
+                    : Container()
               ]
             : [],
         title: Text("Cửa hàng"),

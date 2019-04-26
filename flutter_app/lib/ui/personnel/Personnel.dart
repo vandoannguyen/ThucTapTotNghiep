@@ -20,9 +20,9 @@ class _PersonnelState extends State<Personnel> implements PersonnelView {
   @override
   void initState() {
     // TODO: implement initState
-    _presenter = new PersonnelPresenter();
-    _presenter.intiView(this);
     _viewModel = new PersonnelViewModel();
+    _presenter = new PersonnelPresenter(_viewModel);
+    _presenter.intiView(this);
     _presenter.getPersonnel();
     super.initState();
   }
@@ -66,8 +66,16 @@ class _PersonnelState extends State<Personnel> implements PersonnelView {
               : snap.data is BlocLoaded
                   ? snap.data.value.length > 0
                       ? ListView.builder(
-                          itemBuilder: (ctx, index) =>
-                              itemNhanVien(snap.data.value[index]),
+                          itemBuilder: (ctx, index) => GestureDetector(
+                            onTap: () {
+                              intentToRegisterDetail(
+                                  context, snap.data.value[index]);
+                            },
+                            onLongPress: () {
+                              _presenter.showDialogDelete(context, index);
+                            },
+                            child: itemPersonnel(snap.data.value[index]),
+                          ),
                           itemCount: snap.data.value.length,
                         )
                       : GestureDetector(
@@ -89,7 +97,7 @@ class _PersonnelState extends State<Personnel> implements PersonnelView {
     );
   }
 
-  itemNhanVien(data) {
+  itemPersonnel(data) {
     return Card(
       elevation: 5,
       child: Container(
@@ -193,8 +201,24 @@ class _PersonnelState extends State<Personnel> implements PersonnelView {
 
   void intentToRegister(BuildContext context) {
     IntentAnimation.intentNomal(
+            context: context,
+            screen: Register(Register.ADD_PERSONEL),
+            option: IntentAnimationOption.RIGHT_TO_LEFT,
+            duration: Duration(milliseconds: 800))
+        .then((value) {
+      if (value != null) {
+        _presenter.getPersonnel();
+      }
+    }).catchError((err) {});
+  }
+
+  void intentToRegisterDetail(BuildContext context, user) async {
+    IntentAnimation.intentNomal(
         context: context,
-        screen: Register(Register.ADD_PERSONEL),
+        screen: Register(
+          Register.DETAIL,
+          user: user,
+        ),
         option: IntentAnimationOption.RIGHT_TO_LEFT,
         duration: Duration(milliseconds: 800));
   }

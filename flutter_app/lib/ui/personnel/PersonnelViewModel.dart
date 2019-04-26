@@ -1,1 +1,5 @@
-class PersonnelViewModel {}
+class PersonnelViewModel {
+  dynamic personnels = [];
+
+  PersonnelViewModel();
+}

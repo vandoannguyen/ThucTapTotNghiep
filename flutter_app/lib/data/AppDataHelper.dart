@@ -22,7 +22,7 @@ class AppDataHelper implements IAppDataHelper {
   }
 
   @override
-  Future<String> getPass() {
+  Future getPass() {
     // TODO: implement getPass
     return sharePreferHelper.getPass();
   }
@@ -34,7 +34,7 @@ class AppDataHelper implements IAppDataHelper {
   }
 
   @override
-  Future<String> getUser() {
+  Future getUser() {
     // TODO: implement getUser
     return sharePreferHelper.getUser();
   }
@@ -169,5 +169,17 @@ class AppDataHelper implements IAppDataHelper {
   Future getPersonnels(idShop) {
     // TODO: implement getPersonnels
     return apiHelper.getPersonnels(idShop);
+  }
+
+  @override
+  Future updateUser(user) {
+    // TODO: implement updateUser
+    return apiHelper.updateUser(user);
+  }
+
+  @override
+  Future deletePersonnel(idUser) {
+    // TODO: implement deletePersonnel
+    return apiHelper.deletePersonnel(idUser);
   }
 }

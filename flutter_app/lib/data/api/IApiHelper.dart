@@ -38,4 +38,7 @@ abstract class IApiHelper {
   Future getBestSeller(idShop, limits, fromDate, toDate);
 
   Future getWillBeEmpty(idShop, warningCount);
+
+  Future updateUser(user);
+  Future deletePersonnel(idUser);
 }

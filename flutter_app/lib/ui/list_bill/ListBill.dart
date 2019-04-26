@@ -175,6 +175,75 @@ class _ListBillState extends State<ListBill> implements ListBillView {
                           SizedBox(
                             height: 5,
                           ),
+                          Container(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  "Sắp xếp theo:",
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 13),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    _presenter.pressFillOption(context);
+                                  },
+                                  child: Card(
+                                      elevation: 4,
+                                      child: StreamBuilder(
+                                        stream: _presenter.getStream(
+                                            ListBillPresenter.CHOSE_OPTION),
+                                        builder: (ctx, snap) => snap.data
+                                                is BlocLoaded
+                                            ? Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text(snap.data.value),
+                                              )
+                                            : Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Text("Ngày tạo"),
+                                              ),
+                                      )),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    _presenter.pressOrder();
+                                  },
+                                  child: Card(
+                                    elevation: 4,
+                                    child: Container(
+                                      width: 25,
+                                      height: 25,
+                                      child: StreamBuilder(
+                                        stream: _presenter.getStream(
+                                            ListBillPresenter.ORDER_STATUS),
+                                        builder: (ctx, snap) =>
+                                            snap.data is BlocLoaded
+                                                ? Icon(
+                                                    _viewModel.order == "up"
+                                                        ? Icons.arrow_upward
+                                                        : Icons.arrow_downward,
+                                                    size: 18,
+                                                  )
+                                                : Icon(
+                                                    _viewModel.order == "up"
+                                                        ? Icons.arrow_upward
+                                                        : Icons.arrow_downward,
+                                                    size: 18,
+                                                  ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                           Expanded(
                             child: StreamBuilder(
                               stream: _presenter
@@ -243,6 +312,7 @@ class _ListBillState extends State<ListBill> implements ListBillView {
   @override
   void showMess(isErr, mess) {
     // TODO: implement showMess
+    print(mess);
     _viewModel.scaffoldKey.currentState.showSnackBar(new SnackBar(
       content: Text(
         mess,
@@ -250,6 +320,7 @@ class _ListBillState extends State<ListBill> implements ListBillView {
       ),
       elevation: 4,
       backgroundColor: isErr ? Colors.red : Colors.blue,
+      duration: Duration(seconds: 2),
     ));
   }
 }

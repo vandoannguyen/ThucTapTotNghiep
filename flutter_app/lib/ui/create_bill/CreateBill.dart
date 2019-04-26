@@ -495,6 +495,7 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
   }
 
   containerNguoiBan(value) {
+    print(widget.value);
     return Container(
       width: Common.widthOfScreen,
       padding: EdgeInsets.all(10),
@@ -509,7 +510,7 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
         children: <Widget>[
           Container(
             child: Text(
-              "Người bán",
+              widget.value["status"] == 1 ? "Người bán" : "Người nhập",
               style: lableStyle(),
             ),
           ),
@@ -529,7 +530,7 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
                       )
                     : FadeInImage.assetNetwork(
                         placeholder: "assets/images/defAvatar.png",
-                        image: value["image"],
+                        image: Common.rootUrl + value["image"],
                         width: 70,
                         height: 70,
                         fit: BoxFit.cover),

@@ -5,8 +5,11 @@ class Common {
 
   static var config = {};
 
-  static var rootUrlApi = "http://192.168.0.100:3000/api/";
-  static var rootUrl = "http://192.168.0.100:3000/";
+//  static var rootUrlApi = "https://thuc-tap-tot-nhiep.herokuapp.com/api/";
+//  static var rootUrl = "https://thuc-tap-tot-nhiep.herokuapp.com/";
+
+  static var rootUrlApi = "https://192.168.0.102:3000/api/";
+  static var rootUrl = "https://192.168.0.102:3000/";
 
   static String loginToken = "";
   static dynamic user = {};
@@ -18,6 +21,7 @@ class Common {
   static final CURRENCY_FORMAT = NumberFormat("#,###,###,##0", "en_US");
   static final String KEY_CHECK_CREATE_SHOP = "create";
   static dynamic personnels = [];
+  static dynamic categories = [];
 
   static String DATE_FORMAT(DateTime dateTime) {
     return new DateFormat("dd/MM/yyyy").format(dateTime);

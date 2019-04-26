@@ -8,8 +8,6 @@ var base64ToImage = require('base64-to-image');
 
 
 async function createUser(req, res) {
-    console.log(req.body);
-
     if (req.body["image"] != null && req.body["image"] != "") {
         var path = './public';
         var optionalObj = { 'fileName': "image" + Date.now(), 'type': 'png' };
@@ -20,7 +18,7 @@ async function createUser(req, res) {
             else {
                 req.body["image"] = imageName;
                 userModel.createUser(req.body).then((value) => {
-                    res.json({
+                    res.status(200).json({
                         message: "Create user success",
                         success: true,
                     })
@@ -90,13 +88,19 @@ async function userLogin(req, res) {
 async function changePass(req, res) {
     userModel.changePass(req.body).then((value) => {
         res.status(200);
-        res.json(
-            { "status": 200, "message": value["affectedRows"] > 0 ? "OK" : "NOT_OK" }
-        )
+        if (value["affectedRows"] > 0) {
+            res.status(200).json({ "mess": "Đổi mật khẩu thành công" })
+        }
+        else {
+            res.status(400).json("Đổi mật khẩu không thành công");
+        }
+        // res.json(
+        //     { "status": 200, "message": value["affectedRows"] > 0 ? "OK" : "NOT_OK" }
+        // )
     }).catch((err) => {
         console.log(err);
         res.status(400);
-        res.json({ "status": 400, "message": err });
+        res.status(400).json("Đổi mật khẩu không thành công");
     });
 
 }
@@ -119,14 +123,9 @@ async function createPersonnel(req, res) {
         require("fs").writeFile(path + imageName, base64Data, 'base64', function (err) {
             if (err) res.json({ status: 500, message: err })
             else {
-                console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo2");
-
                 req.body["image"] = imageName;
                 userModel.createUser(req.body).then((value) => {
-                    console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo1");
                     userModel.getUser(req.body["username"]).then((valuee) => {
-                        console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo");
-                        console.log(valuee);
                         req.body["idUser"] = valuee[0]["idUser"];
                         userModel.createPersonnel(req.body).then((value) => {
                             res.json({
@@ -148,7 +147,6 @@ async function createPersonnel(req, res) {
         req.body["image"] = "";
         userModel.createUser(req.body).then((value) => {
             userModel.getUser(req.body["username"]).then((valuee) => {
-                console.log(valuee);
                 req.body["idUser"] = valuee[0]["idUser"];
                 userModel.createPersonnel(req.body).then((value) => {
                     res.json({
@@ -173,6 +171,47 @@ async function getpersonnels(req, res) {
         res.status(400).json(err);
     })
 }
+
+async function updateUser(req, res) {
+    if (req.body["image"] != null && req.body["image"] != "" && !req.body["image"].includes("/upload")) {
+        var path = './public';
+        var optionalObj = { 'fileName': "image" + Date.now(), 'type': 'png' };
+        var base64Data = req.body["image"].replace(/^data:image\/png;base64,/, "");
+        var imageName = "/upload/" + "image" + Date.now() + ".png";
+        require("fs").writeFile(path + imageName, base64Data, 'base64', function (err) {
+            if (err) res.json({ status: 500, message: err })
+            else {
+                req.body["image"] = imageName;
+                userModel.updateUser(req.body).then((value) => {
+                    res.status(200).json({ "mess": "Sửa thông tin thành công" })
+                }).catch((err) => {
+                    console.log(err);
+                    if (err["sqlMessage"].includes("username"))
+                        res.status(400).json({ "error": "UserName đã được sử dụng" })
+                });
+            }
+        });
+    } else {
+        userModel.updateUser(req.body).then((value) => {
+            res.status(200).json({ "mess": "Sửa thông tin thành công" })
+        }).catch((err) => {
+            console.log(err);
+            if (err["sqlMessage"].includes("username"))
+                res.status(400).json({ "error": "UserName đã được sử dụng" })
+        });
+    }
+}
+function deletePersonnel(req, res) {
+    userModel.deletePersonnel(req.body["idUser"]).then((value) => {
+        if (value.affectedRows > 0) {
+            res.status(200).json({ "mess": "Xóa nhân viên thành công" });
+        }
+        else res.status(400).json({ "error": "Xóa nhân viên không thành công" });
+    }).catch((err) => {
+        console.log(err);
+        res.status(400).json({ "error": "Xóa nhân viên không thành công" });
+    })
+};
 module.exports = {
     userLogin: userLogin,
     createUser: createUser,
@@ -180,4 +219,6 @@ module.exports = {
     getUser: getUser,
     createPersonnel: createPersonnel,
     getpersonnels: getpersonnels,
+    updateUser: updateUser,
+    deletePersonnel: deletePersonnel,
 }

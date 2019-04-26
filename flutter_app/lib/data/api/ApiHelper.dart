@@ -369,4 +369,43 @@ class ApiHelper implements IApiHelper {
     });
     return completer.future;
   }
+
+  @override
+  Future updateUser(user) {
+    // TODO: implement updateUser
+    Completer completer = new Completer();
+    http
+        .post("${Common.rootUrlApi}users/updateUser",
+            headers: _getHeader(), body: user)
+        .then((value) {
+      print(value.body);
+      if (value.statusCode == 200)
+        completer.complete(jsonDecode(value.body));
+      else
+        completer.completeError(jsonDecode(value.body));
+    }).catchError((err) {
+      completer.completeError(err);
+      print(err);
+    });
+    return completer.future;
+  }
+
+  @override
+  Future deletePersonnel(idUser) {
+    // TODO: implement deletePersonnel
+    Completer completer = new Completer();
+    http
+        .post("${Common.rootUrlApi}users/deletePersonnel",
+            headers: _getHeader(), body: jsonEncode({"idUser": idUser}))
+        .then((value) {
+      if (value.statusCode == 200) {
+        completer.complete("Xóa nhân viên thành công");
+      } else {
+        completer.completeError("Xóa nhân viên không thành công!");
+      }
+    }).catchError((onError) {
+      completer.completeError(onError);
+    });
+    return completer.future;
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
 
@@ -10,8 +11,9 @@ class Register extends StatefulWidget {
   static final String ADD_PERSONEL = "ADD_PERSONEL";
   static final String DETAIL = "DETAIL";
   String keyCheck;
+  dynamic user;
 
-  Register(this.keyCheck);
+  Register(this.keyCheck, {this.user});
 
   @override
   _RegisterState createState() => _RegisterState();
@@ -32,12 +34,23 @@ class _RegisterState extends State<Register> implements RegisterView {
     _presenter = new RegisterPresenter(_viewModel);
     _presenter.intiView(this);
     if (widget.keyCheck == Register.DETAIL) {
-      _viewModel.fullNameController.text = Common.user["name"];
-      _viewModel.usernameController.text = Common.user["username"];
-      _viewModel.passwordController.text = Common.user["password"];
-      _viewModel.emailController.text = Common.user["email"];
-      _viewModel.comfirmPassVisibile = false;
-      _viewModel.enableEdit = false;
+      if (widget.user != null) {
+        _viewModel.user = widget.user;
+        _viewModel.fullNameController.text = widget.user["name"];
+        _viewModel.usernameController.text = widget.user["username"];
+        _viewModel.passwordController.text = widget.user["password"];
+        _viewModel.emailController.text = widget.user["email"];
+        _viewModel.comfirmPassVisibile = false;
+        _viewModel.enableEdit = false;
+        _viewModel.personnelIsActive = widget.user["status"] == 1;
+      } else {
+        _viewModel.fullNameController.text = Common.user["name"];
+        _viewModel.usernameController.text = Common.user["username"];
+        _viewModel.passwordController.text = Common.user["password"];
+        _viewModel.emailController.text = Common.user["email"];
+        _viewModel.comfirmPassVisibile = false;
+        _viewModel.enableEdit = false;
+      }
     }
     // TODO: implement initState
     super.initState();
@@ -67,7 +80,8 @@ class _RegisterState extends State<Register> implements RegisterView {
                       children: <Widget>[
                         GestureDetector(
                           onTap: () {
-                            Navigator.pop(context);
+                            Navigator.pop(
+                                context, _viewModel.enableEdit ? "ok" : null);
                           },
                           child: Card(
                             elevation: 4,
@@ -127,19 +141,6 @@ class _RegisterState extends State<Register> implements RegisterView {
                           color: Colors.white),
                     ),
                   ),
-                  _viewModel.keyCheck == Register.REGISTER
-                      ? Container(
-                          padding: EdgeInsets.only(top: 5, left: 15),
-                          child: Text(
-                            "Chào mừng bạn đến với SmartShop",
-                            style: TextStyle(
-                                fontSize: 14, color: Colors.grey[300]),
-                          ),
-                        )
-                      : Container(),
-                  SizedBox(
-                    height: 15,
-                  ),
                   GestureDetector(
                       onTap: () {
                         if (_viewModel.enableEdit) {
@@ -183,7 +184,7 @@ class _RegisterState extends State<Register> implements RegisterView {
                                       Icons.person,
                                       size: prefixIconSize(),
                                     ),
-                                    labelText: "Họ tên"),
+                                    labelText: "Họ và tên"),
                               ),
                             ),
                             SizedBox(
@@ -231,7 +232,7 @@ class _RegisterState extends State<Register> implements RegisterView {
                                       Icons.person,
                                       size: prefixIconSize(),
                                     ),
-                                    labelText: "Họ và tên"),
+                                    labelText: "UserName"),
                               ),
                             ),
                             SizedBox(
@@ -282,7 +283,8 @@ class _RegisterState extends State<Register> implements RegisterView {
                               height: 15,
                             ),
                             Visibility(
-                              visible: _viewModel.comfirmPassVisibile,
+                              visible: _viewModel.comfirmPassVisibile ||
+                                  _viewModel.enableEdit,
                               child: Container(
                                 padding: EdgeInsets.only(
                                     bottom: 0, left: 20, right: 20),
@@ -321,7 +323,7 @@ class _RegisterState extends State<Register> implements RegisterView {
                                   ),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -332,31 +334,39 @@ class _RegisterState extends State<Register> implements RegisterView {
                   ),
                   Container(
                     alignment: Alignment.center,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (widget.keyCheck == Register.REGISTER)
-                          register(context);
-                        else
-                          createPersonnel(context);
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: 200,
-                        padding: EdgeInsets.only(top: 13, bottom: 13),
-                        decoration: getDecorationInput(color: Colors.blue),
-                        child: Text(
-                          widget.keyCheck == Register.REGISTER
-                              ? "Đăng ký"
-                              : widget.keyCheck == Register.ADD_PERSONEL
-                                  ? "Thêm nhân viên"
-                                  : "Sửa tài khoản",
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
+                    child: _viewModel.enableEdit
+                        ? GestureDetector(
+                            onTap: () {
+                              if (widget.keyCheck == Register.REGISTER)
+                                register(context);
+                              else {
+                                if (widget.keyCheck == Register.ADD_PERSONEL) {
+                                  createPersonnel(context);
+                                } else {
+                                  upDatePersonnels(context);
+                                }
+                              }
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: 200,
+                              padding: EdgeInsets.only(top: 13, bottom: 13),
+                              decoration:
+                                  getDecorationInput(color: Colors.blue),
+                              child: Text(
+                                widget.keyCheck == Register.REGISTER
+                                    ? "Đăng ký"
+                                    : widget.keyCheck == Register.ADD_PERSONEL
+                                        ? "Thêm nhân viên"
+                                        : "Sửa tài khoản",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          )
+                        : Container(),
                   ),
                   SizedBox(
                     height: 30,
@@ -371,6 +381,7 @@ class _RegisterState extends State<Register> implements RegisterView {
   @override
   void updateUI(dynamic) {
     // TODO: implement updateUI
+    setState(() {});
   }
 
   getDecorationInput({color}) {
@@ -396,6 +407,7 @@ class _RegisterState extends State<Register> implements RegisterView {
   }
 
   avatar() {
+    print(widget.user);
     return Container(
       width: double.infinity,
       alignment: Alignment.center,
@@ -404,32 +416,43 @@ class _RegisterState extends State<Register> implements RegisterView {
         children: <Widget>[
           GestureDetector(
             onTap: () {
-              openImageonCamera();
+              if (_viewModel.enableEdit) {
+                openImageonCamera();
+              }
             },
             child: Card(
+              clipBehavior: Clip.antiAlias,
               elevation: 5,
+//              padding: EdgeInsets.all(5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
                   Radius.circular(70),
                 ),
               ),
+              color: Colors.white,
               child: Container(
-                padding: EdgeInsets.all(5),
-                child: widget.key != Register.DETAIL
-                    ? CircleAvatar(
-                        radius: 60,
-                        backgroundImage: _viewModel.avatarImage != null
-                            ? _viewModel.avatarImage
-                            : AssetImage("assets/images/defAvatar.png"),
-                      )
-                    : FadeInImage.assetNetwork(
-                        placeholder: "assets/images/defAvatar.png",
-                        image: Common.rootUrl + Common.user["image"]),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(60))),
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundImage: _viewModel.avatarImage != null
+                      ? _viewModel.avatarImage
+                      : widget.keyCheck == Register.DETAIL
+                          ? _viewModel.user != null
+                              ? _viewModel.user["image"] != ""
+                                  ? NetworkImage(
+                                      Common.rootUrl + _viewModel.user["image"])
+                                  : AssetImage("assets/images/defAvatar.png")
+                              : Common.user["image"] != ""
+                                  ? NetworkImage(
+                                      Common.rootUrl + Common.user["image"])
+                                  : AssetImage("assets/images/defAvatar.png")
+                          : AssetImage("assets/images/defAvatar.png"),
+                ),
               ),
             ),
           ),
           Container(
-            padding: EdgeInsets.all(5),
             decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: Colors.blue, width: 1),
@@ -484,7 +507,7 @@ class _RegisterState extends State<Register> implements RegisterView {
   }
 
   void register(BuildContext context) {
-//    if (_key.currentState.validate()) _presenter.register();
+    if (_key.currentState.validate()) _presenter.register();
   }
 
   void openImageonCamera() {
@@ -526,5 +549,9 @@ class _RegisterState extends State<Register> implements RegisterView {
 
   void createPersonnel(BuildContext context) {
     if (_key.currentState.validate()) _presenter.createPersonnel();
+  }
+
+  void upDatePersonnels(BuildContext context) {
+    if (_key.currentState.validate()) _presenter.updateUser();
   }
 }

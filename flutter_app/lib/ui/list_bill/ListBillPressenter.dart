@@ -9,36 +9,48 @@ import 'package:init_app/utils/BasePresenter.dart';
 import 'package:init_app/utils/BlogEvent.dart';
 
 class ListBillPresenter<V extends ListBillView> extends BasePresenter<V> {
-  static final String LIST_BILL = "LIST_BILL";
-  static final String DAY_OF_WEEK = "DAY_OF_WEEK";
+  static const String LIST_BILL = "LIST_BILL";
+  static const String DAY_OF_WEEK = "DAY_OF_WEEK";
+  static const String BUTTON_FILL = "BUTTON_FILL";
+  static const String CHOSE_OPTION = "CHOSE_OPTION";
   ListBillViewModel _viewModel;
   IAppDataHelper appDataHelper;
 
-  static final String BUTTON_FILL = "BUTTON_FILL";
+  static const String DATE = "DATE";
 
-  void pressDonXuat() {
-    _viewModel.isExportBill = true;
+  static const String PRICE = "PRICE";
 
-    var list =
-        _viewModel.bills.where((element) => element["status"] == 1).toList();
-    getSink(LIST_BILL).add(new BlocLoaded(list));
-    getSink(BUTTON_FILL).add(new BlocLoaded(true));
-  }
+  static const String DISCOUNT = "DISCOUNT";
 
-  void pressDonNhap() {
-    _viewModel.isExportBill = false;
-    var list =
-        _viewModel.bills.where((element) => element["status"] == 0).toList();
-    getSink(LIST_BILL).add(new BlocLoaded(list));
-    getSink(BUTTON_FILL).add(new BlocLoaded(false));
-  }
+  static const ORDER_STATUS = "ORDER_STATUS";
 
   ListBillPresenter(ListBillViewModel viewModel) : super() {
     _viewModel = viewModel;
     addStreamController(LIST_BILL);
     addStreamController(DAY_OF_WEEK);
     addStreamController(BUTTON_FILL);
+    addStreamController(CHOSE_OPTION);
+    addStreamController(ORDER_STATUS);
     appDataHelper = new AppDataHelper();
+  }
+
+  void pressDonXuat() {
+    _viewModel.isExportBill = true;
+
+    _viewModel.listFilled =
+        _viewModel.bills.where((element) => element["status"] == 1).toList();
+    sortList();
+    getSink(LIST_BILL).add(new BlocLoaded(_viewModel.listFilled));
+    getSink(BUTTON_FILL).add(new BlocLoaded(true));
+  }
+
+  void pressDonNhap() {
+    _viewModel.isExportBill = false;
+    _viewModel.listFilled =
+        _viewModel.bills.where((element) => element["status"] == 0).toList();
+    sortList();
+    getSink(LIST_BILL).add(new BlocLoaded(_viewModel.listFilled));
+    getSink(BUTTON_FILL).add(new BlocLoaded(false));
   }
 
   void getDayOfWeek() {
@@ -65,10 +77,14 @@ class ListBillPresenter<V extends ListBillView> extends BasePresenter<V> {
         context: context,
         callBack: (value) {
           if (value != null) {
-            _viewModel.endDay = value;
-            getSink(DAY_OF_WEEK).add(new BlocLoaded(
-                {"firstDay": _viewModel.firstDay, "endDay": value}));
-            getListBill(_viewModel.firstDay, value);
+            if (_viewModel.firstDay.isBefore(value)) {
+              _viewModel.endDay = value;
+              getSink(DAY_OF_WEEK).add(new BlocLoaded(
+                  {"firstDay": _viewModel.firstDay, "endDay": value}));
+              getListBill(_viewModel.firstDay, value);
+            }
+          } else {
+            baseView.showMess(false, "Vui lòng chọn lại ngày");
           }
         });
   }
@@ -143,19 +159,155 @@ class ListBillPresenter<V extends ListBillView> extends BasePresenter<V> {
 //      getSink(LIST_BILL).add(new BlocLoaded([]));
       print(value);
       if (_viewModel.isExportBill) {
-        dynamic list = _viewModel.bills
+        _viewModel.listFilled = _viewModel.bills
             .where((element) => element["status"] == 1)
             .toList();
-        print(list.length);
-        getSink(LIST_BILL).add(new BlocLoaded(list));
+        print(_viewModel.listFilled.length);
+        sortList();
+        getSink(LIST_BILL).add(new BlocLoaded(_viewModel.listFilled));
       } else {
-        dynamic list = _viewModel.bills
+        _viewModel.listFilled = _viewModel.bills
             .where((element) => element["status"] == 0)
             .toList();
-        getSink(LIST_BILL).add(new BlocLoaded(list));
+        List<int> munm = [3, 6, 1, 4, 3, 5];
+        munm.sort((a, b) => a - b);
+        print("${munm}");
+        sortList();
+        getSink(LIST_BILL).add(new BlocLoaded(_viewModel.listFilled));
       }
     }).catchError((err) {
       print(err);
     });
+  }
+
+  void pressFillOption(BuildContext context) async {
+    var result = await showDialog(
+        context: context,
+        builder: (context) => Dialog(
+              elevation: 4,
+              child: Container(
+                  padding:
+                      EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Container(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context, DATE);
+                              },
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15))),
+                                elevation: 4,
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, top: 5, bottom: 5),
+                                  child: Text("Ngày tạo"),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context, PRICE);
+                              },
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15))),
+                                elevation: 4,
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, top: 5, bottom: 5),
+                                  child: Text("Giá trị"),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context, DISCOUNT);
+                              },
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15))),
+                                elevation: 4,
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, top: 5, bottom: 5),
+                                  child: Text("Chiết khấu"),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  )),
+            ));
+    if (result != null) {
+      print(result);
+      getSink(CHOSE_OPTION).add(new BlocLoaded(result == DATE
+          ? "Ngày tạo"
+          : result == PRICE ? "Giá trị" : "Chiết khấu"));
+      _viewModel.choseOption = result;
+      sortList();
+      getSink(LIST_BILL).add(new BlocLoaded(_viewModel.listFilled));
+    }
+  }
+
+  void sortList() {
+    if (_viewModel.listFilled != null && _viewModel.listFilled != []) {
+      _viewModel.listFilled.sort((a, b) {
+        switch (_viewModel.choseOption) {
+          case DATE:
+            {
+              int re = DateTime.parse(a["dateCreate"])
+                      .isBefore(DateTime.parse(b["dateCreate"]))
+                  ? -1
+                  : 1;
+              return _viewModel.order == "up" ? re : re * -1;
+            }
+
+          case PRICE:
+            {
+              int re = a["totalPrice"] - b["totalPrice"] as int;
+              return _viewModel.order == "up" ? re : re * -1;
+            }
+          case DISCOUNT:
+            {
+              int re = a["discount"] - b["discount"] as int;
+              return _viewModel.order == "up" ? re : re * -1;
+            }
+        }
+      });
+    }
+  }
+
+  void pressOrder() {
+    if (_viewModel.order == "up")
+      _viewModel.order = "down";
+    else
+      _viewModel.order = "up";
+    sortList();
+    getSink(LIST_BILL).add(new BlocLoaded(_viewModel.listFilled));
+    getSink(ORDER_STATUS).add(new BlocLoaded(_viewModel.order));
   }
 }

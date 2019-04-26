@@ -29,23 +29,23 @@ class ListMerchandisPresenter<V extends ListMerchandisView>
   void getData() async {
     getSink(CATEGORY).add(BlocLoading());
     appDataHelper
-        .getMerchandisesFillByCategory(Common.selectedShop["idShop"])
+        .getMerchandisesByShop(Common.selectedShop["idShop"])
         .then((value) {
-      print(value);
-      var data = value;
-      print(data);
-      _viewModel.categories = data.map((element) {
+      _viewModel.merchandises = value;
+      _viewModel.categories = Common.categories;
+      _viewModel.categories = _viewModel.categories.map((element) {
         element["selected"] = false;
         return element;
       }).toList();
       _viewModel.categories[0]["selected"] = true;
       _viewModel.selectedCategory = _viewModel.categories[0];
-      _viewModel.selectedListMerchandise =
-          _viewModel.selectedCategory["listMechandise"];
+      _viewModel.selectedListMerchandise = _viewModel.merchandises
+          .where((element) =>
+              element["idCategory"] ==
+              _viewModel.selectedCategory["idCategory"])
+          .toList();
       getSink(CATEGORY).add(BlocLoaded(_viewModel.categories));
-    }).catchError((err) {
-      print(err);
-    });
+    }).catchError((err) {});
   }
 
   void addMerchandise(context) {

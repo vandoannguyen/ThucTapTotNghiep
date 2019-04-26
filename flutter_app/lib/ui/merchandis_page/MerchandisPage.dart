@@ -65,7 +65,10 @@ class _MerchandisPageState extends State<MerchandisPage> implements BaseView {
                     ),
                   )
                 : Container(
-                    child: Image.asset("assets/images/logo.png"),
+                    child: Image.asset(
+                      "assets/icons/def_store.png",
+                      height: 200,
+                    ),
                   ),
             SizedBox(
               height: 10,

@@ -11,6 +11,7 @@ class ItemHoaDon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(DateTime.parse(itemValue["dateCreate"]).toString());
     return Card(
       elevation: 4,
       child: GestureDetector(
@@ -178,6 +179,8 @@ class ItemHoaDon extends StatelessWidget {
         ? itemValue["idSeller"] == Common.user["idUser"]
             ? Common.user["name"]
             : ""
-        : personnel["name"];
+        : personnel["status"] == 1
+            ? personnel["name"]
+            : personnel["name"] + "(đã xóa)";
   }
 }

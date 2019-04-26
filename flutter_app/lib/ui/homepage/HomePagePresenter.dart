@@ -173,6 +173,7 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
                           getWillBeEmpty();
                           getMerchandises();
                           getPersonnels(Common.selectedShop["idShop"]);
+                          getCategories();
                           Navigator.pop(context);
                           baseView.updateUI({});
                         },
@@ -274,6 +275,14 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
         getBills();
       },
     );
+  }
+
+  void getCategories() {
+    appDataHelper.getCategories(Common.selectedShop["idShop"]).then((value) {
+      Common.categories = value;
+    }).catchError((err) {
+      print(err);
+    });
   }
 }
 

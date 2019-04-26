@@ -8,9 +8,9 @@ abstract class ISharepreferHelper {
 
   Future rememberMe(value);
 
-  Future<String> getUser();
+  Future getUser();
 
-  Future<String> getPass();
+  Future getPass();
 
   Future<Void> savePass(str);
 
@@ -25,7 +25,7 @@ class SharepreferHelper implements ISharepreferHelper {
   @override
   Future<bool> getRememberMe() async {
     // TODO: implement getRememberMe
-    Completer completer = new Completer();
+    Completer<bool> completer = new Completer();
     SharedPreferences prefer = await SharedPreferences.getInstance();
     bool isRemember = prefer.getBool(SHARE_PREFER_REMEMBER_ME);
     completer.complete(isRemember);
@@ -42,7 +42,7 @@ class SharepreferHelper implements ISharepreferHelper {
   }
 
   @override
-  Future<String> getPass() async {
+  Future getPass() async {
     // TODO: implement getPass
     Completer completer = new Completer();
     SharedPreferences prefer = await SharedPreferences.getInstance();
@@ -51,7 +51,7 @@ class SharepreferHelper implements ISharepreferHelper {
   }
 
   @override
-  Future<String> getUser() async {
+  Future getUser() async {
     // TODO: implement getUser
     Completer completer = new Completer();
     SharedPreferences prefer = await SharedPreferences.getInstance();

@@ -44,12 +44,16 @@ function updateUser(params) {
             params["name"],
             params["username"],
             params["email"],
-            cryptr.encrypt(params["password"]), params["image"]], (err, rows) => {
+            cryptr.encrypt(params["password"]), params["image"], params["idUser"]], (err, rows) => {
                 if (err) {
                     reject(err);
-                    throw err;
+                    // throw err;
                 }
-                else reslove(rows);
+                else{
+                    reslove(rows);
+                    console.log(params);
+                    console.log(rows);
+                };
             });
     })
 }
@@ -98,12 +102,18 @@ function getpersonnels(idShop) {
         pool.query("SELECT name, image, username, password, email, createDate, idRole,idPersonnel, idShop, status FROM personnel, user WHERE idShop= ? AND idUser=idPersonnel ",
             [idShop], (err, rows) => {
                 if (err) reject(err);
-                else reslove(rows)
+                else {
+                    rows = rows.map((element) => {
+                        element["password"] = cryptr.decrypt(element["password"]);
+                        return element;
+                    });
+                    reslove(rows)
+                }
             }
         )
     })
 }
-function getPersonnel(idUser){
+function getPersonnel(idUser) {
     return new Promise((reslove, reject) => {
         pool.query("SELECT * FROM personnel WHERE idPersonnel=?",
             [idUser], (err, rows) => {
@@ -123,6 +133,14 @@ function createPersonnel(params) {
         })
     })
 }
+function deletePersonnel(idUser){
+    return new Promise((reslove, reject)=>{
+        pool.query("UPDATE personnel SET status=0 WHERE idPersonnel=?", [idUser],(err, rows)=>{
+            if(err) reject(err);
+            else reslove(rows);
+        })
+    });
+}
 module.exports = {
     getUser: getUser,
     createUser: createUser,
@@ -132,5 +150,6 @@ module.exports = {
     getUserById: getUserById,
     getpersonnels: getpersonnels,
     createPersonnel: createPersonnel,
-    getPersonnel:getPersonnel,
+    getPersonnel: getPersonnel,
+    deletePersonnel:deletePersonnel,
 }
