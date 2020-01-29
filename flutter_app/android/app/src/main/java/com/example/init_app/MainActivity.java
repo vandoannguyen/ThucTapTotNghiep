@@ -1,12 +1,20 @@
 package com.example.init_app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
 
 import com.example.init_app.utils.SharedPrefsUtils;
 import com.example.ratedialog.RatingDialog;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import io.flutter.app.FlutterActivity;
 import io.flutter.plugin.common.MethodCall;
@@ -15,7 +23,8 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 
 public class MainActivity extends FlutterActivity implements RatingDialog.RatingDialogInterFace {
     private static final String CHANNEL = "com.example.init_app";
-
+    private static final  int SELECT_IMAGE = 9000;
+    MethodChannel.Result resultGetImages = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,10 +41,38 @@ public class MainActivity extends FlutterActivity implements RatingDialog.Rating
                         rateAuto();
                         break;
                     }
+                    case "getImage":{
+                        resultGetImages = result;
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"),SELECT_IMAGE);
+                    }
                 }
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode == SELECT_IMAGE){
+                if (data != null) {
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
+                        Log.e("onActivityResult: ", Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT));
+                        resultGetImages.success(Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }
     }
 
     public static void rateApp(Context context) {
