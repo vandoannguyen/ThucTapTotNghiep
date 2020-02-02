@@ -1,16 +1,15 @@
-import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 
 class LoginViewModel {
   dynamic _user;
-  AnimationController _controller;
+  BuildContext _context;
 
   TextEditingController userNameController, passwordController;
 
-  AnimationController get controller => _controller;
+  BuildContext get context => _context;
 
-  set controller(AnimationController value) {
-    _controller = value;
+  set context(BuildContext value) {
+    _context = value;
   }
 
   LoginViewModel() {

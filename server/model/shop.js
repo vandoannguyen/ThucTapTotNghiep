@@ -26,7 +26,32 @@ function createShop(value) {
         });
     })
 }
+function updateShop(params) {
+    return new Promise((reslove, reject)=>{
+        pool.query("UPDATE shop SET name=?,address=?,idShopkepper=?,image=? WHERE idShop=?",
+        [params["name"], 
+        params["address"], 
+        params["idShopkepper"], 
+        params["image"]],
+        (err, rows)=>{
+            if(err)
+            reject(err);
+            else reslove(rows);
+        });
+    })
+}
+function deleteShop(id) {
+    return new Promise((reslove, reject)=>{
+        pool.query("DELETE FROM shop WHERE idShop=?",[id],(err, rows)=>{
+            if(err)
+            reject(err);
+            else reslove(rows);
+        });
+    })
+}
+
 module.exports={
     createShop:createShop,
     getListShop:getListShop,
+    updateShop:updateShop,
 }

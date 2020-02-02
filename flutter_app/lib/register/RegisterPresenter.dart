@@ -27,7 +27,11 @@ class RegisterPresenter implements BasePresenter {
       "name": _viewModel.fullNameController.text,
       "image": _viewModel.avatarImage != null ? _viewModel.avatarImage : ""
     };
-    http.post("${Common.rootUrl}register", body: value);
+    http.post("${Common.rootUrl}register", body: value).then((value) {
+      print(value.body);
+    }).catchError((err) {
+      print(err);
+    });
   }
 
   void setImage(callBack) {

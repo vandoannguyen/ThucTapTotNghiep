@@ -9,6 +9,8 @@ var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/api/login');
 var registerRouter = require("./routes/api/register");
 var shopRouter = require("./routes/api/shop");
+var merchandiseRouter = require("./routes/api/merchandise");
+var diaChiRouter = require("./routes/api/diachi");
 
 var app = express();
 
@@ -22,11 +24,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/api/diachi', diaChiRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/register', registerRouter);
 app.use('/api/shop', shopRouter);
+app.use('/api/merchandise', merchandiseRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

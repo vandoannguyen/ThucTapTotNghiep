@@ -1,4 +1,3 @@
-var con = require("./config")
 var shopModel = require("../model/shop")
 async function getListShop(req, res){
     var result = await shopModel.getListShop(req.query.idShopkepper);
