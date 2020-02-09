@@ -30,7 +30,10 @@ class _LoginState extends State<Login> implements BaseView {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
-          color: Colors.blue,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/images/bluebackground.jpg"),
+                  fit: BoxFit.fill)),
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
@@ -66,6 +69,7 @@ class _LoginState extends State<Login> implements BaseView {
                                       ),
                                       padding: EdgeInsets.all(15),
                                       child: TextField(
+                                        style: TextStyle(fontSize: 18),
                                         controller:
                                             _viewModel.userNameController,
                                         decoration: InputDecoration.collapsed(
@@ -83,6 +87,7 @@ class _LoginState extends State<Login> implements BaseView {
                                       ),
                                       padding: EdgeInsets.all(15),
                                       child: TextField(
+                                        style: TextStyle(fontSize: 18),
                                         controller:
                                             _viewModel.passwordController,
                                         decoration: InputDecoration.collapsed(
@@ -153,7 +158,7 @@ class _LoginState extends State<Login> implements BaseView {
   void login(BuildContext context) {
     _presenter.postLogin({
       "username": _viewModel.userNameController.text,
-      "password": _viewModel.passwordController.text
+      "password": _viewModel.passwordController.text,
     });
   }
 

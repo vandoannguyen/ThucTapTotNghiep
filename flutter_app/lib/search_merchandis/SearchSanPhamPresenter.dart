@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -20,16 +21,16 @@ class SearchSanPhamPresenter implements BasePresenter {
 
   void getListSanPham(idCuaHang) async {
     print('Bearer ' + Common.loginToken);
-    _viewModel.listSanPham = await http.get(
-      "${Common.rootUrl}merchandise/listMerchandise?idCuaHang=1",
+    var resopnse = await http.get(
+      "${Common.rootUrlApi}merchandise/listMerchandis?idShop=1",
       headers: {
         "Authorization": 'Bearer ' + Common.loginToken,
         HttpHeaders.contentTypeHeader: "application/x-www-form-urlencoded"
       },
-    ).then((response) {
-      print(response.body);
-    }).catchError((err) {
-      print(err);
-    });
+    );
+    print("12345678900asdjkasdhaksjldksdasd");
+    _viewModel.listSanPham = jsonDecode(resopnse.body);
+    _baseView.updateUI(dynamic);
+    print(_viewModel.listSanPham);
   }
 }

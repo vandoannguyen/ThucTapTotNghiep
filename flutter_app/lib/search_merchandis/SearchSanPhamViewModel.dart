@@ -1,5 +1,5 @@
 class SearchSanPhamViewModel {
-  dynamic _listSanPham;
+  dynamic _listSanPham = [];
 
   dynamic get listSanPham => _listSanPham;
 

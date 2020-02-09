@@ -62,6 +62,7 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
                     Container(
                       width: Common.widthOfScreen - 200,
                       child: TextField(
+                        autofocus: true,
                         decoration: InputDecoration.collapsed(
                           hintText: "Nhập tên tìm kiếm",
                           hintStyle: TextStyle(
@@ -80,7 +81,7 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
               ),
               GestureDetector(
                 onTap: () {
-                  showBarcode();
+                  showBarcode(context);
                 },
                 child: Container(
                   child: Icon(
@@ -93,17 +94,112 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
           ),
         ),
       ),
+      body: Container(
+        padding: EdgeInsets.all(10),
+        child: ListView.builder(
+          itemBuilder: (ctx, index) => itemMerchandis(context, index),
+          physics: ScrollPhysics(),
+          itemCount: _viewModel.listSanPham.length,
+        ),
+      ),
     );
   }
 
-  void showBarcode() async {
-    print("dẹksdlkasdasd");
+  void showBarcode(context) async {
     var barcode = await scan.scan();
-    print("barcode ${barcode}");
+    var selectMacherdis = _viewModel.listSanPham.firstWhere((element) {
+      return element["barcode"] == barcode ? element : null;
+    });
+    if (selectMacherdis != null) {
+      print(selectMacherdis);
+      IntentAnimation.intentBack(context: context, result: selectMacherdis);
+    }
   }
 
   @override
   void updateUI(dynamic) {
     // TODO: implement updateUI
+    setState(() {});
+  }
+
+  itemMerchandis(context, int index) {
+    return GestureDetector(
+      onTap: () {
+        IntentAnimation.intentBack(
+            context: context, result: _viewModel.listSanPham[index]);
+      },
+      child: Card(
+        child: Container(
+          padding: EdgeInsets.all(5),
+          child: Row(
+            children: <Widget>[
+              Container(
+                height: Common.widthOfScreen / 7,
+                width: Common.widthOfScreen / 7,
+                child: _viewModel.listSanPham[index]["image"] == null ||
+                        _viewModel.listSanPham[index]["image"] == ""
+                    ? Image.asset(
+                        'assets/images/default_image.png',
+                        fit: BoxFit.fill,
+                      )
+                    : FadeInImage.assetNetwork(
+                        placeholder: "assets/images/default_image.png",
+                        image: Common.rootUrl +
+                            _viewModel.listSanPham[index]["image"]),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Container(
+                  height: Common.widthOfScreen / 7,
+                  width: Common.widthOfScreen / 2,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        _viewModel.listSanPham[index]["nameMerchandise"],
+                        style: topValueStyle(),
+                      ),
+                      Text(
+                        "Barcode: " +
+                            _viewModel.listSanPham[index]["barcode"].toString(),
+                        style: bottomValueStyle(),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                height: Common.widthOfScreen / 7,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      _viewModel.listSanPham[index]["count"].toString(),
+                      style: topValueStyle(),
+                    ),
+                    Text(
+                      "${_viewModel.listSanPham[index]["count"] * _viewModel.listSanPham[index]["outputPrice"]}",
+                      style: bottomValueStyle(),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  topValueStyle() {
+    return TextStyle(fontSize: 17, fontWeight: FontWeight.w600);
+  }
+
+  bottomValueStyle() {
+    return TextStyle(fontSize: 14, color: Colors.grey);
   }
 }

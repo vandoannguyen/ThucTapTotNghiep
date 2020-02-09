@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:init_app/billpage/BillPage.dart';
 import 'package:init_app/home/HomePresenter.dart';
-import 'package:init_app/home/billpage/BillPage.dart';
-import 'package:init_app/home/homepage/HomePage.dart';
+import 'package:init_app/homepage/HomePage.dart';
+import 'package:init_app/merchandis_page/MerchandisPage.dart';
+import 'package:init_app/more/ModePage.dart';
 import 'package:init_app/utils/BaseView.dart';
 
 import 'HomeViewModel.dart';
-import 'merchandis_page/MerchandisPage.dart';
 
 class HomeScreen extends StatelessWidget implements BaseView {
   HomeViewModel _viewmodel;
@@ -30,12 +31,10 @@ class HomeScreen extends StatelessWidget implements BaseView {
                 HomePage(),
                 BillPage(),
                 MerchandisPage(),
-                Container(
-                  color: Colors.orange,
-                ),
-                Container(
-                  color: Colors.white,
-                ),
+//                Container(
+//                  color: Colors.orange,
+//                ),
+                MorePage(),
               ],
             ),
           ),
@@ -99,16 +98,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
             "Sản phẩm",
           ),
         ),
+//        BottomNavigationBarItem(
+//          icon: Icon(Icons.trending_up),
+//          title: Text(
+//            "Báo cáo",
+//          ),
+//        ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.trending_up),
+          icon: Icon(Icons.info),
           title: Text(
-            "Báo cáo",
-          ),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          title: Text(
-            "Cài đặt",
+            "Thông tin",
           ),
         ),
       ],

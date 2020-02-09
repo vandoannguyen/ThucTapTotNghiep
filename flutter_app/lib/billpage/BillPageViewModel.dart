@@ -1,0 +1,3 @@
+class BillPageViewModel {
+  dynamic listBill = [];
+}

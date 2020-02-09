@@ -18,7 +18,7 @@ function createUser(params) {
             params["name"] ,
             params["username"],
             params["email"] ,
-        cryptr.encrypt(params["password"]), 1 , '',
+        cryptr.encrypt(params["password"]), 1 , params["image"],
         date.toISOString().slice(0, 19).replace('T', ' ')],(err, rows)=>{
             if(err){
                 console.log(err);
@@ -36,7 +36,7 @@ function updateUser(params) {
         pool.query("UPDATE user SET name=?,username=?,email=?,password=?,image=? WHERE idUser=?",[
             params["name"] ,
             params["username"],
-            params["email"] + "','"+
+            params["email"] ,
         cryptr.encrypt(params["password"]),params["image"]],(err, rows)=>{
             if(err){
                 reject(err);
@@ -49,7 +49,7 @@ function updateUser(params) {
 function deleteUser(id) {
     return new Promise((reslove, reject)=>{
         var date  = new Date();
-        pool.query("DELETE FROM `user` WHERE idUser=?",[id],(err, rows)=>{
+        pool.query("DELETE FROM user WHERE idUser=?",[id],(err, rows)=>{
             if(err){
                 reject(err);
                 throw err;

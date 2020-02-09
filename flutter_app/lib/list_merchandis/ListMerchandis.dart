@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
+import 'package:init_app/list_merchandis/ListMerchandisPresenter.dart';
+import 'package:init_app/list_merchandis/ListMerchandisViewModel.dart';
+import 'package:init_app/meschandis_detail/MechandisDetail.dart';
+import 'package:init_app/utils/BaseView.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
 class ListMerchandis extends StatefulWidget {
@@ -7,8 +11,19 @@ class ListMerchandis extends StatefulWidget {
   _ListMerchandisState createState() => _ListMerchandisState();
 }
 
-class _ListMerchandisState extends State<ListMerchandis> {
+class _ListMerchandisState extends State<ListMerchandis> implements BaseView {
   var isLoading = false;
+  ListMerchandisViewModel _viewModel;
+  ListMerchandisPresenter _presenter;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _viewModel = new ListMerchandisViewModel();
+    _presenter = new ListMerchandisPresenter(_viewModel);
+    _presenter.intiView(this);
+    _presenter.getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +66,7 @@ class _ListMerchandisState extends State<ListMerchandis> {
                   padding: EdgeInsets.only(top: 10, bottom: 10),
                   child: ListView.builder(
                     itemBuilder: (ctx, index) => categoryItem(index),
-                    itemCount: 15,
+                    itemCount: _viewModel.categories.length,
                     scrollDirection: Axis.horizontal,
                   ),
                 ),
@@ -60,11 +75,11 @@ class _ListMerchandisState extends State<ListMerchandis> {
                     children: <Widget>[
                       ListView.builder(
                         itemBuilder: (ctx, index) => merchandisItem(index),
-                        itemCount: 30,
+                        itemCount: _viewModel.selectedListMerchandise.length,
                         scrollDirection: Axis.vertical,
                       ),
                       Visibility(
-                        visible: false,
+                        visible: _viewModel.selectedListMerchandise.length == 0,
                         child: Container(
                           height: Common.heightOfScreen,
                           width: Common.widthOfScreen,
@@ -121,18 +136,25 @@ class _ListMerchandisState extends State<ListMerchandis> {
 
   categoryItem(int index) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        selectCategory(index);
+      },
       child: Card(
         elevation: 3,
-        color: index == 0 ? Colors.blue : Colors.white,
+        color: _viewModel.categories[index]["selected"]
+            ? Colors.blue
+            : Colors.white,
         child: Container(
           height: 40,
           alignment: Alignment.center,
           padding: EdgeInsets.all(10),
           child: Text(
-            "Dầu gội",
+            "${_viewModel.categories[index]["nameCategory"]}",
             style: TextStyle(
-                color: index == 0 ? Colors.white : Colors.blue, fontSize: 17),
+                color: _viewModel.categories[index]["selected"]
+                    ? Colors.white
+                    : Colors.blue,
+                fontSize: 17),
           ),
         ),
       ),
@@ -141,20 +163,34 @@ class _ListMerchandisState extends State<ListMerchandis> {
 
   merchandisItem(int index) {
     return GestureDetector(
+      onTap: () {
+        merchandiseDetail(context, index);
+      },
       child: Card(
         clipBehavior: Clip.antiAlias,
         elevation: 4,
         child: Container(
+          color: Colors.transparent,
           padding: EdgeInsets.all(10),
           height: 70,
           child: Row(
             children: <Widget>[
               Container(
-                child: Image.asset(
-                  "assets/images/default_image.png",
-                  height: Common.heightOfScreen / 10,
-                  fit: BoxFit.fill,
-                ),
+                child: _viewModel.selectedListMerchandise[index]["image"] != ''
+                    ? FadeInImage.assetNetwork(
+                        image: Common.rootUrl +
+                            _viewModel.selectedListMerchandise[index]["image"],
+                        placeholder: "assets/icons/loading.gif",
+                        fit: BoxFit.fitWidth,
+                        height: Common.heightOfScreen / 10,
+                        width: Common.heightOfScreen / 10,
+                      )
+                    : Image.asset(
+                        "assets/images/default_image.png",
+                        height: Common.heightOfScreen / 10,
+                        width: Common.heightOfScreen / 10,
+                        fit: BoxFit.fill,
+                      ),
               ),
               SizedBox(
                 width: 10,
@@ -165,7 +201,7 @@ class _ListMerchandisState extends State<ListMerchandis> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Text(
-                      "Tên hàng",
+                      "${_viewModel.selectedListMerchandise[index]["nameMerchandise"]}",
                       style: TextStyle(
                           fontSize: 15,
                           color: Colors.black87,
@@ -179,7 +215,7 @@ class _ListMerchandisState extends State<ListMerchandis> {
                             style: TextStyle(fontSize: 13, color: Colors.grey),
                           ),
                           Text(
-                            "1000",
+                            "${_viewModel.selectedListMerchandise[index]["count"]}",
                             style: TextStyle(fontSize: 13, color: Colors.blue),
                           )
                         ],
@@ -196,4 +232,34 @@ class _ListMerchandisState extends State<ListMerchandis> {
   }
 
   void themSanPham() {}
+
+  @override
+  void updateUI(dynamic) {
+    print("okok UPDATE UI");
+    setState(() {});
+    // TODO: implement updateUI
+  }
+
+  void selectCategory(int index) {
+    _viewModel.categories.every((element) {
+      element["selected"] = false;
+      return true;
+    });
+    _viewModel.categories[index]["selected"] = true;
+    _viewModel.selectedCategory = _viewModel.categories[index];
+    _viewModel.selectedListMerchandise =
+        _viewModel.selectedCategory["listMechandise"];
+    setState(() {});
+  }
+
+  void merchandiseDetail(contex, index) {
+    print(_viewModel.selectedListMerchandise[index]);
+    IntentAnimation.intentNomal(
+        context: contex,
+        screen: MerchandisDetail(
+            inputKey: "detail",
+            value: _viewModel.selectedListMerchandise[index]),
+        option: IntentAnimationOption.RIGHT_TO_LEFT,
+        duration: Duration(milliseconds: 500));
+  }
 }

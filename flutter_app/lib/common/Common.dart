@@ -3,7 +3,8 @@ class Common {
 
   static var config = {};
 
-  static var rootUrl = "http://192.168.0.103:3000/api/";
+  static var rootUrlApi = "http://192.168.0.105:3000/api/";
+  static var rootUrl = "http://192.168.0.105:3000/";
 
   static String loginToken = "";
   static dynamic user = {};

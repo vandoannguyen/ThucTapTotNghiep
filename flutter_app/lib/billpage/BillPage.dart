@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:init_app/billpage/BillPageViewModel.dart';
+import 'package:init_app/billpage/ListBill.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/common/CustomButton.dart';
 import 'package:init_app/create_bill/CreateBill.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
+import 'ItemHoaDon.dart';
+
 class BillPage extends StatelessWidget {
+  BillPageViewModel _viewModel;
+
   @override
   Widget build(BuildContext context) {
+    _viewModel = new BillPageViewModel();
     return Scaffold(
       appBar: AppBar(
         title: Text("Đơn hàng"),
@@ -146,9 +153,38 @@ class BillPage extends StatelessWidget {
                       height: 1,
                     ),
                     Expanded(
-                      child: ListView.builder(
-                        itemBuilder: (context, index) => ItemHoaDon(index),
-                        itemCount: 10,
+                      child: Stack(
+                        children: <Widget>[
+                          ListView.builder(
+                            itemBuilder: (context, index) =>
+                                ItemHoaDon(_viewModel.listBill[index]),
+                            itemCount: _viewModel.listBill.length,
+                          ),
+                          Visibility(
+                              visible: _viewModel.listBill.length == 0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  themHoaDon(context);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(15),
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Image.asset(
+                                        "assets/icons/ic_create_order_intro.png",
+                                        height: Common.heightOfScreen / 4,
+                                        fit: BoxFit.fill,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("Hôm nay chưa có đơn nào!")
+                                    ],
+                                  ),
+                                ),
+                              ))
+                        ],
                       ),
                     )
                   ],
@@ -164,7 +200,9 @@ class BillPage extends StatelessWidget {
   void themHoaDon(BuildContext context) {
     IntentAnimation.intentNomal(
       context: context,
-      screen: CreateBill(),
+      screen: CreateBill(
+        keyCheck: "create",
+      ),
       option: IntentAnimationOption.RIGHT_TO_LEFT,
       duration: Duration(milliseconds: 500),
     );
@@ -176,65 +214,10 @@ class BillPage extends StatelessWidget {
   }
 
   void danhSachDonHang(BuildContext context) {
-    print("Danh sách đơn hàng");
-  }
-}
-
-class ItemHoaDon extends StatelessWidget {
-  int index;
-
-  ItemHoaDon(this.index);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "TÊN HÓA ĐƠN",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 16),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text("15:32 31/1/2019")
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    "Thu nhập",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text("4500000")
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+    IntentAnimation.intentNomal(
+        context: context,
+        screen: ListBill(),
+        option: IntentAnimationOption.RIGHT_TO_LEFT,
+        duration: Duration(milliseconds: 500));
   }
 }

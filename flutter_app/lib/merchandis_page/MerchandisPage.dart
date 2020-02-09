@@ -1,10 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/common/CustomButton.dart';
+import 'package:init_app/create_bill/CreateBill.dart';
 import 'package:init_app/list_merchandis/ListMerchandis.dart';
+import 'package:init_app/meschandis_detail/MechandisDetail.dart';
+import 'package:init_app/utils/BaseView.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
 class MerchandisPage extends StatefulWidget {
@@ -12,12 +12,18 @@ class MerchandisPage extends StatefulWidget {
   _MerchandisPageState createState() => _MerchandisPageState();
 }
 
-class _MerchandisPageState extends State<MerchandisPage> {
+class _MerchandisPageState extends State<MerchandisPage> implements BaseView {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue[400],
         elevation: 4,
         title: Text("Sản Phẩm"),
         centerTitle: true,
@@ -96,16 +102,20 @@ class _MerchandisPageState extends State<MerchandisPage> {
         color: Colors.blue, fontSize: 17, fontWeight: FontWeight.w600);
   }
 
-  void themSanPham(BuildContext context) {}
+  void themSanPham(BuildContext context) {
+    IntentAnimation.intentNomal(
+        context: context,
+        screen: MerchandisDetail(inputKey: "add"),
+        option: IntentAnimationOption.RIGHT_TO_LEFT,
+        duration: Duration(milliseconds: 500));
+  }
 
   void nhapHang(BuildContext context) async {
-    File image = await ImagePicker.pickImage(source: ImageSource.camera);
-    print(image.path);
-//    IntentAnimation.intentNomal(
-//        context: context,
-//        screen: CameraApp(),
-//        option: IntentAnimationOption.RIGHT_TO_LEFT,
-//        duration: Duration(milliseconds: 500));
+    IntentAnimation.intentNomal(
+        context: context,
+        screen: CreateBill(),
+        option: IntentAnimationOption.RIGHT_TO_LEFT,
+        duration: Duration(milliseconds: 500));
   }
 
   void danhSachSanPham(BuildContext context) {
@@ -114,5 +124,10 @@ class _MerchandisPageState extends State<MerchandisPage> {
         screen: ListMerchandis(),
         option: IntentAnimationOption.RIGHT_TO_LEFT,
         duration: Duration(milliseconds: 500));
+  }
+
+  @override
+  void updateUI(dynamic) {
+    // TODO: implement updateUI
   }
 }

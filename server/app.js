@@ -11,7 +11,8 @@ var registerRouter = require("./routes/api/register");
 var shopRouter = require("./routes/api/shop");
 var merchandiseRouter = require("./routes/api/merchandise");
 var diaChiRouter = require("./routes/api/diachi");
-
+var billRouter = require("./routes/api/bill");
+var categoryRouter = require("./routes/api/category");
 var app = express();
 
 // view engine setup
@@ -19,10 +20,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({limit: '20mb', extended: true }));
+app.use(express.urlencoded({limit: '20mb', extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'upload')));
 
 app.use('/api/diachi', diaChiRouter);
 app.use('/', indexRouter);
@@ -31,6 +33,8 @@ app.use('/api/login', loginRouter);
 app.use('/api/register', registerRouter);
 app.use('/api/shop', shopRouter);
 app.use('/api/merchandise', merchandiseRouter);
+app.use('/api/bill', billRouter);
+app.use('/api/category', categoryRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

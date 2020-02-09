@@ -24,12 +24,14 @@ class LoginPresenter implements BasePresenter {
 
   void postLogin(user) {
     print(user);
-    http.post("${Common.rootUrl}login", body: user).then((value) {
+    http.post("${Common.rootUrlApi}login", body: user).then((value) {
+      print(value.body);
       if (value.statusCode == 200 && value.body != {}) {
         var response = jsonDecode(value.body);
         Common.user = response["user"];
         Common.loginToken = response["token"];
         Common.shops = response["shop"];
+        Common.selectedShop = Common.shops[0];
         print(Common.user);
         print(Common.loginToken);
         print(Common.shops);

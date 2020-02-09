@@ -299,16 +299,21 @@ class _RegisterState extends State<Register> implements BaseView {
       child: Stack(
         alignment: Alignment.bottomRight,
         children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.blue,
-                border: Border.all(color: Colors.blue, width: 3),
-                borderRadius: BorderRadius.all(Radius.circular(70))),
-            child: CircleAvatar(
-              radius: 70,
-              backgroundImage: _viewModel.avatarImage != null
-                  ? _viewModel.avatarImage
-                  : AssetImage("assets/images/defAvatar.png"),
+          GestureDetector(
+            onTap: () {
+              openImageonCamera();
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.blue,
+                  border: Border.all(color: Colors.blue, width: 3),
+                  borderRadius: BorderRadius.all(Radius.circular(70))),
+              child: CircleAvatar(
+                radius: 70,
+                backgroundImage: _viewModel.avatarImage != null
+                    ? _viewModel.avatarImage
+                    : AssetImage("assets/images/defAvatar.png"),
+              ),
             ),
           ),
           Container(
@@ -368,5 +373,11 @@ class _RegisterState extends State<Register> implements BaseView {
 
   void dangKy(BuildContext context) {
     if (_key.currentState.validate()) _presenter.dangKy();
+  }
+
+  void openImageonCamera() {
+    _presenter.getImage(() {
+      setState(() {});
+    });
   }
 }

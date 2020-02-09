@@ -18,14 +18,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
+          fontFamily: "Roboto",
           primarySwatch: Colors.blue,
           primaryColorDark: Colors.grey[700],
           appBarTheme: AppBarTheme(
-              color: Colors.white,
+              color: Colors.blue[400],
               elevation: 4,
               textTheme: TextTheme(
                   title: TextStyle(
-                      color: Colors.grey[800],
+                      color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 20)))),
       home: Login(),

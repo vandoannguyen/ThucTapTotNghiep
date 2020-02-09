@@ -9,6 +9,8 @@ class RegisterViewModel {
   var avatarImage;
 
   var passwordVisible = false;
+
+  String base64Image = "";
   RegisterViewModel() {
     avatarImage = null;
     usernameController = new TextEditingController();

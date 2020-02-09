@@ -7,7 +7,7 @@ var jwt = require('jsonwebtoken');
 /* GET home page. */
 var userController = require("../../controller/UserController")
 router.post('/', function(req, res, next) {
-  console.log(req.body);
+  // console.log(req.body);
   userController.createUser(req,res);
     // var transporter = nodemailer.createTransport({
     //     service: 'gmail',
