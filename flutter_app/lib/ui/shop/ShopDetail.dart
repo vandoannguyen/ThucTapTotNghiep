@@ -1,0 +1,245 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:init_app/common/Common.dart';
+import 'package:init_app/ui/shop/ShopDetailView.dart';
+import 'package:init_app/utils/BaseView.dart';
+
+import 'ShopDetailPresenter.dart';
+import 'ShopDetailViewModel.dart';
+
+class ShopDetail extends StatefulWidget {
+  var keyCheck, value;
+
+  ShopDetail({@required this.keyCheck, this.value}) {
+    if (keyCheck == null) throw "keyChack mush not be null";
+    if (keyCheck != "create" && (value == null || value == {}))
+      throw "value mush not be null";
+  }
+
+  @override
+  _ShopDetailState createState() => _ShopDetailState();
+}
+
+class _ShopDetailState extends State<ShopDetail> implements ShopDetailView {
+  ShopDetailViewModel _viewModel;
+  ShopDetailPresenter _presenter;
+  var isDow = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _viewModel = new ShopDetailViewModel();
+    _presenter = new ShopDetailPresenter(_viewModel);
+    _presenter.intiView(this);
+    _viewModel.isEditEnable = widget.keyCheck != "detail";
+    if (!_viewModel.isEditEnable) {
+      print(widget.value);
+      _viewModel.shopNameCtrl.text = widget.value["name"];
+      _viewModel.addressCtrl.text = widget.value["address"];
+      _viewModel.phoneNumberCtrl.text = widget.value["phoneNumber"];
+      _viewModel.descriptionCtrl.text = widget.value["description"];
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      appBar: AppBar(
+        actions: widget.keyCheck == "detail"
+            ? <Widget>[
+                IconButton(
+                  icon: Icon(Icons.mode_edit),
+                  onPressed: () {
+                    setState(() {
+                      _viewModel.isEditEnable = true;
+                    });
+                  },
+                )
+              ]
+            : [],
+        title: Text("Cửa hàng"),
+        centerTitle: true,
+      ),
+      body: Container(
+          alignment: Alignment.center,
+          child: Container(
+            width: Common.widthOfScreen - 60,
+            child: SingleChildScrollView(
+              child: Form(
+                key: _viewModel.formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        openImageonCamera();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(4, 8),
+                                blurRadius: 4,
+                              )
+                            ],
+                            color: Colors.blue,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(90))),
+                        child: CircleAvatar(
+                          radius: 90,
+                          backgroundImage: _viewModel.avatarImage != null
+                              ? _viewModel.avatarImage
+                              : AssetImage("assets/icons/def_store.png"),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      enabled: _viewModel.isEditEnable,
+                      controller: _viewModel.shopNameCtrl,
+                      validator: _presenter.validator,
+                      style: inputTextStyle(),
+                      decoration: InputDecoration(
+                          labelText: "Tên cửa hàng",
+                          prefixIcon: Icon(
+                            Icons.store,
+                            color: Colors.blue,
+                          )),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      enabled: _viewModel.isEditEnable,
+                      controller: _viewModel.addressCtrl,
+                      validator: _presenter.validator,
+                      style: inputTextStyle(),
+                      decoration: InputDecoration(
+                          labelText: "Địa chỉ",
+                          prefixIcon: Image.asset(
+                            "assets/icons/locator_add.png",
+                            width: 25,
+                          )),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      enabled: _viewModel.isEditEnable,
+                      keyboardType: TextInputType.phone,
+                      controller: _viewModel.phoneNumberCtrl,
+                      validator: _presenter.validator,
+                      style: inputTextStyle(),
+                      decoration: InputDecoration(
+                          labelText: "Số điện thoại",
+                          prefixIcon: Icon(
+                            Icons.phone_in_talk,
+                            color: Colors.blue,
+                          )),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      controller: _viewModel.descriptionCtrl,
+                      style: inputTextStyle(),
+                      decoration: InputDecoration(
+                          labelText: "Ghi chú",
+                          prefixIcon: Icon(
+                            Icons.note,
+                            color: Colors.blue,
+                          )),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Visibility(
+                      visible: _viewModel.isEditEnable,
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                width: Common.widthOfScreen / 3,
+                                alignment: Alignment.center,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey,
+                                          blurRadius: 5,
+                                          offset: Offset(3, 3))
+                                    ]),
+                                child: Text("HỦY"),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                _presenter.addShop();
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 40,
+                                width: Common.widthOfScreen / 3,
+                                decoration: BoxDecoration(
+                                    color: Colors.blue[300],
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30)),
+                                    boxShadow: [
+                                      isDow
+                                          ? BoxShadow(
+                                              color: Colors.grey,
+                                              blurRadius: 0,
+                                              offset: Offset(0, 0))
+                                          : BoxShadow(
+                                              color: Colors.grey,
+                                              blurRadius: 5,
+                                              offset: Offset(3, 3))
+                                    ]),
+                                child: Text(
+                                  "OK",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )),
+    );
+  }
+
+  @override
+  void updateUI(dynamic) {
+    // TODO: implement updateUI
+  }
+
+  void openImageonCamera() {
+    _presenter.getImage(() {
+      setState(() {});
+    });
+  }
+
+  inputTextStyle() {
+    return TextStyle();
+  }
+}

@@ -1,0 +1,29 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/src/painting/image_provider.dart';
+
+class ShopDetailViewModel {
+  FileImage avatarImage;
+  String base64Image;
+  TextEditingController shopNameCtrl,
+      addressCtrl,
+      phoneNumberCtrl,
+      descriptionCtrl;
+  FocusNode fcNameShop, fcAdd, fcPhonenum, fcDess;
+
+  GlobalKey<FormState> formKey;
+
+  bool isEditEnable = true;
+
+  ShopDetailViewModel() {
+    shopNameCtrl = new TextEditingController();
+    addressCtrl = new TextEditingController();
+    phoneNumberCtrl = new TextEditingController();
+    descriptionCtrl = new TextEditingController();
+
+    fcNameShop = new FocusNode();
+    fcAdd = new FocusNode();
+    fcPhonenum = new FocusNode();
+    fcDess = new FocusNode();
+    formKey = new GlobalKey();
+  }
+}
