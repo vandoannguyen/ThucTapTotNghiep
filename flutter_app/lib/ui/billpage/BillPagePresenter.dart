@@ -1,22 +1,24 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/ui/billpage/BillPageViewModel.dart';
 import 'package:init_app/utils/BasePresenter.dart';
 import 'package:init_app/utils/BaseView.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
 import 'ListBill.dart';
 
-class BillPagePresenter implements BasePresenter {
+class BillPagePresenter extends BasePresenter {
   BillPageViewModel _viewModel;
   BaseView baseView;
   IAppDataHelper appDataHelper;
 
+  var CURRENT_BILLS = "billscurrent";
+
   BillPagePresenter(this._viewModel) {
     appDataHelper = new AppDataHelper();
+    addStreamController(CURRENT_BILLS);
   }
 
   void listBill(BuildContext context) {
@@ -33,14 +35,17 @@ class BillPagePresenter implements BasePresenter {
   }
 
   void getBillCurrentDay() {
+    getSink(CURRENT_BILLS).add(new BlocLoading());
     appDataHelper
-        .getBillCurrentDay(Common.selectedShop["idShop"])
+        .getBillByDay(
+            Common.selectedShop["idShop"], DateTime.now(), DateTime.now(), 0)
         .then((value) {
       print(value);
       _viewModel.listBill = value;
-      baseView.updateUI({});
+      getSink(CURRENT_BILLS).add(new BlocLoaded(value));
+//      baseView.updateUI({});
     }).catchError((onError) {
-      print(onError);
+      getSink(CURRENT_BILLS).add(new BlocFailed(onError));
     });
   }
 

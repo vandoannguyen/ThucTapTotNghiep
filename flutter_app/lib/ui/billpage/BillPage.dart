@@ -3,6 +3,7 @@ import 'package:init_app/common/Common.dart';
 import 'package:init_app/common/CustomButton.dart';
 import 'package:init_app/ui/create_bill/CreateBill.dart';
 import 'package:init_app/utils/BaseView.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
 import 'BillPagePresenter.dart';
@@ -86,7 +87,9 @@ class _BillPageState extends State<BillPage> implements BaseView {
               height: 10,
             ),
             Expanded(
-              child: Container(
+                child: StreamBuilder(
+              stream: _presenter.getStream(_presenter.CURRENT_BILLS),
+              builder: (ctx, snap) => Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     border: Border.all(
@@ -134,7 +137,11 @@ class _BillPageState extends State<BillPage> implements BaseView {
                                         color: Colors.blue,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700)),
-                                Text("${_viewModel.listBill.length}")
+                                snap.data is BlocLoading
+                                    ? Text("")
+                                    : snap.data is BlocLoaded
+                                        ? Text("${snap.data.value.length}")
+                                        : Text("")
                               ],
                             ),
                           ),
@@ -155,8 +162,12 @@ class _BillPageState extends State<BillPage> implements BaseView {
                                         color: Colors.blue,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700)),
-                                Text(
-                                    "${Common.CURRENCY_FORMAT.format(getTongTien())}")
+                                snap.data is BlocLoading
+                                    ? Text("")
+                                    : snap.data is BlocLoaded
+                                        ? Text(
+                                            "${Common.CURRENCY_FORMAT.format(getTongTien(snap.data.value))}")
+                                        : Text("")
                               ],
                             ),
                           ),
@@ -170,44 +181,56 @@ class _BillPageState extends State<BillPage> implements BaseView {
                       height: 1,
                     ),
                     Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          ListView.builder(
-                            itemBuilder: (context, index) =>
-                                ItemHoaDon(_viewModel.listBill[index]),
-                            itemCount: _viewModel.listBill.length,
-                          ),
-                          Visibility(
-                              visible: _viewModel.listBill.length == 0,
-                              child: GestureDetector(
-                                onTap: () {
-                                  themHoaDon(context);
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(15),
-                                  alignment: Alignment.center,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Image.asset(
-                                        "assets/icons/ic_create_order_intro.png",
-                                        height: Common.heightOfScreen / 4,
-                                        fit: BoxFit.fill,
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("Hôm nay chưa có đơn nào!")
-                                    ],
-                                  ),
-                                ),
-                              ))
-                        ],
-                      ),
+                      child: snap.data is BlocLoading
+                          ? Container(
+                              alignment: Alignment.center,
+                              child: Image.asset(
+                                "assets/icons/loading.gif",
+                                width: 30,
+                                height: 30,
+                              ),
+                            )
+                          : snap.data is BlocLoaded
+                              ? Stack(
+                                  children: <Widget>[
+                                    ListView.builder(
+                                      itemBuilder: (context, index) =>
+                                          ItemHoaDon(snap.data.value[index]),
+                                      itemCount: snap.data.value.length,
+                                    ),
+                                    Visibility(
+                                        visible: snap.data.value.length == 0,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            themHoaDon(context);
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(15),
+                                            alignment: Alignment.center,
+                                            child: Column(
+                                              children: <Widget>[
+                                                Image.asset(
+                                                  "assets/icons/ic_create_order_intro.png",
+                                                  height:
+                                                      Common.heightOfScreen / 4,
+                                                  fit: BoxFit.fill,
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text("Hôm nay chưa có đơn nào!")
+                                              ],
+                                            ),
+                                          ),
+                                        ))
+                                  ],
+                                )
+                              : Container(),
                     )
                   ],
                 ),
               ),
-            )
+            ))
           ],
         ),
       ),
@@ -236,9 +259,9 @@ class _BillPageState extends State<BillPage> implements BaseView {
     // TODO: implement updateUI
   }
 
-  getTongTien() {
+  getTongTien(value) {
     var tong = 0;
-    _viewModel.listBill.forEach((element) {
+    value.forEach((element) {
       tong += element["totalPrice"] - element["discount"];
     });
     return tong;

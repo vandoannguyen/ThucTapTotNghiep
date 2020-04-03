@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/utils/BaseView.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 import 'package:qrscan/qrscan.dart' as scan;
 
@@ -16,13 +17,14 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
     implements BaseView {
   SearchSanPhamPresenter _presenter;
   SearchSanPhamViewModel _viewModel;
+
   @override
   void initState() {
     super.initState();
     _viewModel = new SearchSanPhamViewModel();
     _presenter = new SearchSanPhamPresenter(_viewModel);
     _presenter.intiView(this);
-    _presenter.getListSanPham(1);
+    _presenter.getListSanPham();
   }
 
   @override
@@ -50,6 +52,7 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
                 width: Common.widthOfScreen - 150,
                 color: Colors.transparent,
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Container(
                       child: Icon(
@@ -61,8 +64,9 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
                     ),
                     Container(
                       width: Common.widthOfScreen - 200,
+                      padding: EdgeInsets.only(bottom: 20),
+                      height: 50,
                       child: TextField(
-                        autofocus: true,
                         decoration: InputDecoration.collapsed(
                           hintText: "Nhập tên tìm kiếm",
                           hintStyle: TextStyle(
@@ -96,11 +100,29 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
       ),
       body: Container(
         padding: EdgeInsets.all(10),
-        child: ListView.builder(
-          itemBuilder: (ctx, index) => itemMerchandis(context, index),
-          physics: ScrollPhysics(),
-          itemCount: _viewModel.listSanPham.length,
-        ),
+        child: StreamBuilder(
+            stream: _presenter.getStream(_presenter.LIST_MERCHANDISE),
+            builder: (ctx, snap) => snap.data is BlocLoading
+                ? Container(
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      "assets/icons/loading.gif",
+                      width: 35,
+                      height: 30,
+                    ),
+                  )
+                : snap.data is BlocLoaded
+                    ? ListView.builder(
+                        itemBuilder: (ctx, index) =>
+                            itemMerchandis(context, snap.data.value[index]),
+                        physics: ScrollPhysics(),
+                        itemCount: snap.data.value.length,
+                      )
+                    : snap.data is BlocFailed
+                        ? Container(
+                            child: Text(snap.data.mess),
+                          )
+                        : Container()),
       ),
     );
   }
@@ -123,11 +145,10 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
     setState(() {});
   }
 
-  itemMerchandis(context, int index) {
+  itemMerchandis(context, data) {
     return GestureDetector(
       onTap: () {
-        IntentAnimation.intentBack(
-            context: context, result: _viewModel.listSanPham[index]);
+        IntentAnimation.intentBack(context: context, result: data);
       },
       child: Card(
         child: Container(
@@ -137,16 +158,14 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
               Container(
                 height: Common.widthOfScreen / 7,
                 width: Common.widthOfScreen / 7,
-                child: _viewModel.listSanPham[index]["image"] == null ||
-                        _viewModel.listSanPham[index]["image"] == ""
+                child: data["image"] == null || data["image"] == ""
                     ? Image.asset(
                         'assets/images/default_image.png',
                         fit: BoxFit.fill,
                       )
                     : FadeInImage.assetNetwork(
                         placeholder: "assets/images/default_image.png",
-                        image: Common.rootUrl +
-                            _viewModel.listSanPham[index]["image"]),
+                        image: Common.rootUrl + data["image"]),
               ),
               SizedBox(
                 width: 10,
@@ -160,12 +179,11 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        _viewModel.listSanPham[index]["nameMerchandise"],
+                        data["nameMerchandise"],
                         style: topValueStyle(),
                       ),
                       Text(
-                        "Barcode: " +
-                            _viewModel.listSanPham[index]["barcode"].toString(),
+                        "Barcode: " + data["barcode"].toString(),
                         style: bottomValueStyle(),
                       )
                     ],
@@ -179,11 +197,11 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      _viewModel.listSanPham[index]["count"].toString(),
+                      data["count"].toString(),
                       style: topValueStyle(),
                     ),
                     Text(
-                      "${_viewModel.listSanPham[index]["count"] * _viewModel.listSanPham[index]["outputPrice"]}",
+                      "${data["count"] * data["outputPrice"]}",
                       style: bottomValueStyle(),
                     )
                   ],

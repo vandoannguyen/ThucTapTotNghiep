@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
-import 'package:init_app/ui/homepage/HomePageViewModel.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 
 // ignore: must_be_immutable
-class MerchandiseStatus extends StatefulWidget {
-  HomePageViewModel _homePageViewModel;
+class MerchandiseStatus extends StatelessWidget {
+  dynamic data;
   static final String INFOR = "infor";
   static final String WARNING = "warning";
   String keyCheck = "";
 
-  MerchandiseStatus(this._homePageViewModel, this.keyCheck);
+  MerchandiseStatus(this.data, this.keyCheck);
 
-  @override
-  _MerchandiseStatusState createState() => _MerchandiseStatusState();
-}
-
-class _MerchandiseStatusState extends State<MerchandiseStatus> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,7 +20,7 @@ class _MerchandiseStatusState extends State<MerchandiseStatus> {
             padding: EdgeInsets.all(10),
             alignment: Alignment.centerLeft,
             child: Text(
-              widget.keyCheck == MerchandiseStatus.WARNING
+              keyCheck == MerchandiseStatus.WARNING
                   ? "HÀNG SẮP HẾT"
                   : "HÀNG BÁN CHẠY",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
@@ -33,23 +28,34 @@ class _MerchandiseStatusState extends State<MerchandiseStatus> {
           ),
           Card(
             elevation: 4,
-            child: ListView.separated(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              separatorBuilder: (ctx, inde) => Container(
-                margin: EdgeInsets.only(left: 10, right: 10),
-                height: 0.5,
-                color: Colors.grey,
-              ),
-              itemBuilder: (ctx, index) => ItemView(
-                  keyCheck: MerchandiseStatus.WARNING,
-                  value: widget.keyCheck == MerchandiseStatus.WARNING
-                      ? widget._homePageViewModel.marchandiseWillEmpty[index]
-                      : widget._homePageViewModel.bestSellers[index]),
-              itemCount: widget.keyCheck == MerchandiseStatus.WARNING
-                  ? widget._homePageViewModel.marchandiseWillEmpty.length
-                  : widget._homePageViewModel.bestSellers.length,
-            ),
+            child: data is BlocLoading
+                ? Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.only(top: 5, bottom: 5),
+                    child: Image.asset(
+                      "assets/icons/loading.gif",
+                      height: 30,
+                      width: 30,
+                    ),
+                  )
+                : data is BlocLoaded
+                    ? ListView.separated(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        separatorBuilder: (ctx, inde) => Container(
+                              margin: EdgeInsets.only(left: 10, right: 10),
+                              height: 0.5,
+                              color: Colors.grey,
+                            ),
+                        itemBuilder: (ctx, index) => ItemView(
+                            keyCheck: keyCheck, value: data.value[index]),
+                        itemCount: data.value.length)
+                    : data is BlocFailed
+                        ? Container(
+                            padding: EdgeInsets.only(top: 10, bottom: 10),
+                            child: Text(data.mess),
+                          )
+                        : Container(),
           )
         ],
       ),
@@ -96,11 +102,9 @@ class _MerchandiseStatusState extends State<MerchandiseStatus> {
                       Text(
                         "${value["countsp"]}",
                         style: TextStyle(
-                            color: value["countsp"] == 0
+                            color: keyCheck == MerchandiseStatus.WARNING
                                 ? Colors.red
-                                : value["countsp"] == 1
-                                    ? Colors.orange
-                                    : Colors.lightGreen,
+                                : Colors.lightGreen,
                             fontSize: 18,
                             fontWeight: FontWeight.w500),
                       )

@@ -293,20 +293,14 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                         },
                         child: Container(
                           decoration: BoxDecoration(
+                              color: Colors.blue,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(30)),
-                              color: Colors.blue,
                               boxShadow: [
                                 BoxShadow(
-                                    spreadRadius: 1,
-                                    blurRadius: 2,
-                                    offset: Offset(2, 2),
-                                    color: Colors.grey),
-                                BoxShadow(
-                                    spreadRadius: 1,
-                                    blurRadius: 2,
-                                    offset: Offset(-4, -4),
-                                    color: Colors.white),
+                                    color: Colors.grey,
+                                    blurRadius: 5,
+                                    offset: Offset(3, 3))
                               ]),
                           alignment: Alignment.center,
                           height: 40,
@@ -331,15 +325,9 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                               color: Colors.white,
                               boxShadow: [
                                 BoxShadow(
-                                    spreadRadius: 1,
-                                    blurRadius: 2,
-                                    offset: Offset(2, 2),
-                                    color: Colors.grey),
-                                BoxShadow(
-                                    spreadRadius: 1,
-                                    blurRadius: 2,
-                                    offset: Offset(-2, -2),
-                                    color: Colors.grey[200]),
+                                    color: Colors.grey,
+                                    blurRadius: 5,
+                                    offset: Offset(3, 3))
                               ]),
                           alignment: Alignment.center,
                           height: 40,
@@ -481,40 +469,55 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
               title: Text("Xóa sản phẩm này ?"),
               actions: <Widget>[
                 GestureDetector(
-                    onTap: () {
-                      IntentAnimation.intentBack(
-                          context: context, result: "ok");
-                    },
-                    child: Card(
-                      elevation: 4,
-                      color: Colors.red,
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: 100,
-                        height: 40,
-                        child: Text(
-                          "Xóa",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
-                    )),
+                  onTap: () {
+                    IntentAnimation.intentBack(context: context, result: "ok");
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(
+                        top: 10, bottom: 10, left: 15, right: 15),
+                    decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 5,
+                              offset: Offset(3, 3))
+                        ]),
+                    alignment: Alignment.center,
+                    width: 100,
+                    height: 40,
+                    child: Text(
+                      "Xóa",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                ),
                 GestureDetector(
-                    onTap: () {
-                      IntentAnimation.intentBack(context: context);
-                    },
-                    child: Card(
-                      elevation: 4,
-                      color: Colors.white,
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: 100,
-                        height: 40,
-                        child: Text(
-                          "Hủy",
-                          style: TextStyle(color: Colors.grey, fontSize: 18),
-                        ),
-                      ),
-                    )),
+                  onTap: () {
+                    IntentAnimation.intentBack(context: context);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(
+                        top: 10, bottom: 10, left: 15, right: 15),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 5,
+                              offset: Offset(3, 3))
+                        ]),
+                    alignment: Alignment.center,
+                    width: 100,
+                    height: 40,
+                    child: Text(
+                      "Hủy",
+                      style: TextStyle(color: Colors.grey, fontSize: 18),
+                    ),
+                  ),
+                ),
               ],
             ));
     if (result != null && result == "ok") {

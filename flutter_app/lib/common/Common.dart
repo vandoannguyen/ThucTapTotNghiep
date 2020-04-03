@@ -5,8 +5,8 @@ class Common {
 
   static var config = {};
 
-  static var rootUrlApi = "http://192.168.0.106:3000/api/";
-  static var rootUrl = "http://192.168.0.106:3000/";
+  static var rootUrlApi = "http://192.168.0.101:3000/api/";
+  static var rootUrl = "http://192.168.0.101:3000/";
 
   static String loginToken = "";
   static dynamic user = {};
@@ -17,4 +17,8 @@ class Common {
   static var widthOfScreen = 0.0;
   static final CURRENCY_FORMAT = NumberFormat("#,###,###,##0", "en_US");
   static final String KEY_CHECK_CREATE_SHOP = "create";
+
+  static String DATE_FORMAT(DateTime dateTime) {
+    return new DateFormat("dd/MM/yyyy").format(dateTime);
+  }
 }

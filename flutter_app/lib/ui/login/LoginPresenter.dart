@@ -42,11 +42,13 @@ class LoginPresenter<V extends LoginView> extends BasePresenter<V> {
         Common.shops = value["shop"];
         Common.selectedShop = Common.shops.length > 0 ? Common.shops[0] : {};
         if (Common.shops.length > 0) {
-          IntentAnimation.intentPushReplacement(
-              context: _viewModel.context,
-              screen: HomeScreen(),
-              option: IntentAnimationOption.RIGHT_TO_LEFT,
-              duration: Duration(milliseconds: 800));
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => HomeScreen()));
+//          IntentAnimation.intentPushReplacement(
+//              context: _viewModel.context,
+//              screen: HomeScreen(),
+//              option: IntentAnimationOption.RIGHT_TO_LEFT,
+//              duration: Duration(milliseconds: 800));
         } else {
           _viewModel.isLoading = false;
           baseView.updateUI({});

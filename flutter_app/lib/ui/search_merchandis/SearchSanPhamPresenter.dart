@@ -1,19 +1,21 @@
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
-import 'package:init_app/ui/search_merchandis/SearchSanPhamView.dart';
 import 'package:init_app/utils/BasePresenter.dart';
 import 'package:init_app/utils/BaseView.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 
 import 'SearchSanPhamViewModel.dart';
 
-class SearchSanPhamPresenter<V extends SearchSanPhamView>
-    extends BasePresenter<V> {
+class SearchSanPhamPresenter extends BasePresenter {
   BaseView _baseView;
   SearchSanPhamViewModel _viewModel;
   IAppDataHelper appDataHelper;
 
-  SearchSanPhamPresenter(this._viewModel) {
+  String LIST_MERCHANDISE = "merchndises";
+
+  SearchSanPhamPresenter(this._viewModel) : super() {
     appDataHelper = new AppDataHelper();
+    addStreamController(LIST_MERCHANDISE);
   }
 
   @override
@@ -21,13 +23,16 @@ class SearchSanPhamPresenter<V extends SearchSanPhamView>
     this._baseView = baseView;
   }
 
-  void getListSanPham(idCuaHang) async {
-    print('Bearer ' + Common.loginToken);
-    appDataHelper.getMerchandisesByShop(idCuaHang).then((value) {
+  void getListSanPham() async {
+    getSink(LIST_MERCHANDISE).add(BlocLoading());
+    appDataHelper
+        .getMerchandisesByShop(Common.selectedShop["idShop"])
+        .then((value) {
       _viewModel.listSanPham = value;
-      _baseView.updateUI(dynamic);
+      getSink(LIST_MERCHANDISE).add(BlocLoaded(value));
       print(_viewModel.listSanPham);
     }).catchError((err) {
+      getSink(LIST_MERCHANDISE).add(BlocFailed(err));
       print(err);
     });
   }

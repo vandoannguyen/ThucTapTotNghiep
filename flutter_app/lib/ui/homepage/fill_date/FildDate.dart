@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 
-import '../HomePageViewModel.dart';
-
-class FillDate extends StatefulWidget {
+// ignore: must_be_immutable
+class FillDate extends StatelessWidget {
   var title, fromDate, toDate;
-  HomePageViewModel _viewModel;
+  var data;
+  FillDate(this.data);
 
-  @override
-  _FillDateState createState() => _FillDateState();
-
-  FillDate(this._viewModel, {this.title, this.fromDate, this.toDate});
-}
-
-class _FillDateState extends State<FillDate> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -33,7 +27,7 @@ class _FillDateState extends State<FillDate> {
                       padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        widget.title,
+                        "Trong khoảng",
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
@@ -44,10 +38,14 @@ class _FillDateState extends State<FillDate> {
                     Container(
                       padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        "${widget.fromDate}   -   ${widget.toDate}",
-                        style: TextStyle(fontSize: 13),
-                      ),
+                      child: data is BlocLoading
+                          ? Text("")
+                          : data is BlocLoaded
+                              ? Text(
+                                  "${Common.DATE_FORMAT(data.value["fristDay"])}   -   ${Common.DATE_FORMAT(data.value["endDay"])}",
+                                  style: TextStyle(fontSize: 13),
+                                )
+                              : Text(""),
                     )
                   ],
                 ),

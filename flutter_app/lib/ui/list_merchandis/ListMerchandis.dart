@@ -17,6 +17,7 @@ class _ListMerchandisState extends State<ListMerchandis>
   var isLoading = false;
   ListMerchandisViewModel _viewModel;
   ListMerchandisPresenter _presenter;
+
   @override
   void initState() {
     // TODO: implement initState

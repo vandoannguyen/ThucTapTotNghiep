@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:init_app/ui/category/CategoryView.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 
 import 'CategoryPresenter.dart';
 import 'CategoryViewModel.dart';
@@ -13,7 +14,6 @@ class Category extends StatefulWidget {
 
 class _CategoryState extends State<Category> implements CategoryView {
   CategoryPresenter _presenter;
-
   CategoryViewModel _viewModel;
 
   @override
@@ -43,11 +43,28 @@ class _CategoryState extends State<Category> implements CategoryView {
         ],
       ),
       body: Container(
-        child: ListView.builder(
-          itemBuilder: (context, index) => itemView(index),
-          itemCount: _viewModel.danhSachLoaiMatHang.length,
-        ),
-      ),
+          child: StreamBuilder(
+        stream: _presenter.getStream(_presenter.LIST_CATEGORY),
+        builder: (ctx, snap) => snap.data is BlocLoading
+            ? Container(
+                alignment: Alignment.center,
+                child: Image.asset(
+                  "assets/icons/loading.gif",
+                  width: 30,
+                  height: 30,
+                ),
+              )
+            : snap.data is BlocLoaded
+                ? ListView.builder(
+                    itemBuilder: (context, index) => itemView(index),
+                    itemCount: _viewModel.danhSachLoaiMatHang.length,
+                  )
+                : snap.data is BlocFailed
+                    ? Container(
+                        child: Text(snap.data.mess),
+                      )
+                    : Container(),
+      )),
     );
   }
 

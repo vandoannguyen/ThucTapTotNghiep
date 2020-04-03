@@ -39,20 +39,22 @@ class ApiHelper implements IApiHelper {
   }
 
   @override
-  Future getBillCurrentDay(idShop) {
+  Future getBillByDay(idShop, startDate, endDate, status) {
     Completer com = new Completer();
     if (Common.user["idRole"] == 2) {
       var now = new DateTime.now();
       print(now.toIso8601String());
       http
-          .post("${Common.rootUrlApi}bill/getCurrentBills",
+          .post("${Common.rootUrlApi}bill/getBills",
               headers: {
                 HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
                 HttpHeaders.contentTypeHeader: 'application/json'
               },
               body: jsonEncode({
                 "user": Common.user,
-                "date": now.toIso8601String().replaceFirst("T", " "),
+                "startDate": startDate.toIso8601String().replaceFirst("T", " "),
+                "endDate": endDate.toIso8601String().replaceFirst("T", " "),
+                "status": status,
                 "idShop": idShop
               }))
           .then((value) {
@@ -143,7 +145,7 @@ class ApiHelper implements IApiHelper {
     // TODO: implement getMerchandisesByShop
     Completer completer = new Completer();
     http.get(
-      "${Common.rootUrlApi}merchandise/listMerchandis?idShop=${Common.selectedShop["idShop"]}",
+      "${Common.rootUrlApi}merchandise/listMerchandis?idShop=${idShop}",
       headers: {
         "Authorization": 'Bearer ' + Common.loginToken,
         HttpHeaders.contentTypeHeader: "application/x-www-form-urlencoded"
@@ -255,6 +257,50 @@ class ApiHelper implements IApiHelper {
           HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
           HttpHeaders.contentTypeHeader: 'application/json'
         });
+    return completer.future;
+  }
+
+  @override
+  Future getBestSeller(idShop, limits, fromDate, toDate) {
+    // TODO: implement getBestSeller
+    Completer completer = new Completer();
+    http
+        .post("${Common.rootUrlApi}merchandise/getbestseller",
+            headers: {
+              HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: jsonEncode({
+              "idShop": idShop,
+              "limits": limits,
+              "fromDate": fromDate,
+              "toDate": toDate
+            }))
+        .then((value) {
+      print("body ${value.body}");
+      completer.complete(jsonDecode(value.body));
+    }).catchError((err) {
+      completer.completeError(err);
+    });
+    return completer.future;
+  }
+
+  @override
+  Future getWillBeEmpty(idShop, warningCount) {
+    // TODO: implement getWillBeEmpty
+    Completer completer = new Completer();
+    http
+        .post("${Common.rootUrlApi}merchandise/getMerchandisewillempty",
+            headers: {
+              HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: jsonEncode({"idShop": idShop, "warningCount": warningCount}))
+        .then((onValue) {
+      completer.complete(jsonDecode(onValue.body));
+    }).catchError((onError) {
+      completer.completeError(onError);
+    });
     return completer.future;
   }
 }

@@ -64,9 +64,9 @@ class AppDataHelper implements IAppDataHelper {
   }
 
   @override
-  Future getBillCurrentDay(idShop) {
+  Future getBillByDay(idShop, startDate, endDate, status) {
     // TODO: implement getBillCurrentDay
-    return apiHelper.getBillCurrentDay(idShop);
+    return apiHelper.getBillByDay(idShop, startDate, endDate, status);
   }
 
   @override
@@ -139,5 +139,17 @@ class AppDataHelper implements IAppDataHelper {
   Future updateMerchandise(data) {
     // TODO: implement updateMerchandise
     return apiHelper.updateMerchandise(data);
+  }
+
+  @override
+  Future getBestSeller(idShop, limits, fromDate, toDate) {
+    // TODO: implement getBestSeller
+    return apiHelper.getBestSeller(idShop, limits, fromDate, toDate);
+  }
+
+  @override
+  Future getWillBeEmpty(idShop, warningCount) {
+    // TODO: implement getWillBeEmpty
+    return apiHelper.getWillBeEmpty(idShop, warningCount);
   }
 }

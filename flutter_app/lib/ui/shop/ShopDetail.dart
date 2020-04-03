@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/ui/shop/ShopDetailView.dart';
-import 'package:init_app/utils/BaseView.dart';
 
 import 'ShopDetailPresenter.dart';
 import 'ShopDetailViewModel.dart';
@@ -24,6 +23,7 @@ class _ShopDetailState extends State<ShopDetail> implements ShopDetailView {
   ShopDetailViewModel _viewModel;
   ShopDetailPresenter _presenter;
   var isDow = false;
+
   @override
   void initState() {
     // TODO: implement initState

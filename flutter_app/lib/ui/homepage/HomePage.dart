@@ -25,8 +25,11 @@ class _HomePageState extends State<HomePage> implements HomePageView {
     _viewModel = new HomePageViewModel();
     _presenter = new HomePagePresenter<HomePageView>(_viewModel);
     _presenter.intiView(this);
-    _presenter.getHangBanChay();
-    _presenter.getHangSapHet();
+    _presenter.getDayOfWeek();
+    _presenter.getBestSeller();
+    _presenter.getWillBeEmpty();
+    _presenter.getBills();
+    _presenter.getMerchandises();
   }
 
   @override
@@ -63,17 +66,43 @@ class _HomePageState extends State<HomePage> implements HomePageView {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                FillDate(_viewModel,
-                    title: "Tuần qua",
-                    fromDate: "2/2/2019",
-                    toDate: "2/3/2019"),
+                StreamBuilder(
+                    stream: _presenter.getStream(_presenter.DAY_OF_WEEK),
+                    builder: (context, snap) => FillDate(snap.data)),
+
+//            builder: (context, snap) => FillDate(
+//                          title: "Trong khoảng",
+//                          fromDate: snap.hasData
+//                              ? Common.DATE_FORMAT(snap.data["fristDay"])
+//                              : "loading...",
+//                          toDate: snap.hasData
+//                              ? Common.DATE_FORMAT(snap.data["endDay"])
+//                              : "loading...",
+//                        )),
                 SizedBox(
                   height: 15,
                 ),
-                OverView(),
-                MerchandiseStatus(_viewModel, MerchandiseStatus.INFOR),
-                Warehouse(_viewModel),
-                MerchandiseStatus(_viewModel, MerchandiseStatus.WARNING),
+                StreamBuilder(
+                  stream: _presenter.getStream(_presenter.OVERLAY_IN_BILL),
+                  builder: (ctx, snap) => OverView(_viewModel, _presenter),
+                ),
+                StreamBuilder(
+                    stream: _presenter.getStream(_presenter.BEST_SALE),
+                    builder: (cont, snap) {
+                      return MerchandiseStatus(
+                          snap.data, MerchandiseStatus.INFOR);
+                    }),
+                StreamBuilder(
+                  stream: _presenter.getStream(_presenter.WAREHOUSE),
+                  builder: (ctx, snap) {
+                    return Warehouse(snap.data);
+                  },
+                ),
+                StreamBuilder(
+                  stream: _presenter.getStream(_presenter.WARNING),
+                  builder: (ctx, snap) =>
+                      MerchandiseStatus(snap.data, MerchandiseStatus.WARNING),
+                ),
               ],
             ),
           ),
@@ -85,6 +114,13 @@ class _HomePageState extends State<HomePage> implements HomePageView {
   @override
   void updateUI(dynamic) {
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _presenter.onDispose();
   }
 
   @override

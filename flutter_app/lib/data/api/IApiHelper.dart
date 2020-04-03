@@ -3,7 +3,7 @@ abstract class IApiHelper {
 
   Future getListBill(isShop);
 
-  Future getBillCurrentDay(idShop);
+  Future getBillByDay(idShop, startDate, endDate, status);
 
   Future getCategories(idShop);
 
@@ -28,4 +28,6 @@ abstract class IApiHelper {
   Future createShop(data);
 
   Future updateMerchandise(data);
+  Future getBestSeller(idShop, limits, fromDate, toDate);
+  Future getWillBeEmpty(idShop, warningCount);
 }

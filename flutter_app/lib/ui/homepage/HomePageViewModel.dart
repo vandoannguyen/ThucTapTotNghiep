@@ -5,4 +5,10 @@ class HomePageViewModel {
   dynamic bestSellers = [];
 
   dynamic marchandiseWillEmpty = [];
+
+  DateTime firstDay;
+
+  DateTime endDay;
+
+  dynamic bills = [];
 }

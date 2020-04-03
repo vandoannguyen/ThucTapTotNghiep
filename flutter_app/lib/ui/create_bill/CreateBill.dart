@@ -252,8 +252,6 @@ class _CreateBillState extends State<CreateBill> implements BaseView {
                         alignment: Alignment.center,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
                             _viewmodel.listMerchandis.length > 0 &&
                                     _viewmodel.tongSo > 0
@@ -268,40 +266,64 @@ class _CreateBillState extends State<CreateBill> implements BaseView {
                                               .KEY_CHECK_IMPORT_MERCHANDISE)
                                         _presenter.createBillImport();
                                     },
-                                    child: Card(
-                                        color: Colors.blue,
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          width: Common.widthOfScreen / 3,
-                                          padding: EdgeInsets.all(15),
-                                          child: Text(
-                                            "Thêm",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16),
-                                          ),
-                                        )),
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: 15, right: 50),
+                                      decoration: BoxDecoration(
+                                          color: Colors.blue,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(25)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Colors.grey,
+                                                blurRadius: 5,
+                                                offset: Offset(3, 3))
+                                          ]),
+                                      alignment: Alignment.center,
+                                      width: Common.widthOfScreen / 3,
+                                      padding: EdgeInsets.only(
+                                          top: 10,
+                                          bottom: 10,
+                                          left: 15,
+                                          right: 15),
+                                      child: Text(
+                                        "Thêm",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 16),
+                                      ),
+                                    ),
                                   )
                                 : Container(),
                             GestureDetector(
                               onTap: () {
-                                _presenter.createBillExport();
+//                                _presenter.createBillExport();
+                                Navigator.pop(context);
                               },
-                              child: Card(
-                                  color: Colors.white,
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    width: Common.widthOfScreen / 3,
-                                    padding: EdgeInsets.all(15),
-                                    child: Text(
-                                      "Hủy",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.black87, fontSize: 16),
-                                    ),
-                                  )),
-                            )
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 15),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(25)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey,
+                                          blurRadius: 5,
+                                          offset: Offset(3, 3))
+                                    ]),
+                                alignment: Alignment.center,
+                                width: Common.widthOfScreen / 3,
+                                padding: EdgeInsets.only(
+                                    top: 10, bottom: 10, left: 15, right: 15),
+                                child: Text(
+                                  "Hủy",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.black87, fontSize: 16),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       )
