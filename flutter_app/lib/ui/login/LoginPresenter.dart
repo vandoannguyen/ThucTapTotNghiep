@@ -73,10 +73,27 @@ class LoginPresenter<V extends LoginView> extends BasePresenter<V> {
 
   void register(BuildContext context) {
     IntentAnimation.intentNomal(
-        context: context,
-        screen: Register(),
-        option: IntentAnimationOption.RIGHT_TO_LEFT,
-        duration: Duration(milliseconds: 700));
+            context: context,
+            screen: Register(),
+            option: IntentAnimationOption.RIGHT_TO_LEFT,
+            duration: Duration(milliseconds: 700))
+        .then((value) {
+      if (value != null) {
+        _viewModel.scaffoldKey = new GlobalKey();
+        _viewModel.userNameController = new TextEditingController();
+        _viewModel.passwordController = new TextEditingController();
+        _viewModel.userNameController.text = value["username"];
+        _viewModel.passwordController.text = value["password"];
+        _viewModel.scaffoldKey.currentState.showSnackBar(
+          new SnackBar(
+            content: Text("Đăng ký thành công"),
+            elevation: 4,
+            backgroundColor: Colors.blue,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    });
   }
 
   void usernameSummit() {

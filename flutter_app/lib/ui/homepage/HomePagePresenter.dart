@@ -69,10 +69,14 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
 
   void getWillBeEmpty() async {
     getSink(WARNING).add(new BlocLoading());
+    int warningCoutn = Common.selectedShop["warningCount"];
+    if (warningCoutn == null) {
+      warningCoutn = 10;
+    }
     appDataHelper
-        .getWillBeEmpty(
-            Common.selectedShop["idShop"], Common.selectedShop["warningCount"])
+        .getWillBeEmpty(Common.selectedShop["idShop"], warningCoutn)
         .then((value) {
+          print(value);
       _viewModel.marchandiseWillEmpty = value;
       getSink(WARNING).add(new BlocLoaded(value));
     }).catchError((err) {
@@ -88,7 +92,32 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
         .then((onValue) {
       if (onValue != null && onValue != "") {
         _viewModel.bills = onValue;
-        getSink(OVERLAY_IN_BILL).add(BlocLoaded(onValue));
+        var countBillIn = 0,
+            countBillOut = 0,
+            totalIn = 0,
+            totalInReal = 0,
+            totalOut = 0,
+            totalOutReal = 0;
+        _viewModel.bills.forEach((element) {
+          if (element["status"] == 0) {
+            countBillIn++;
+            totalIn += element["totalPrice"];
+            totalInReal += element["totalPrice"] - element["discount"];
+          } else {
+            countBillOut++;
+            totalOut += element["totalPrice"];
+            totalOutReal += element["totalPrice"] - element["discount"];
+          }
+        });
+        var data = {
+          "countBillIn": countBillIn,
+          "countBillOut": countBillOut,
+          "totalIn": totalIn,
+          "totalInReal": totalInReal,
+          "totalOut": totalOut,
+          "totalOutReal": totalOutReal
+        };
+        getSink(OVERLAY_IN_BILL).add(BlocLoaded(data));
       }
     }).catchError((onError) {
       print(onError);

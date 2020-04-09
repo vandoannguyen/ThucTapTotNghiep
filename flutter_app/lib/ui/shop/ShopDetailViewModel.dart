@@ -7,6 +7,7 @@ class ShopDetailViewModel {
   TextEditingController shopNameCtrl,
       addressCtrl,
       phoneNumberCtrl,
+      warningCountEditCtrl,
       descriptionCtrl;
   FocusNode fcNameShop, fcAdd, fcPhonenum, fcDess;
 
@@ -19,6 +20,7 @@ class ShopDetailViewModel {
     addressCtrl = new TextEditingController();
     phoneNumberCtrl = new TextEditingController();
     descriptionCtrl = new TextEditingController();
+    warningCountEditCtrl = new TextEditingController();
 
     fcNameShop = new FocusNode();
     fcAdd = new FocusNode();

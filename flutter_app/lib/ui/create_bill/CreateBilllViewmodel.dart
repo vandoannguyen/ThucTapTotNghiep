@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class CreateBillViewmodel {
   dynamic listMerchandis = [];
@@ -13,7 +14,12 @@ class CreateBillViewmodel {
   TextEditingController ghiChuController;
 
   var listSanPham = [];
+
+  GlobalKey<ScaffoldState> scaffoldKey;
+
+  var keyCheck = "";
   CreateBillViewmodel() {
+    scaffoldKey = new GlobalKey();
     editEnable = true;
     focusNodeChietKhau = new FocusNode();
     chietKhauController = new TextEditingController(text: '${0}');

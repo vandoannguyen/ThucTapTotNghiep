@@ -36,6 +36,7 @@ class ShopDetailPresenter<V extends ShopDetailView> extends BasePresenter<V> {
       "dateCreate": DateTime.now().millisecondsSinceEpoch,
       "phoneNumber": _viewModel.phoneNumberCtrl.text,
       "description": _viewModel.descriptionCtrl.text,
+      "warningCount": int.parse(_viewModel.warningCountEditCtrl.text),
     };
 
     print(data);

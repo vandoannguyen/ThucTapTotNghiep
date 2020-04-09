@@ -38,6 +38,8 @@ class _ShopDetailState extends State<ShopDetail> implements ShopDetailView {
       _viewModel.addressCtrl.text = widget.value["address"];
       _viewModel.phoneNumberCtrl.text = widget.value["phoneNumber"];
       _viewModel.descriptionCtrl.text = widget.value["description"];
+      _viewModel.warningCountEditCtrl.text =
+          widget.value["warningCount"].toString();
     }
   }
 
@@ -139,6 +141,22 @@ class _ShopDetailState extends State<ShopDetail> implements ShopDetailView {
                           prefixIcon: Icon(
                             Icons.phone_in_talk,
                             color: Colors.blue,
+                          )),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    TextFormField(
+                      enabled: _viewModel.isEditEnable,
+                      keyboardType: TextInputType.number,
+                      controller: _viewModel.warningCountEditCtrl,
+                      validator: _presenter.validator,
+                      style: inputTextStyle(),
+                      decoration: InputDecoration(
+                          labelText: "Hạn mức cảnh báo",
+                          prefixIcon: Icon(
+                            Icons.warning,
+                            color: Colors.red,
                           )),
                     ),
                     SizedBox(

@@ -20,15 +20,18 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
   }
 
   void dangKy() {
-    var value = {
+    dynamic data = {
       "username": _viewModel.usernameController.text,
       "password": _viewModel.passwordController.text,
       "email": _viewModel.emailController.text,
       "name": _viewModel.fullNameController.text,
-      "image": _viewModel.avatarImage != null ? _viewModel.base64Image : ""
+      "image": _viewModel.avatarImage != null ? _viewModel.base64Image : "",
+      "role": "2"
     };
-    appDataHelper.registerAccount(value).then((value) {
-      print(value.body);
+    print(data);
+    appDataHelper.registerAccount(jsonEncode(data)).then((onvalue) {
+      print(onvalue);
+      baseView.backView(data);
     }).catchError((err) {
       print(err);
     });

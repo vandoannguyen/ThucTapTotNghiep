@@ -8,9 +8,16 @@ import 'package:init_app/utils/BaseView.dart';
 import 'HomePresenter.dart';
 import 'HomeViewModel.dart';
 
-class HomeScreen extends StatelessWidget implements BaseView {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> implements BaseView {
   HomeViewModel _viewmodel;
+
   HomePresenter _presenter;
+
   PageController _pageController;
 
   @override
@@ -26,7 +33,12 @@ class HomeScreen extends StatelessWidget implements BaseView {
         children: <Widget>[
           Expanded(
             child: PageView(
-              physics: NeverScrollableScrollPhysics(),
+              onPageChanged: (index) {
+                _presenter
+                    .getSink(_presenter.PAGE_CHANGE)
+                    .add(new BlocPageChangeEvent(index));
+              },
+              physics: ScrollPhysics(),
               controller: _pageController,
               children: <Widget>[
                 HomePage(),
@@ -39,11 +51,67 @@ class HomeScreen extends StatelessWidget implements BaseView {
               ],
             ),
           ),
-          Container(child: BottomNavBar(_viewmodel, _pageController))
+          Container(
+              child: StreamBuilder(
+            stream: _presenter.getStream(_presenter.PAGE_CHANGE),
+            builder: (ctx, snap) => BottomNavigationBar(
+              onTap: (index) {
+                setState(() {
+                  _viewmodel.curentIndexNavBar = index;
+                });
+                _pageController.jumpToPage(index);
+              },
+              elevation: 4,
+              unselectedItemColor: Colors.grey[700],
+              selectedItemColor: Colors.blue,
+              currentIndex:
+                  snap.data is BlocPageChangeEvent ? snap.data.index : 0,
+              type: BottomNavigationBarType.fixed,
+              selectedLabelStyle: TextStyle(color: Colors.blue, fontSize: 12),
+              unselectedLabelStyle: TextStyle(color: Colors.grey),
+              showUnselectedLabels: true,
+              selectedIconTheme: IconThemeData(color: Colors.blue),
+              unselectedIconTheme: IconThemeData(color: Colors.grey),
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  title: Text(
+                    "Trang chủ",
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.insert_drive_file),
+                  title: Text(
+                    "Đơn hàng",
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.folder_open),
+                  title: Text(
+                    "Sản phẩm",
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.info),
+                  title: Text(
+                    "Thông tin",
+                  ),
+                ),
+              ],
+            ),
+          ))
         ],
       ),
     ));
   }
+
+  bottomNavigationBarTitleStyle() {
+    return new TextStyle(color: Colors.blue);
+  }
+
+  bottomNavigationIconSize() {}
+
+  void bottomNavOnTap(int index) {}
 
   @override
   void updateUI(dynamic) {
@@ -100,12 +168,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
             "Sản phẩm",
           ),
         ),
-//        BottomNavigationBarItem(
-//          icon: Icon(Icons.trending_up),
-//          title: Text(
-//            "Báo cáo",
-//          ),
-//        ),
         BottomNavigationBarItem(
           icon: Icon(Icons.info),
           title: Text(

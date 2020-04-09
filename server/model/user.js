@@ -13,12 +13,11 @@ function createUser(params) {
     return new Promise((reslove, reject)=>{
         var date  = new Date();
         console.log(params);
-        
         pool.query("INSERT INTO user (name, username, email, password,idRole, image, createDate) values(?,?,?,?,?,?,?)",[
             params["name"] ,
             params["username"],
             params["email"] ,
-        cryptr.encrypt(params["password"]), 2 , params["image"],
+        cryptr.encrypt(params["password"]), params["role"] , params["image"],
         date.toISOString().slice(0, 19).replace('T', ' ')],(err, rows)=>{
             if(err){
                 console.log(err);

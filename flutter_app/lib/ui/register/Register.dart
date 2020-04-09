@@ -26,6 +26,7 @@ class _RegisterState extends State<Register> implements RegisterView {
 
   @override
   Widget build(BuildContext context) {
+    _viewModel.context = context;
     return Scaffold(
       body: Container(
           child: SingleChildScrollView(
@@ -416,5 +417,13 @@ class _RegisterState extends State<Register> implements RegisterView {
     // TODO: implement dispose
     super.dispose();
     _presenter.disposeView();
+  }
+
+  @override
+  void backView(value) {
+    // TODO: implement backView
+    if (_viewModel.context != null) {
+      Navigator.pop(_viewModel.context, value);
+    }
   }
 }

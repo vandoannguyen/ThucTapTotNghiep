@@ -245,7 +245,14 @@ class _BillPageState extends State<BillPage> implements BaseView {
       ),
       option: IntentAnimationOption.RIGHT_TO_LEFT,
       duration: Duration(milliseconds: 500),
-    );
+    ).then((value) {
+      print("value  ${value}");
+      if (value != null && value == "ok") {
+        _presenter.getBillCurrentDay();
+      }
+    }).catchError((err) {
+      print(err);
+    });
   }
 
   buttonTextStyle() {

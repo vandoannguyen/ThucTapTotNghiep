@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:init_app/common/Common.dart';
-import 'package:init_app/utils/BaseView.dart';
+import 'package:init_app/ui/create_bill/CreateBillView.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
 import 'CreateBillPresenter.dart';
@@ -26,17 +26,18 @@ class CreateBill extends StatefulWidget {
   _CreateBillState createState() => _CreateBillState();
 }
 
-class _CreateBillState extends State<CreateBill> implements BaseView {
+class _CreateBillState extends State<CreateBill> implements CreateBillView {
   CreateBillViewmodel _viewmodel;
-  CreateBillPresenter _presenter;
+  CreateBillPresenter<CreateBillView> _presenter;
+  BuildContext context;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _viewmodel = new CreateBillViewmodel();
-
-    _presenter = new CreateBillPresenter(_viewmodel);
+    _viewmodel.keyCheck = widget.keyCheck;
+    _presenter = new CreateBillPresenter<CreateBillView>(_viewmodel);
     _presenter.intiView(this);
     if (widget.keyCheck == CreateBill.KEY_CHECK_DETAIL) {
       print("${widget.value}");
@@ -57,7 +58,9 @@ class _CreateBillState extends State<CreateBill> implements BaseView {
 
   @override
   Widget build(BuildContext context) {
+    this.context = context;
     return Scaffold(
+      key: _viewmodel.scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 4,
@@ -147,7 +150,7 @@ class _CreateBillState extends State<CreateBill> implements BaseView {
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         scrollDirection: Axis.vertical,
-                        itemBuilder: (context, index) => TtemMerchandis(
+                        itemBuilder: (context, index) => ItemMerchandis(
                           index,
                           _viewmodel,
                           () {
@@ -417,5 +420,18 @@ class _CreateBillState extends State<CreateBill> implements BaseView {
   void chietKhauSubmitted(String value) {
     _presenter.chietKhauSubmitted(value);
     setState(() {});
+  }
+
+  @override
+  void backView(String status) {
+    // TODO: implement backView
+    Navigator.of(this.context).pop(status);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _presenter ?? _presenter.onDispose();
   }
 }

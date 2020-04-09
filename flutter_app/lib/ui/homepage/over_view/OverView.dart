@@ -1,15 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:init_app/common/Common.dart';
-import 'package:init_app/ui/homepage/HomePagePresenter.dart';
-import 'package:init_app/ui/homepage/HomePageView.dart';
-import 'package:init_app/ui/homepage/HomePageViewModel.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 
 class OverView extends StatefulWidget {
-  HomePageViewModel viewModel;
-  HomePagePresenter<HomePageView> presenter;
+  var data;
 
-  OverView(this.viewModel, this.presenter);
+  OverView(this.data);
 
   @override
   State<StatefulWidget> createState() {
@@ -33,167 +29,86 @@ class OverViewState extends State<OverView> {
             ),
             padding: EdgeInsets.all(10),
           ),
+          widget.data is BlocLoading
+              ? Container(
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    "assets/icons/loading.gif",
+                    width: 30,
+                    height: 30,
+                  ),
+                )
+              : widget.data is BlocLoaded
+                  ? Card(
+                      elevation: 4,
+                      child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ItemOverlay(
+                              title: "Đơn nhâp",
+                              value: widget.data.value["countBillIn"],
+                            ),
+                            ItemOverlay(
+                              title: "Tổng chi",
+                              value: widget.data.value["totalIn"],
+                            ),
+                            ItemOverlay(
+                              title: "Tổng chi thực",
+                              value: widget.data.value["totalInReal"],
+                            ),
+                            ItemOverlay(
+                              title: "Đơn bán",
+                              value: widget.data.value["countBillOut"],
+                            ),
+                            ItemOverlay(
+                              title: "Tổng thu",
+                              value: widget.data.value["totalOut"],
+                            ),
+                            ItemOverlay(
+                              title: "Tổng thu thực",
+                              value: widget.data.value["totalOutReal"],
+                            )
+                          ]),
+                    )
+                  : Container()
+        ],
+      ),
+    );
+  }
+}
+
+class ItemOverlay extends StatelessWidget {
+  var value, title;
+
+  ItemOverlay({this.value, this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.bottomLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
           Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(top: 15, bottom: 15, left: 10),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Card(
-                  child: Container(
-                    alignment: Alignment.center,
-                    height: Common.widthOfScreen / 3.5,
-                    padding: EdgeInsets.only(top: 10, bottom: 10),
-                    width: Common.widthOfScreen / 3.5,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          "${getSoLuongDonNhap()}",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        Text("Đơn Nhập"),
-                      ],
-                    ),
-                  ),
-                ),
-//                Card(
-//                  child: Container(
-//                    padding: EdgeInsets.only(top: 10, bottom: 10),
-//                    width: Common.widthOfScreen / 3.5,
-//                    child: Column(
-//                      children: <Widget>[
-//                        Text(
-//                          "${getTongLuongNhap()}",
-//                          style: TextStyle(color: Colors.grey),
-//                        ),
-//                        Text("Tổng lượng nhập"),
-//                      ],
-//                    ),
-//                  ),
-//                ),
-                Card(
-                  child: Container(
-                    height: Common.widthOfScreen / 3.5,
-                    padding: EdgeInsets.only(top: 10, bottom: 10),
-                    width: Common.widthOfScreen / 3.5,
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          "${getTongKhoanChiNhap()}",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        Text("Tổng khoản chi"),
-                      ],
-                    ),
-                  ),
+                Text("${title} : "),
+                Text(
+                  "${value}",
+                  style: TextStyle(color: Colors.grey),
                 ),
               ],
             ),
           ),
           Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Card(
-                  child: Container(
-                    padding: EdgeInsets.only(top: 10, bottom: 10),
-                    width: Common.widthOfScreen / 3.5,
-                    height: Common.widthOfScreen / 3.5,
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          "0",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        Text("Đơn Bán"),
-                      ],
-                    ),
-                  ),
-                ),
-//                Card(
-//                  child: Container(
-//                    padding: EdgeInsets.only(top: 10, bottom: 10),
-//                    width: Common.widthOfScreen / 3.5,
-//                    child: Column(
-//                      children: <Widget>[
-//                        Text(
-//                          "0",
-//                          style: TextStyle(color: Colors.grey),
-//                        ),
-//                        Text("Tổng lượng bán"),
-//                      ],
-//                    ),
-//                  ),
-//                ),
-                Card(
-                  child: Container(
-                    height: Common.widthOfScreen / 3.5,
-                    padding: EdgeInsets.only(top: 10, bottom: 10),
-                    width: Common.widthOfScreen / 3.5,
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          "0",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        Text("Tổng giá trị"),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            height: 0.5,
+            color: Colors.grey,
           )
         ],
-      ),
-    );
-  }
-
-  int getTongLuongNhap() {}
-
-  int getTongKhoanChiNhap() {}
-
-  int getSoLuongDonNhap() {
-    int t = 0;
-    int totalBillIn = 0;
-    int totalEarn = 0;
-//    if (widget.viewModel.bills.map((element) {
-//      if (element["status"] == 0){
-//        t++;
-//        totalBillIn+=element[""]
-//      }
-//        return true;
-//    }))
-  }
-}
-
-class ItemOverlay extends StatefulWidget {
-  var value, title;
-
-  ItemOverlay(this.value, this.title);
-
-  @override
-  _ItemOverlayState createState() => _ItemOverlayState();
-}
-
-class _ItemOverlayState extends State<ItemOverlay> {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        alignment: Alignment.center,
-        height: Common.widthOfScreen / 3.5,
-        padding: EdgeInsets.only(top: 10, bottom: 10),
-        width: Common.widthOfScreen / 3.5,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              "${widget.value}",
-              style: TextStyle(color: Colors.grey),
-            ),
-            Text(widget.title),
-          ],
-        ),
       ),
     );
   }

@@ -69,22 +69,12 @@ class _HomePageState extends State<HomePage> implements HomePageView {
                 StreamBuilder(
                     stream: _presenter.getStream(_presenter.DAY_OF_WEEK),
                     builder: (context, snap) => FillDate(snap.data)),
-
-//            builder: (context, snap) => FillDate(
-//                          title: "Trong khoảng",
-//                          fromDate: snap.hasData
-//                              ? Common.DATE_FORMAT(snap.data["fristDay"])
-//                              : "loading...",
-//                          toDate: snap.hasData
-//                              ? Common.DATE_FORMAT(snap.data["endDay"])
-//                              : "loading...",
-//                        )),
                 SizedBox(
                   height: 15,
                 ),
                 StreamBuilder(
                   stream: _presenter.getStream(_presenter.OVERLAY_IN_BILL),
-                  builder: (ctx, snap) => OverView(_viewModel, _presenter),
+                  builder: (ctx, snap) => OverView(snap.data),
                 ),
                 StreamBuilder(
                     stream: _presenter.getStream(_presenter.BEST_SALE),

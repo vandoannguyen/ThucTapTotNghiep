@@ -21,11 +21,6 @@ function getBill(id) {
         })
     })
 }
-function getListCurrentBillMaster(idShop) {
-    return new Promise((reslove, reject) => {
-        pool.query("SELECT * FROM Bill WHERE idShop=? AND dateCreate=NOW()")
-    })
-}
 function insertBill(value) {
     console.log(value);
     console.log(value["listMer"].map((element) => {
@@ -107,6 +102,54 @@ function deleteBill(id) {
             })
     })
 }
+function getBills(data) {
+    // var date = new Date(data["date"])
+    var start = data["startDate"];
+    var end = data["endDate"];
+    var statDate = start.slice(0, 10);
+    statDate += " 00:00:00"
+    var endDate = end.slice(0, 10);
+    endDate += " 23:59:59"
+    // var endDate = date.toString();
+    console.log(statDate + "\n" + endDate);
+    var status = data["status"];
+    console.log(status);
+
+    return new Promise((reslove, reject) => {
+        if (data["user"]["idRole"] == 2) {
+            var query = "SELECT * FROM bill WHERE dateCreate BETWEEN ? AND ? And idShop=? ";
+            if (status == 0 || status == 1)
+                query += ("AND status=" + status + " ");
+            pool.query(query, [statDate, endDate, data["idShop"]], (err, result) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                    throw err;
+                }
+                else {
+                    console.log(result);
+                    reslove(result);
+                }
+            });
+        }
+        if (data["user"]["idRole"] == 1) {
+            var query = "SELECT * FROM bill WHERE dateCreate BETWEEN ? AND ? And idShop=? ";
+            if (status == 0 || status == 1)
+                query += ("AND status=" + status + " ");
+            pool.query(query, [statDate, endDate, data["idShop"], data["user"]["idUser"]], (err, result) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                    throw err;
+                }
+                else {
+                    console.log(result);
+                    reslove(result);
+                }
+            });
+        }
+    });
+}
 function getCurrentBills(data) {
     var date = new Date(data["date"])
     var statDate = date.toISOString().slice(0, 10);
@@ -118,17 +161,22 @@ function getCurrentBills(data) {
 
     return new Promise((reslove, reject) => {
         if (data["user"]["idRole"] == 2) {
-            pool.query("SELECT * FROM bill WHERE dateCreate BETWEEN ? AND ? And idShop=? AND status=0", [statDate, endDate, data["idShop"]], (err, result) => {
-                if (err) {
-                    console.log(err);
-                    throw err;
-                    reject(err);
-                }
-                else {
-                    console.log(result);
-                    reslove(result);
-                }
-            });
+            try{
+                pool.query("SELECT * FROM bill WHERE dateCreate BETWEEN ? AND ? And idShop=? AND status=0", [statDate, endDate, data["idShop"]], (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        throw err;
+                        reject(err);
+                    }
+                    else {
+                        console.log(result);
+                        reslove(result);
+                    }
+                });
+            }
+            catch(err){
+                reject(err)
+            }
         }
     });
 }
@@ -139,4 +187,5 @@ module.exports = {
     updateBill: updateBill,
     deleteBill: deleteBill,
     getCurrentBills: getCurrentBills,
+    getBills: getBills
 }

@@ -12,6 +12,8 @@ class RegisterViewModel {
   var passwordVisible = false;
 
   String base64Image = "";
+
+  BuildContext context;
   RegisterViewModel() {
     fcName = new FocusNode();
     fcEmail = new FocusNode();

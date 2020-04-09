@@ -225,8 +225,11 @@ class ApiHelper implements IApiHelper {
   @override
   Future registerAccount(data) {
     // TODO: implement registerAccount
+    print(data);
     Completer completer = new Completer();
-    http.post("${Common.rootUrlApi}register", body: data).then((value) {
+    http.post("${Common.rootUrlApi}register",
+        body: data,
+        headers: {'content-type': 'application/json'}).then((value) {
       completer.complete(jsonDecode(value.body));
     }).catchError((err) {
       completer.completeError(err);

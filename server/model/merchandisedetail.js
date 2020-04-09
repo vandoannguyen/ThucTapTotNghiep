@@ -37,27 +37,32 @@ function createMerchandise(params) {
     console.log("paramas ===========", params)
     return new Promise((reslove, reject) => {
         var sql = "INSERT INTO merchandisedetail (barcode, image, idShop, nameMerchandise, idCategory, inputPrice, outputPrice, count) VALUES (?,?,?,?,?,?,?,?)"
-        pool.query(sql, [
-            params["barcode"],
-            params["image"],
-            params["idShop"],
-            params["nameMerchandise"],
-            params["idCategory"],
-            params["inputPrice"],
-            params["outputPrice"],
-            params["count"],
-        ], (err, rows) => {
-            if (err) {
-                console.log(err);
-                throw err,
-                reject(err);
-            }
-            else {
-                console.log(
-                    "1234567890", rows);
-                reslove(params);
-            }
-        });
+        try{
+            pool.query(sql, [
+                params["barcode"],
+                params["image"],
+                params["idShop"],
+                params["nameMerchandise"],
+                params["idCategory"],
+                params["inputPrice"],
+                params["outputPrice"],
+                params["count"],
+            ], (err, rows) => {
+                if (err) {
+                    console.log(err);
+                    throw err,
+                    reject(err);
+                }
+                else {
+                    console.log(
+                        "1234567890", rows);
+                    reslove(params);
+                }
+            });
+        }
+        catch(err){
+            reject(err);
+        }
     })
 }
 async function getBestSeller(params) {
@@ -80,6 +85,8 @@ async function getBestSeller(params) {
 }
 async function getMerchandiseWillEmpty(params) {
     return new Promise((reslove, reject) => {
+        console.log(params["warningCount"] + "    " +  params["idShop"] + "okok");
+        
         var query =
             "Select idShop, barcode, nameMerchandise, count as countsp, image FROM merchandisedetail where count <= ? and idShop = ?";
         pool.query(query, [params["warningCount"], params["idShop"]], (err, rows) => {
@@ -87,7 +94,10 @@ async function getMerchandiseWillEmpty(params) {
                 reject(err);
                 throw err;
             }
-            else { console.log(rows); reslove(rows); }
+            else {
+                console.log("1234567890 will empty");
+                console.log(rows); reslove(rows);
+            }
         })
 
     })
@@ -104,7 +114,7 @@ async function updateMerchandises(params) {
             params["outputPrice"],
             params["barcode"],
             params["idShop"],
-        ], (err, rows) => {
+        ], (err, rows) => { 
             if (err) {
                 reject(err);
                 throw err;

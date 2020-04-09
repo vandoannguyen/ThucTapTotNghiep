@@ -8,7 +8,9 @@ var base64ToImage = require('base64-to-image');
 
 
 async function createUser(req, res) {
-    if (req.body["image"] != "") {
+    console.log(req.body);
+    
+    if (req.body["image"]!=null && req.body["image"]!="") {
         var path = './public';
         var optionalObj = { 'fileName': "image" + Date.now(), 'type': 'png' };
         var base64Data = req.body["image"].replace(/^data:image\/png;base64,/, "");
@@ -49,6 +51,7 @@ async function createUser(req, res) {
         // })
     }
     else
+    req.body["image"] = "";
         userModel.createUser(req.body).then((value) => {
             res.json({
                 message: "Create user success",

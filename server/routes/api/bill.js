@@ -5,5 +5,5 @@ var billController = require("../../controller/BillController")
 // router.get("/listbill",authenMiddlware,billController);
 router.post("/createbill",authenMiddlware,billController.createBill);
 router.get("/getListBill", authenMiddlware, billController.getListBill);
-router.post("/getCurrentBills", authenMiddlware, billController.getCurrentBills)
+router.post("/getBills", authenMiddlware, billController.getBills)
 module.exports = router;

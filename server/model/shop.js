@@ -5,7 +5,7 @@ function getListShop(value) {
     var sql = "SELECT * FROM shop where idShopkepper=?";
     return new Promise((reslove, reject) => {
         console.log(value);
-        
+
         pool.query("SELECT * FROM shop where idShopkepper=?", [value], (err, rows) => {
             if (err) {
                 reject(err);
@@ -16,15 +16,18 @@ function getListShop(value) {
     });
 }
 function createShop(value) {
+    var warningCount = value["warningCount"];
+    if (warningCount == null || warningCount == 0)
+        warningCount = 10;
     return new Promise((reslove, reject) => {
         var date = new Date();
         var curentDateTime = date.toISOString().slice(0, 19).replace('T', ' ')
-        pool.query("INSERT INTO shop( name, address, idShopkepper, image, dateCreate, phoneNumber, description) VALUES (?,?,?,?,?,?,?)",
+        pool.query("INSERT INTO shop( name, address, idShopkepper, image, dateCreate, phoneNumber, description, warningCount) VALUES (?,?,?,?,?,?,?,?)",
             [value["name"],
             value["address"],
             value["idShopkepper"],
             value["image"],
-                curentDateTime, value["phoneNumber"], value["description"]],
+                curentDateTime, value["phoneNumber"], value["description"], warningCount],
             (err, rows) => {
                 if (err)
                     reject(err);

@@ -1,14 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
+import 'package:init_app/ui/create_bill/CreateBillView.dart';
 import 'package:init_app/ui/search_merchandis/SearchSanPham.dart';
 import 'package:init_app/utils/BasePresenter.dart';
-import 'package:init_app/utils/BaseView.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 import 'package:qrscan/qrscan.dart' as scan;
 
 import 'CreateBilllViewmodel.dart';
 
-class CreateBillPresenter<V extends BaseView> extends BasePresenter<V> {
+class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
   CreateBillViewmodel _viewmodel;
 
   CreateBillPresenter(this._viewmodel) {
@@ -90,7 +91,24 @@ class CreateBillPresenter<V extends BaseView> extends BasePresenter<V> {
       "description": _viewmodel.ghiChuController.text
     };
     print(bill);
-    appDataHelper.createBill(bill).then((value) {}).catchError((onError) {});
+    appDataHelper
+        .createBill(bill)
+        .then((value) {
+          _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+            content: Text("Thêm đơn thành công"),
+            elevation: 4,
+            backgroundColor: Colors.blue,
+          ));
+          baseView.backView("ok");
+        })
+        .catchError((onError) {})
+        .catchError((onError) {
+          _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+            content: Text("Thêm không thành công!"),
+            elevation: 4,
+            backgroundColor: Colors.blue,
+          ));
+        });
   }
 
   void getMerchandisesByBill(idBill, idShop) async {
@@ -123,7 +141,19 @@ class CreateBillPresenter<V extends BaseView> extends BasePresenter<V> {
       "description": _viewmodel.ghiChuController.text
     };
     print(bill);
-    appDataHelper.createBill(bill).then((value) {}).catchError((err) {});
+    appDataHelper.createBill(bill).then((value) {
+      _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+        content: Text("Thêm đơn thành công"),
+        elevation: 4,
+        backgroundColor: Colors.blue,
+      ));
+    }).catchError((onError) {
+      _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+        content: Text("Thêm không thành công!"),
+        elevation: 4,
+        backgroundColor: Colors.blue,
+      ));
+    });
   }
 
   void getMerchandisesByShop(idCuaHang) async {

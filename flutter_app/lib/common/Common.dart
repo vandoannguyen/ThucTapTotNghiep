@@ -5,8 +5,8 @@ class Common {
 
   static var config = {};
 
-  static var rootUrlApi = "http://192.168.0.101:3000/api/";
-  static var rootUrl = "http://192.168.0.101:3000/";
+  static var rootUrlApi = "http://192.168.0.102:3000/api/";
+  static var rootUrl = "http://192.168.0.102:3000/";
 
   static String loginToken = "";
   static dynamic user = {};
