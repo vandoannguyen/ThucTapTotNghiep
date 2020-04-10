@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/ui/create_bill/CreateBillView.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
 import 'CreateBillPresenter.dart';
@@ -40,12 +41,11 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
     _presenter = new CreateBillPresenter<CreateBillView>(_viewmodel);
     _presenter.intiView(this);
     if (widget.keyCheck == CreateBill.KEY_CHECK_DETAIL) {
-      print("${widget.value}");
       _viewmodel.editEnable = false;
-//      _viewmodel.listMerchandis = widget.value["listMer"];
       _viewmodel.tongTien = widget.value["totalPrice"].toDouble();
       _viewmodel.chietKhau = widget.value["discount"].toDouble();
       _viewmodel.ghiChuController.text = widget.value["description"];
+      _presenter.getPersonnelByBill(widget.value["idSeller"]);
       _presenter.getMerchandisesByBill(
           widget.value["idBill"], Common.selectedShop["idShop"]);
     } else {
@@ -125,7 +125,10 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
                   ],
                 ),
               )
-            : Text("Thông tin hóa đơn"),
+            : Text(
+                "Thông tin hóa đơn",
+                style: TextStyle(color: Colors.blue),
+              ),
         centerTitle: true,
       ),
       body: Container(
@@ -138,63 +141,102 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
                 ),
                 Card(
                   elevation: 6,
-                  child: Container(
-                      child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      ListView.separated(
-                        separatorBuilder: (ctx, index) => Container(
-                          height: 0.5,
-                          color: Colors.grey,
-                        ),
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (context, index) => ItemMerchandis(
-                          index,
-                          _viewmodel,
-                          () {
-                            tinhTongSo();
-                            tinhTongTien();
-                            setState(() {});
-                          },
-                          enable: _viewmodel.editEnable,
-                        ),
-                        itemCount: _viewmodel.listMerchandis.length,
-                      ),
-                      Visibility(
-                        visible: _viewmodel.listMerchandis.length == 0,
-                        child: GestureDetector(
-                          onTap: () {
-                            searchSanPham(context);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            height: Common.heightOfScreen / 4,
-                            child: Column(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Image.asset(
-                                    "assets/icons/ic_create_order_intro.png",
-                                    fit: BoxFit.fitHeight,
+                  child: StreamBuilder(
+                    stream:
+                        _presenter.getStream(CreateBillPresenter.MERCHANDISE),
+                    builder: (ctx, snap) => snap.data is BlocLoading
+                        ? Card(
+                            child: Container(
+                              child: Image.asset(
+                                "assets/icons/loading.gif",
+                                width: 30,
+                                height: 30,
+                              ),
+                            ),
+                          )
+                        : snap.data is BlocLoaded
+                            ? snap.data.value.length > 0
+                                ? ListView.separated(
+                                    separatorBuilder: (ctx, index) => Container(
+                                      height: 0.5,
+                                      color: Colors.grey,
+                                    ),
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: (context, index) =>
+                                        ItemMerchandis(
+                                      index,
+                                      _viewmodel,
+                                      () {
+                                        tinhTongSo();
+                                        tinhTongTien();
+                                        setState(() {});
+                                      },
+                                      enable: _viewmodel.editEnable,
+                                    ),
+                                    itemCount: _viewmodel.listMerchandis.length,
+                                  )
+                                : GestureDetector(
+                                    onTap: () {
+                                      searchSanPham(context);
+                                    },
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: EdgeInsets.all(10),
+                                      height: Common.heightOfScreen / 4,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Image.asset(
+                                              "assets/icons/ic_create_order_intro.png",
+                                              fit: BoxFit.fitHeight,
+                                            ),
+                                          ),
+                                          Container(
+                                            height: 50,
+                                            child: Text(
+                                              "Đơn hàng này của bạn \n chưa có sản phẩm nào!",
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 13),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                            : GestureDetector(
+                                onTap: () {
+                                  searchSanPham(context);
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(10),
+                                  height: Common.heightOfScreen / 4,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Image.asset(
+                                          "assets/icons/ic_create_order_intro.png",
+                                          fit: BoxFit.fitHeight,
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 50,
+                                        child: Text(
+                                          "Đơn hàng này của bạn \n chưa có sản phẩm nào!",
+                                          style: TextStyle(
+                                              color: Colors.grey, fontSize: 13),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
-                                Container(
-                                  height: 50,
-                                  child: Text(
-                                    "Đơn hàng này của bạn \n chưa có sản phẩm nào!",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 13),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  )),
+                              ),
+                  ),
                 ),
                 SizedBox(
                   height: 20,
@@ -250,6 +292,23 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
                 SizedBox(
                   height: 15,
                 ),
+                widget.keyCheck == CreateBill.KEY_CHECK_DETAIL
+                    ? StreamBuilder(
+                        stream:
+                            _presenter.getStream(CreateBillPresenter.PERSONNEL),
+                        builder: (ctx, snap) => snap.data is BlocLoading
+                            ? Container(
+                                child: Image.asset(
+                                  "assets/icons/loading.gif",
+                                  width: 30,
+                                  height: 30,
+                                ),
+                              )
+                            : snap.data is BlocLoaded
+                                ? containerNguoiBan(snap.data.value)
+                                : Container(),
+                      )
+                    : Container(),
                 _viewmodel.editEnable
                     ? Container(
                         alignment: Alignment.center,
@@ -432,6 +491,73 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _presenter ?? _presenter.onDispose();
+    _presenter.onDispose();
+  }
+
+  containerNguoiBan(value) {
+    return Container(
+      width: Common.widthOfScreen,
+      padding: EdgeInsets.all(10),
+      alignment: Alignment.topLeft,
+      margin: EdgeInsets.only(top: 5),
+      decoration: BoxDecoration(
+          border: Border.all(
+              color: Colors.grey, width: 0.5, style: BorderStyle.solid)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            child: Text(
+              "Người bán",
+              style: lableStyle(),
+            ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Container(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                value["image"] == ""
+                    ? Image.asset(
+                        "assets/images/defAvatar.png",
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.cover,
+                      )
+                    : FadeInImage.assetNetwork(
+                        placeholder: "assets/images/defAvatar.png",
+                        image: value["image"],
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.cover),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  height: 50,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Text(
+                        value["name"],
+                        style: TextStyle(fontSize: 17, color: Colors.black),
+                      ),
+                      Text(
+                        value["email"],
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

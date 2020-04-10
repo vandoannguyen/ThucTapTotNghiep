@@ -54,7 +54,7 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
           icon: Icon(
             Icons.arrow_back_ios,
             size: 18,
-            color: Colors.grey[800],
+            color: Colors.white,
           ),
           onPressed: () {
             IntentAnimation.intentBack(context: context);
@@ -159,6 +159,7 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                         TextFormField(
                           readOnly: !_viewModel.isEditing,
                           controller: _viewModel.tenSpControl,
+                          validator: _validatorNameMerchandise,
                           style: textStyle(),
                           enabled: _viewModel.isEditing,
                           textDirection: TextDirection.ltr,
@@ -172,6 +173,7 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                         TextFormField(
                           readOnly: !_viewModel.isEditing,
                           controller: _viewModel.barcodeControl,
+                          validator: _validatorBarcode,
                           style: textStyle(),
                           enabled: _viewModel.isEditing,
                           textDirection: TextDirection.ltr,
@@ -207,6 +209,7 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                         TextFormField(
                           readOnly: !_viewModel.isEditing,
                           controller: _viewModel.inputPriceController,
+                          validator: _validatorInPrice,
                           style: textStyle(),
                           keyboardType: TextInputType.number,
                           enabled: _viewModel.isEditing,
@@ -220,6 +223,7 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                         TextFormField(
                           readOnly: !_viewModel.isEditing,
                           controller: _viewModel.outputPriceController,
+                          validator: _validatorOutPrice,
                           keyboardType: TextInputType.number,
                           style: textStyle(),
                           enabled: _viewModel.isEditing,
@@ -265,6 +269,7 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                           keyboardType: TextInputType.phone,
                           style: textStyle(),
                           enabled: _viewModel.isEditing,
+                          validator: _validateCount,
                           textDirection: TextDirection.ltr,
                           decoration: InputDecoration(
                               alignLabelWithHint: true,
@@ -471,10 +476,11 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                 GestureDetector(
                   onTap: () {
                     IntentAnimation.intentBack(context: context, result: "ok");
+                    deleteMerchandis();
                   },
                   child: Container(
-                    padding: EdgeInsets.only(
-                        top: 10, bottom: 10, left: 15, right: 15),
+                    padding:
+                        EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
                     decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -486,7 +492,6 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                         ]),
                     alignment: Alignment.center,
                     width: 100,
-                    height: 40,
                     child: Text(
                       "Xóa",
                       style: TextStyle(color: Colors.white, fontSize: 18),
@@ -498,8 +503,8 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                     IntentAnimation.intentBack(context: context);
                   },
                   child: Container(
-                    padding: EdgeInsets.only(
-                        top: 10, bottom: 10, left: 15, right: 15),
+                    padding:
+                        EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -511,7 +516,6 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                         ]),
                     alignment: Alignment.center,
                     width: 100,
-                    height: 40,
                     child: Text(
                       "Hủy",
                       style: TextStyle(color: Colors.grey, fontSize: 18),
@@ -531,19 +535,9 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
     _viewModel.scaffoldKey.currentState.showSnackBar(SnackBar(
       elevation: 4,
       duration: Duration(seconds: 2),
-      behavior: SnackBarBehavior.floating,
       backgroundColor:
           keyInput == MerchandiseDetail.API_SUCCESS ? Colors.blue : Colors.red,
-      content: Container(
-        height: 35,
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Text(mess),
-            ),
-          ],
-        ),
-      ),
+      content: Text(mess),
     ));
   }
 
@@ -552,5 +546,25 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
     // TODO: implement continueAdd
     _viewModel = new MerchandiseDetailViewModel();
     setState(() {});
+  }
+
+  String _validateCount(String value) {
+    return value == "" ? "Nhập thiếu số lượng hàng!" : null;
+  }
+
+  String _validatorOutPrice(String value) {
+    return value == "" ? "Nhập thiếu giá bán!" : null;
+  }
+
+  String _validatorInPrice(String value) {
+    return value == "" ? "Nhập thiếu giá nhập!" : null;
+  }
+
+  String _validatorBarcode(String value) {
+    return value == "" ? "Nhập thiếu mã barcode!" : null;
+  }
+
+  String _validatorNameMerchandise(String value) {
+    return value == "" ? "Nhập thiếu tên sản phẩm!" : null;
   }
 }

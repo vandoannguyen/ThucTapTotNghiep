@@ -9,8 +9,8 @@ var base64ToImage = require('base64-to-image');
 
 async function createUser(req, res) {
     console.log(req.body);
-    
-    if (req.body["image"]!=null && req.body["image"]!="") {
+
+    if (req.body["image"] != null && req.body["image"] != "") {
         var path = './public';
         var optionalObj = { 'fileName': "image" + Date.now(), 'type': 'png' };
         var base64Data = req.body["image"].replace(/^data:image\/png;base64,/, "");
@@ -51,59 +51,79 @@ async function createUser(req, res) {
         // })
     }
     else
-    req.body["image"] = "";
-        userModel.createUser(req.body).then((value) => {
-            res.json({
-                message: "Create user success",
-                success: true,
-            })
-        }).catch((err) => {
-            res.json({
-                message: "Can not create user " + err,
-                success: false
-            })
+        req.body["image"] = "";
+    userModel.createUser(req.body).then((value) => {
+        res.json({
+            message: "Create user success",
+            success: true,
         })
+    }).catch((err) => {
+        res.json({
+            message: "Can not create user " + err,
+            success: false
+        })
+    })
 }
 async function userLogin(req, res) {
-    console.log(req.body);
-    
+
     var result = await userModel.getUser(req.body["username"])
-    if (result) {
-        if (result[0] != undefined && (cryptr.decrypt(result[0]["password"]) === req.body["password"])) {
-            var shops = [];
-            if (result[0]["idRole"] == 2) {
+    if (result.length > 0) {
+        if (result[0] != undefined) {
+            if (cryptr.decrypt(result[0]["password"]) == req.body["password"]) {
+                var shops = [];
+                if (result[0]["idRole"] == 2) {
+                    result[0]["password"] = req.body["password"];
+                    shops = await shopModel.getListShop(result[0]["idUser"]);
+                }
+                var token = jwt.sign(req.body, 'token', { expiresIn: "3h" });
+                res.status(200);
                 result[0]["password"] = req.body["password"];
-                shops = await shopModel.getListShop(result[0]["idUser"]);
+                res.json({ 'token': token, "user": result[0], "shop": shops });
             }
-            var token = jwt.sign(req.body, 'token', { expiresIn: "3h" });
-            res.status(200);
-            result[0]["password"] = req.body["password"];
-            res.json({ 'token': token, "user": result[0], "shop": shops });
+            else {
+                console.log(cryptr.decrypt(result[0]["password"]) == req.body["password"]);
+                res.json({ "status": 400, "message": "Không đúng tên hoặc mật khẩu!" })
+                res.status(400);
+            }
         }
         else {
+            console.log(result);
+            res.json({ "status": 400, "message": "Không đúng tên hoặc mật khẩu!" })
             res.status(400);
-            res.json({ "status": 400, "message": "Invalid username or password" })
         }
     }
-    else{
-    res.json({ "status": 400, "message": "Invalid username or password" })
-    res.status = (400);
+    else {
+        console.log("1234567890");
+        res.json({ "status": 400, "message": "Không đúng tên hoặc mật khẩu!" })
+        res.status = (400);
     }
 }
-async function changePass  (req, res){
-    userModel.changePass(req.body).then((value)=>{
+async function changePass(req, res) {
+    userModel.changePass(req.body).then((value) => {
         res.status(200);
         res.json(
-            {"status":200, "message":value["affectedRows"] > 0 ? "OK":"NOT_OK"}
+            { "status": 200, "message": value["affectedRows"] > 0 ? "OK" : "NOT_OK" }
         )
-    }).catch((err)=>{
+    }).catch((err) => {
         console.log(err);
         res.status(400);
-        res.json({"status":400, "message":err});
+        res.json({ "status": 400, "message": err });
+    });
+
+}
+async function getUser(req, res) {
+    userModel.getUserById(req.query.idUser).then((value) => {
+        res.json(value);
+        res.status(200);
+    }).catch((err) => {
+        console.log("err", err);
+        res.json(err);
+        res,status(200);
     });
 }
 module.exports = {
     userLogin: userLogin,
     createUser: createUser,
-    changePass:changePass,
+    changePass: changePass,
+    getUser: getUser,
 }

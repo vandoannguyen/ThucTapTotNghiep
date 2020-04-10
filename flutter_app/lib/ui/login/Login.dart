@@ -272,6 +272,7 @@ class _LoginState extends State<Login> implements LoginView {
   @override
   void updateUI(dynamic) {
     // TODO: implement updateUI
+    setState(() {});
   }
 
   register(context) {

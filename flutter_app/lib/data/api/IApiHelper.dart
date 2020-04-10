@@ -12,6 +12,7 @@ abstract class IApiHelper {
   Future createBill(bill);
 
   Future getMerchandisesByBill(idBill, idShop);
+  Future getPersonnelByBill(idPersonnel);
 
   Future getMerchandisesByShop(idShop);
 

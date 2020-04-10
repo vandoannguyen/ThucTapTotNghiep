@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
@@ -36,19 +34,17 @@ class LoginPresenter<V extends LoginView> extends BasePresenter<V> {
     _viewModel.isLoading = true;
     baseView.updateUI({});
     appDataHelper.postLogin(user).then((value) {
-      if (value != null) {
+      if (value != null && value["status"] != 400) {
         Common.user = value["user"];
         Common.loginToken = value["token"];
         Common.shops = value["shop"];
         Common.selectedShop = Common.shops.length > 0 ? Common.shops[0] : {};
         if (Common.shops.length > 0) {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => HomeScreen()));
-//          IntentAnimation.intentPushReplacement(
-//              context: _viewModel.context,
-//              screen: HomeScreen(),
-//              option: IntentAnimationOption.RIGHT_TO_LEFT,
-//              duration: Duration(milliseconds: 800));
+          IntentAnimation.intentPushReplacement(
+              context: _viewModel.context,
+              screen: HomeScreen(),
+              option: IntentAnimationOption.RIGHT_TO_LEFT,
+              duration: Duration(milliseconds: 800));
         } else {
           _viewModel.isLoading = false;
           baseView.updateUI({});
@@ -57,17 +53,17 @@ class LoginPresenter<V extends LoginView> extends BasePresenter<V> {
       } else {
         _viewModel.isLoading = false;
         baseView.updateUI({});
-        if (value.statusCode == 400) {
+        if (value["status"] == 400) {
           print("post login");
-          baseView.showSnackBar(
-              key: "message", message: jsonDecode(value.body)["message"]);
+          baseView.showSnackBar(key: "message", message: value["message"]);
         }
       }
     }).catchError((onError) {
       print(onError);
       _viewModel.isLoading = false;
       baseView.updateUI({});
-      baseView.showSnackBar(key: "message", message: onError);
+      print("1234567890" + onError.toString());
+//      baseView.showSnackBar(key: "message", message: jsonDecode(value.body)["message"]);
     });
   }
 

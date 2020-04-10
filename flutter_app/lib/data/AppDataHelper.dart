@@ -152,4 +152,10 @@ class AppDataHelper implements IAppDataHelper {
     // TODO: implement getWillBeEmpty
     return apiHelper.getWillBeEmpty(idShop, warningCount);
   }
+
+  @override
+  Future getPersonnelByBill(idPersonel) {
+    // TODO: implement getPersonelByBill
+    return apiHelper.getPersonnelByBill(idPersonel);
+  }
 }

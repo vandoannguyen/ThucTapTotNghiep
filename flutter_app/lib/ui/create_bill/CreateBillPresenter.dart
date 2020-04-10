@@ -4,6 +4,7 @@ import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/ui/create_bill/CreateBillView.dart';
 import 'package:init_app/ui/search_merchandis/SearchSanPham.dart';
 import 'package:init_app/utils/BasePresenter.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 import 'package:qrscan/qrscan.dart' as scan;
 
@@ -12,8 +13,16 @@ import 'CreateBilllViewmodel.dart';
 class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
   CreateBillViewmodel _viewmodel;
 
+  static final String PERSONNEL = "PERSONNEL";
+
+  static final String MERCHANDISE = "MERCHANDISE";
+
+//  static final String PERSONNEL = "PERSONNEL";
+
   CreateBillPresenter(this._viewmodel) {
     appDataHelper = new AppDataHelper();
+    addStreamController(PERSONNEL);
+    addStreamController(MERCHANDISE);
   }
 
   IAppDataHelper appDataHelper;
@@ -23,7 +32,7 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
     _viewmodel.listMerchandis.forEach((element) {
       _viewmodel.tongSo += element["countsp"];
     });
-
+    baseView.updateUI({});
 //    tongSo = tong;
   }
 
@@ -48,9 +57,9 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
             0) {
       sp["countsp"] = 1;
       _viewmodel.listMerchandis.add(sp);
+      getSink(MERCHANDISE).add(new BlocLoaded(_viewmodel.listMerchandis));
       calculateTotalMerchandises();
       calculateTotalPrice();
-      print(_viewmodel.listMerchandis);
     }
   }
 
@@ -59,13 +68,11 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
     var merchandis = _viewmodel.listSanPham.firstWhere(
         (element) => element["barcode"] == barcode,
         orElse: () => null);
-    print(merchandis);
     if (merchandis != null) {
       merchandis["countsp"] = 1;
       _viewmodel.listMerchandis.add(merchandis);
+      getSink(MERCHANDISE).add(new BlocLoaded(_viewmodel.listMerchandis));
     }
-    print(_viewmodel.listMerchandis);
-    baseView.updateUI({});
   }
 
   void chietKhauSubmitted(String value) {
@@ -112,9 +119,11 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
   }
 
   void getMerchandisesByBill(idBill, idShop) async {
+    getSink(MERCHANDISE).add(new BlocLoading());
     print('Bearer ' + Common.loginToken);
     appDataHelper.getMerchandisesByBill(idBill, idShop).then((value) {
       _viewmodel.listMerchandis = value;
+      getSink(MERCHANDISE).add(new BlocLoaded(value));
       calculateTotalMerchandises();
       baseView.updateUI({});
     }).catchError((onError) {
@@ -157,14 +166,23 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
   }
 
   void getMerchandisesByShop(idCuaHang) async {
-    print('Bearer ' + Common.loginToken);
     appDataHelper
         .getMerchandisesByShop(Common.selectedShop["idShop"])
         .then((value) {
+      print(value);
       _viewmodel.listSanPham = value;
-      print(_viewmodel.listSanPham);
     }).catchError((err) {
       print(err);
+    });
+  }
+
+  void getPersonnelByBill(idPersonnel) {
+    getSink(PERSONNEL).add(new BlocLoading());
+    appDataHelper.getPersonnelByBill(idPersonnel).then((value) {
+      print(value);
+      getSink(PERSONNEL).add(new BlocLoaded(value));
+    }).catchError((err) {
+      getSink(PERSONNEL).add(BlocFailed(""));
     });
   }
 }

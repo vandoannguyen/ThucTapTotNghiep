@@ -8,6 +8,7 @@ import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/ui/meschandis_detail/MechandisDetail.dart';
 import 'package:init_app/ui/meschandis_detail/MerchandiseView.dart';
 import 'package:init_app/utils/BasePresenter.dart';
+import 'package:init_app/utils/IntentAnimation.dart';
 import 'package:qrscan/qrscan.dart' as scan;
 
 import 'MerchandisDetailViewModel.dart';
@@ -41,7 +42,7 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
   void getCategory() async {
     appDataHelper.getCategories(Common.selectedShop["idShop"]).then((value) {
       _viewModel.categories = value;
-      print(value);
+      _viewModel.selectedCategory = value[value.length - 1];
       baseView.updateUI({});
     }).catchError((onError) {
       print(onError);
@@ -49,70 +50,129 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
   }
 
   void createMerchandis(context) {
-    var data = {
-      "barcode": _viewModel.barcodeControl.text,
-      "image": _viewModel.base64Image,
-      "idShop": Common.selectedShop["idShop"],
-      "nameMerchandise": _viewModel.tenSpControl.text,
-      "idCategory": _viewModel.selectedCategory["idCategory"],
-      "inputPrice": double.parse(_viewModel.inputPriceController.text),
-      "outputPrice": double.parse(_viewModel.outputPriceController.text),
-      "count": int.parse(_viewModel.totalMerchandiseController.text),
-      "unit": '',
-    };
-    appDataHelper.createMerchandise(data).then((onValue) {
-      baseView.showSnackBar(
-          keyInput: MerchandiseDetail.API_SUCCESS, mess: "Thêm thành công");
-      _showDialogSuccess(context);
-    }).catchError((err) {
-      baseView.showSnackBar(keyInput: MerchandiseDetail.API_FAILD, mess: err);
-    });
+    if (_viewModel.formKey.currentState.validate()) {
+      var data = {
+        "barcode": _viewModel.barcodeControl.text,
+        "image": _viewModel.base64Image,
+        "idShop": Common.selectedShop["idShop"],
+        "nameMerchandise": _viewModel.tenSpControl.text,
+        "idCategory": _viewModel.selectedCategory["idCategory"],
+        "inputPrice": double.parse(_viewModel.inputPriceController.text),
+        "outputPrice": double.parse(_viewModel.outputPriceController.text),
+        "count": int.parse(_viewModel.totalMerchandiseController.text),
+        "unit": '',
+      };
+      appDataHelper.createMerchandise(data).then((onValue) {
+        baseView.showSnackBar(
+            keyInput: MerchandiseDetail.API_SUCCESS, mess: "Thêm thành công");
+        _showDialogSuccess(context);
+      }).catchError((err) {
+        baseView.showSnackBar(keyInput: MerchandiseDetail.API_FAILD, mess: err);
+      });
+    }
   }
 
   void updateMerchandise() {
-    if (_viewModel.base64Image == "") {
-      _viewModel.base64Image = _viewModel.value["image"];
+    if (_viewModel.formKey.currentState.validate()) {
+      if (_viewModel.base64Image == "") {
+        _viewModel.base64Image = _viewModel.value["image"];
+      }
+      var data = {
+        "barcode": _viewModel.barcodeControl.text,
+        "image": _viewModel.base64Image,
+        "idShop": Common.selectedShop["idShop"],
+        "nameMerchandise": _viewModel.tenSpControl.text,
+        "idCategory": _viewModel.selectedCategory["idCategory"],
+        "inputPrice": double.parse(_viewModel.inputPriceController.text),
+        "outputPrice": double.parse(_viewModel.outputPriceController.text),
+        "count": int.parse(_viewModel.totalMerchandiseController.text),
+        "unit": '',
+      };
+      appDataHelper.updateMerchandise(data).then((value) {
+        _viewModel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+          content: Text("Sửa thông tin thành công"),
+          duration: Duration(seconds: 2),
+          elevation: 4,
+          backgroundColor: Colors.blue,
+        ));
+      }).catchError((err) {
+        _viewModel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+          content: Text("Sửa thông tin không thành công!"),
+          duration: Duration(seconds: 2),
+          elevation: 4,
+          backgroundColor: Colors.red,
+        ));
+      });
     }
-    var data = {
-      "barcode": _viewModel.barcodeControl.text,
-      "image": _viewModel.base64Image,
-      "idShop": Common.selectedShop["idShop"],
-      "nameMerchandise": _viewModel.tenSpControl.text,
-      "idCategory": _viewModel.selectedCategory["idCategory"],
-      "inputPrice": double.parse(_viewModel.inputPriceController.text),
-      "outputPrice": double.parse(_viewModel.outputPriceController.text),
-      "count": int.parse(_viewModel.totalMerchandiseController.text),
-      "unit": '',
-    };
-    appDataHelper.updateMerchandise(data).then((value) {}).catchError((err) {});
   }
 
   void deleteMerchandise(value) {}
 
   void _showDialogSuccess(context) {
-    showDialog<void>(
+    showDialog<String>(
       context: context,
       // false = user must tap button, true = tap outside dialog
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text("Thêm thành công.\nBạn có muốn tiếp tục?"),
+          content: Text("Thêm thành công.\nBạn có muốn tiếp tục?"),
           actions: <Widget>[
-            FlatButton(
-              child: Text('Không'),
-              onPressed: () {
-                Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+            GestureDetector(
+              onTap: () {
+                IntentAnimation.intentBack(context: dialogContext);
               },
+              child: Container(
+                padding:
+                    EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 5,
+                          offset: Offset(3, 3))
+                    ]),
+                alignment: Alignment.center,
+                width: 100,
+                child: Text(
+                  "Có",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
             ),
-            FlatButton(
-              child: Text('Có'),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                baseView.continueAdd(); // Dismiss alert dialog
+            GestureDetector(
+              onTap: () {
+                IntentAnimation.intentBack(context: context, result: "back");
               },
+              child: Container(
+                padding:
+                    EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 5,
+                          offset: Offset(3, 3))
+                    ]),
+                alignment: Alignment.center,
+                width: 100,
+                child: Text(
+                  "Không",
+                  style: TextStyle(color: Colors.grey, fontSize: 18),
+                ),
+              ),
             ),
           ],
         );
       },
-    );
+    ).then((value) {
+      print("back okok");
+      print(value);
+      if (value == "back") {
+        IntentAnimation.intentBack(context: context, result: "ok");
+      }
+    });
   }
 }

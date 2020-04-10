@@ -9,6 +9,15 @@ function getUser(username, callback) {
         });
        } );
 }
+function getUserById(idUser){
+    return new Promise((reslove, reject)=>{
+        console.log("idUser", idUser);
+        pool.query("select * from user where idUser = '"+ idUser +"'", (err, rows)=>{
+            if(err) reject(err);
+            else reslove(rows)
+        });
+    })
+}
 function createUser(params) {
     return new Promise((reslove, reject)=>{
         var date  = new Date();
@@ -61,7 +70,6 @@ function changePass(value){
         pool.query("UPDATE user SET password=? WHERE idUser=?", [cryptr.encrypt(value["password"]), value["idUser"]], (err, rows)=>{
             if(err){
                 console.log(err);
-                
                 reject(err);
             }
             else reslove(rows);
@@ -75,4 +83,5 @@ module.exports={
     updateUser:updateUser,
     deleteUser:deleteUser,
     changePass:changePass,
+    getUserById:getUserById,
 }

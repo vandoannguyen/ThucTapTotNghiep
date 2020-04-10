@@ -1,8 +1,11 @@
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/ui/meschandis_detail/MechandisDetail.dart';
 import 'package:init_app/utils/BasePresenter.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
+import 'package:qrscan/qrscan.dart' as scan;
 
 import 'ListMerchandisView.dart';
 import 'ListMerchandisViewModel.dart';
@@ -12,11 +15,19 @@ class ListMerchandisPresenter<V extends ListMerchandisView>
   IAppDataHelper appDataHelper;
   ListMerchandisViewModel _viewModel;
 
-  ListMerchandisPresenter(this._viewModel) {
+  static final String CATEGORY = "CATEGORY";
+  static final String MERCHANDISE = "MERCHANDISE";
+  static final String CLICK_CATEGORY = "CLICK_CATEGORY";
+
+  ListMerchandisPresenter(this._viewModel) : super() {
     appDataHelper = new AppDataHelper();
+    addStreamController(CATEGORY);
+    addStreamController(MERCHANDISE);
+    addStreamController(CLICK_CATEGORY);
   }
 
   void getData() async {
+    getSink(CATEGORY).add(BlocLoading());
     appDataHelper
         .getMerchandisesFillByCategory(Common.selectedShop["idShop"])
         .then((value) {
@@ -31,7 +42,7 @@ class ListMerchandisPresenter<V extends ListMerchandisView>
       _viewModel.selectedCategory = _viewModel.categories[0];
       _viewModel.selectedListMerchandise =
           _viewModel.selectedCategory["listMechandise"];
-      baseView.updateUI({});
+      getSink(CATEGORY).add(BlocLoaded(_viewModel.categories));
     }).catchError((err) {
       print(err);
     });
@@ -39,11 +50,44 @@ class ListMerchandisPresenter<V extends ListMerchandisView>
 
   void addMerchandise(context) {
     IntentAnimation.intentNomal(
-        context: context,
-        screen: MerchandiseDetail(
-          inputKey: MerchandiseDetail.CREATE,
-        ),
-        option: IntentAnimationOption.RIGHT_TO_LEFT,
-        duration: Duration(milliseconds: 500));
+            context: context,
+            screen: MerchandiseDetail(
+              inputKey: MerchandiseDetail.CREATE,
+            ),
+            option: IntentAnimationOption.RIGHT_TO_LEFT,
+            duration: Duration(milliseconds: 500))
+        .then((value) {
+      print(value);
+      if (value != null && value == "ok") {
+        getData();
+      }
+    });
+  }
+
+  void showScanBarCode(BuildContext context) {
+    scan.scan().then((value) {
+      dynamic selectedMerchandise = _viewModel.merchandises
+          .firstWhere((element) => element["barcode"] == value);
+      if (selectedMerchandise != null) {
+        IntentAnimation.intentNomal(
+            context: context,
+            screen: MerchandiseDetail(
+              inputKey: MerchandiseDetail.DETAIL,
+              value: selectedMerchandise,
+            ),
+            option: IntentAnimationOption.RIGHT_TO_LEFT,
+            duration: Duration(milliseconds: 800));
+      }
+    }).catchError((err) {});
+  }
+
+  void getMerchandise() {
+    appDataHelper
+        .getMerchandisesByShop(Common.selectedShop["idShop"])
+        .then((value) {
+      _viewModel.merchandises = value;
+    }).catchError((err) {
+      print(err);
+    });
   }
 }

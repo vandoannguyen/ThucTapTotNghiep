@@ -34,8 +34,6 @@ class _HomePageState extends State<HomePage> implements HomePageView {
 
   @override
   Widget build(BuildContext context) {
-//    SystemChrome.setSystemUIOverlayStyle(
-//        SystemUiOverlayStyle(statusBarColor: Colors.blue));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue[400],
@@ -68,7 +66,8 @@ class _HomePageState extends State<HomePage> implements HomePageView {
               children: <Widget>[
                 StreamBuilder(
                     stream: _presenter.getStream(_presenter.DAY_OF_WEEK),
-                    builder: (context, snap) => FillDate(snap.data)),
+                    builder: (context, snap) =>
+                        FillDate(snap.data, _viewModel)),
                 SizedBox(
                   height: 15,
                 ),

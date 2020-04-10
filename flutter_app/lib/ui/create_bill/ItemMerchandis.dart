@@ -50,7 +50,7 @@ class _ItemMerchandisState extends State<ItemMerchandis> {
                     fit: BoxFit.fill,
                   )
                 : FadeInImage.assetNetwork(
-                    placeholder: "assets/images/loading.png",
+                    placeholder: "assets/images/default_image.png",
                     image: Common.rootUrl +
                         widget.viewmodel.listMerchandis[widget.index]["image"]),
           ),

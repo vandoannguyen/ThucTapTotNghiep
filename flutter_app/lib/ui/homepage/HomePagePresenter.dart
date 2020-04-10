@@ -76,7 +76,7 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
     appDataHelper
         .getWillBeEmpty(Common.selectedShop["idShop"], warningCoutn)
         .then((value) {
-          print(value);
+      print(value);
       _viewModel.marchandiseWillEmpty = value;
       getSink(WARNING).add(new BlocLoaded(value));
     }).catchError((err) {
@@ -142,7 +142,7 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
       var totalPrice = 0;
       value.forEach((element) {
         countMerchandise += element["count"];
-        totalPrice += element["inputPrice"];
+        totalPrice += element["inputPrice"] * element["count"];
       });
       getSink(WAREHOUSE)
           .add(BlocLoaded({"count": countMerchandise, "total": totalPrice}));

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
+import 'package:init_app/ui/homepage/HomePageViewModel.dart';
 import 'package:init_app/utils/BlogEvent.dart';
 
 // ignore: must_be_immutable
 class FillDate extends StatelessWidget {
   var title, fromDate, toDate;
   var data;
-  FillDate(this.data);
+  HomePageViewModel _viewModel;
+  FillDate(this.data, this._viewModel);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +47,10 @@ class FillDate extends StatelessWidget {
                                   "${Common.DATE_FORMAT(data.value["fristDay"])}   -   ${Common.DATE_FORMAT(data.value["endDay"])}",
                                   style: TextStyle(fontSize: 13),
                                 )
-                              : Text(""),
+                              : Text(
+                                  "${Common.DATE_FORMAT(_viewModel.firstDay)}   -   ${Common.DATE_FORMAT(_viewModel.endDay)}",
+                                  style: TextStyle(fontSize: 13),
+                                ),
                     )
                   ],
                 ),

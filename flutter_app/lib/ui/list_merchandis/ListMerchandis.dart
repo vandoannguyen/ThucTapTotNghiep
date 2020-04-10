@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/ui/list_merchandis/ListMerchandisView.dart';
 import 'package:init_app/ui/meschandis_detail/MechandisDetail.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
 import 'ListMerchandisPresenter.dart';
@@ -26,6 +27,14 @@ class _ListMerchandisState extends State<ListMerchandis>
     _presenter = new ListMerchandisPresenter(_viewModel);
     _presenter.intiView(this);
     _presenter.getData();
+    _presenter.getMerchandise();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _presenter.onDispose();
   }
 
   @override
@@ -54,91 +63,99 @@ class _ListMerchandisState extends State<ListMerchandis>
               size: 25,
               color: Colors.white,
             ),
+          ),
+          IconButton(
+            onPressed: () {
+              _presenter.showScanBarCode(context);
+            },
+            icon: Icon(
+              Icons.flip,
+              size: 25,
+              color: Colors.white,
+            ),
           )
         ],
       ),
-      body: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: 70,
-                  padding: EdgeInsets.only(top: 10, bottom: 10),
-                  child: ListView.builder(
-                    itemBuilder: (ctx, index) => categoryItem(index),
-                    itemCount: _viewModel.categories.length,
-                    scrollDirection: Axis.horizontal,
-                  ),
-                ),
-                Expanded(
-                  child: Stack(
-                    children: <Widget>[
-                      ListView.builder(
-                        itemBuilder: (ctx, index) => merchandisItem(index),
-                        itemCount: _viewModel.selectedListMerchandise.length,
-                        scrollDirection: Axis.vertical,
-                      ),
-                      Visibility(
-                        visible: _viewModel.selectedListMerchandise.length == 0,
-                        child: Container(
-                          height: Common.heightOfScreen,
-                          width: Common.widthOfScreen,
-                          alignment: Alignment.center,
-                          color: Colors.white,
-                          child: GestureDetector(
-                            onTap: () {
-                              addMerchandise(context);
-                            },
-                            child: Container(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Container(
-                                    height: Common.heightOfScreen / 5,
-                                    child: Image.asset(
-                                        "assets/icons/add_merchandis.png"),
-                                  ),
-                                  Text(
-                                    "Loại hàng này chưa có hàng\n Click để thêm...",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(color: Colors.blue),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-          Visibility(
-              visible: isLoading,
-              child: Container(
+      body: StreamBuilder(
+          stream: _presenter.getStream(ListMerchandisPresenter.CATEGORY),
+          builder: (ctx, snap) => snap.data is BlocLoading
+              ? Container(
                   alignment: Alignment.center,
                   width: Common.widthOfScreen,
                   height: Common.heightOfScreen,
                   color: Colors.white,
-                  child: Container(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        CircularProgressIndicator(),
-                        SizedBox(
-                          height: 5,
+                  child: Image.asset(
+                    "assets/icons/loading.gif",
+                    width: 30,
+                    height: 30,
+                  ))
+              : Container(
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        height: 50,
+                        child: ListView.builder(
+                          itemBuilder: (ctx, index) => categoryItem(index),
+                          itemCount: _viewModel.categories.length,
+                          scrollDirection: Axis.horizontal,
                         ),
-                        Text("Loading ....")
-                      ],
-                    ),
-                  )))
-        ],
-      ),
+                      ),
+                      Container(
+                        height: 0.5,
+                        color: Colors.grey,
+                        margin: EdgeInsets.only(
+                            left: 10, right: 10, top: 5, bottom: 5),
+                      ),
+                      Expanded(
+                        child: Stack(
+                          children: <Widget>[
+                            ListView.builder(
+                              itemBuilder: (ctx, index) =>
+                                  merchandisItem(index),
+                              itemCount:
+                                  _viewModel.selectedListMerchandise.length,
+                              scrollDirection: Axis.vertical,
+                            ),
+                            Visibility(
+                              visible:
+                                  _viewModel.selectedListMerchandise.length ==
+                                      0,
+                              child: Container(
+                                height: Common.heightOfScreen,
+                                width: Common.widthOfScreen,
+                                alignment: Alignment.center,
+                                color: Colors.white,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    addMerchandise(context);
+                                  },
+                                  child: Container(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Container(
+                                          height: Common.heightOfScreen / 5,
+                                          child: Image.asset(
+                                              "assets/icons/add_merchandis.png"),
+                                        ),
+                                        Text(
+                                          "Loại hàng này chưa có hàng\n Click để thêm...",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(color: Colors.blue),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )),
     );
   }
 
@@ -180,16 +197,17 @@ class _ListMerchandisState extends State<ListMerchandis>
         child: Container(
           color: Colors.transparent,
           padding: EdgeInsets.all(10),
-          height: 70,
           child: Row(
             children: <Widget>[
               Container(
+                height: 70,
+                width: 70,
                 child: _viewModel.selectedListMerchandise[index]["image"] != ''
                     ? FadeInImage.assetNetwork(
                         image: Common.rootUrl +
                             _viewModel.selectedListMerchandise[index]["image"],
-                        placeholder: "assets/icons/loading.gif",
-                        fit: BoxFit.fitWidth,
+                        placeholder: "assets/images/default_image.png",
+                        fit: BoxFit.cover,
                         height: Common.heightOfScreen / 10,
                         width: Common.heightOfScreen / 10,
                       )

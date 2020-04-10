@@ -7,15 +7,21 @@ import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/api/IApiHelper.dart';
 
 class ApiHelper implements IApiHelper {
+  static dynamic _getHeader() {
+    return {
+      HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    };
+  }
+
   @override
   Future postLogin(user) {
     // TODO: implement postLogin
     Completer completer = new Completer();
     http.post("${Common.rootUrlApi}login", body: user).then((value) {
-      print(value.statusCode);
-      print(value.body);
       completer.complete(jsonDecode(value.body));
     }).catchError((error) {
+      print("32s1df32s1d3f21sd32f1");
       print(error);
       completer.completeError(error);
     });
@@ -133,7 +139,7 @@ class ApiHelper implements IApiHelper {
         HttpHeaders.contentTypeHeader: "application/x-www-form-urlencoded"
       },
     ).then((value) {
-      completer.complete(jsonDecode(value.toString()));
+      completer.complete(jsonDecode(value.body));
     }).catchError((err) {
       completer.completeError(err);
     });
@@ -259,7 +265,11 @@ class ApiHelper implements IApiHelper {
         headers: {
           HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
           HttpHeaders.contentTypeHeader: 'application/json'
-        });
+        }).then((value) {
+      completer.complete(value);
+    }).catchError((err) {
+      completer.completeError(err);
+    });
     return completer.future;
   }
 
@@ -294,15 +304,29 @@ class ApiHelper implements IApiHelper {
     Completer completer = new Completer();
     http
         .post("${Common.rootUrlApi}merchandise/getMerchandisewillempty",
-            headers: {
-              HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
-              HttpHeaders.contentTypeHeader: 'application/json'
-            },
+            headers: _getHeader(),
             body: jsonEncode({"idShop": idShop, "warningCount": warningCount}))
         .then((onValue) {
       completer.complete(jsonDecode(onValue.body));
     }).catchError((onError) {
       completer.completeError(onError);
+    });
+    return completer.future;
+  }
+
+  @override
+  Future getPersonnelByBill(idPersonnel) {
+    // TODO: implement getPersonnelByBill
+
+    Completer completer = new Completer();
+    http
+        .get("${Common.rootUrlApi}users/user?idUser=${idPersonnel}",
+            headers: _getHeader())
+        .then((value) {
+      completer.complete(jsonDecode(value.body)[0]);
+    }).catchError((err) {
+      completer.completeError(err);
+      print(err);
     });
     return completer.future;
   }
