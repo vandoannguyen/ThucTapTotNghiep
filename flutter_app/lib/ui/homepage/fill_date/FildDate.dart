@@ -8,7 +8,11 @@ class FillDate extends StatelessWidget {
   var title, fromDate, toDate;
   var data;
   HomePageViewModel _viewModel;
-  FillDate(this.data, this._viewModel);
+  var onClickFromDate;
+  var onClickToDate;
+
+  FillDate(this.data, this._viewModel,
+      {this.onClickFromDate, this.onClickToDate});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,7 @@ class FillDate extends StatelessWidget {
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.center,
                       child: Text(
                         "Trong khoảng",
                         style: TextStyle(fontSize: 18),
@@ -43,10 +47,9 @@ class FillDate extends StatelessWidget {
                       child: data is BlocLoading
                           ? Text("")
                           : data is BlocLoaded
-                              ? Text(
-                                  "${Common.DATE_FORMAT(data.value["fristDay"])}   -   ${Common.DATE_FORMAT(data.value["endDay"])}",
-                                  style: TextStyle(fontSize: 13),
-                                )
+                              ? TextDate(
+                                  Common.DATE_FORMAT(_viewModel.firstDay),
+                                  Common.DATE_FORMAT(_viewModel.endDay))
                               : Text(
                                   "${Common.DATE_FORMAT(_viewModel.firstDay)}   -   ${Common.DATE_FORMAT(_viewModel.endDay)}",
                                   style: TextStyle(fontSize: 13),
@@ -56,15 +59,58 @@ class FillDate extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
-              width: 10,
-            ),
-            Icon(
-              Icons.date_range,
-              color: Colors.grey[400],
-            )
           ],
         ),
+      ),
+    );
+  }
+
+  TextDate(String date_format, String date_format2) {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              if (onClickFromDate != null) {
+                onClickFromDate();
+              }
+            },
+            child: Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.date_range),
+                    Text(
+                      "${date_format}",
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ],
+                )),
+          ),
+          Container(
+            child: Text("-"),
+          ),
+          GestureDetector(
+            onTap: () {
+              if (onClickToDate != null) {
+                onClickToDate();
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.date_range),
+                  Text(
+                    "${date_format2}",
+                    style: TextStyle(fontSize: 13),
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

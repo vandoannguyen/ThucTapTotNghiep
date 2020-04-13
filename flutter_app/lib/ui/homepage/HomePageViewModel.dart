@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class HomePageViewModel {
@@ -11,4 +13,10 @@ class HomePageViewModel {
   DateTime endDay;
 
   dynamic bills = [];
+
+  GlobalKey<ScaffoldState> scaffKeyHomePage;
+
+  HomePageViewModel() {
+    scaffKeyHomePage = new GlobalKey();
+  }
 }

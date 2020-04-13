@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/utils/BasePresenter.dart';
@@ -147,5 +150,167 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
       getSink(WAREHOUSE)
           .add(BlocLoaded({"count": countMerchandise, "total": totalPrice}));
     }).catchError((err) {});
+  }
+
+  void shopNameClick(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+            elevation: 4,
+            title: Text('Danh sách cửa hàng'),
+            content: Container(
+              height: 200,
+              width: 200,
+              child: ListView.builder(
+                  physics: ScrollPhysics(),
+                  itemCount: Common.shops.length,
+                  itemBuilder: (ctx, index) => GestureDetector(
+                        onTap: () {
+                          Common.selectedShop = Common.shops[index];
+                          getDayOfWeek();
+                          getBestSeller();
+                          getBills();
+                          getWillBeEmpty();
+                          getMerchandises();
+                          Navigator.pop(context);
+                          baseView.updateUI({});
+                        },
+                        child: ItemShop(Common.shops[index]),
+                      )),
+            ));
+      },
+    );
+  }
+
+  void onClickFromDate(context) {
+    const String MIN_DATETIME = '1998-01-01';
+    const String MAX_DATETIME = '2050-12-31';
+    const String INIT_DATETIME = '2020-04-13';
+    DateTime _dateTime;
+    String _format = 'yyyy-MMMM-dd';
+    DateTimePickerLocale _locale = DateTimePickerLocale.en_us;
+    _dateTime = DateTime.parse(INIT_DATETIME);
+    DatePicker.showDatePicker(
+      context,
+      pickerTheme: DateTimePickerTheme(
+        showTitle: true,
+        titleHeight: 30,
+        confirm: Icon(
+          Icons.done,
+          color: Colors.blue,
+        ),
+        cancel: Icon(
+          Icons.close,
+          color: Colors.red,
+        ),
+      ),
+      minDateTime: DateTime.parse(MIN_DATETIME),
+      maxDateTime: DateTime.parse(MAX_DATETIME),
+      initialDateTime: _dateTime,
+      dateFormat: _format,
+      locale: _locale,
+      onClose: () => {},
+      onCancel: () => {},
+      onChange: (dateTime, List<int> index) {
+        print(dateTime);
+      },
+      onConfirm: (dateTime, List<int> index) {
+        _viewModel.firstDay = dateTime;
+        getBestSeller();
+        getBills();
+      },
+    );
+  }
+
+  void onClickToDate(context) {
+    const String MIN_DATETIME = '1998-01-01';
+    const String MAX_DATETIME = '2050-12-31';
+    const String INIT_DATETIME = '2020-04-13';
+    DateTime _dateTime;
+    String _format = 'yyyy-MMMM-dd';
+    DateTimePickerLocale _locale = DateTimePickerLocale.en_us;
+    _dateTime = DateTime.parse(INIT_DATETIME);
+    DatePicker.showDatePicker(
+      context,
+      pickerTheme: DateTimePickerTheme(
+        showTitle: true,
+        titleHeight: 30,
+        confirm: Icon(
+          Icons.done,
+          color: Colors.blue,
+        ),
+        cancel: Icon(
+          Icons.close,
+          color: Colors.red,
+        ),
+      ),
+      minDateTime: DateTime.parse(MIN_DATETIME),
+      maxDateTime: DateTime.parse(MAX_DATETIME),
+      initialDateTime: _dateTime,
+      dateFormat: _format,
+      locale: _locale,
+      onClose: () => print(_dateTime),
+      onCancel: () => print(_dateTime),
+      onChange: (dateTime, List<int> index) {
+        print(dateTime);
+      },
+      onConfirm: (dateTime, List<int> index) {
+        _viewModel.endDay = dateTime;
+        getBestSeller();
+        getBills();
+      },
+    );
+  }
+}
+
+class ItemShop extends StatelessWidget {
+  dynamic shop;
+
+  ItemShop(this.shop);
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Card(
+      elevation: 4,
+      child: Container(
+        child: Container(
+          width: 250,
+          height: 80,
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: 70,
+                height: 70,
+                padding: EdgeInsets.all(10),
+                child: Image.asset(
+                  "assets/icons/def_store.png",
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      shop["name"],
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      shop["address"],
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

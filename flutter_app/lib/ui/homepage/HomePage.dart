@@ -27,14 +27,15 @@ class _HomePageState extends State<HomePage> implements HomePageView {
     _presenter.intiView(this);
     _presenter.getDayOfWeek();
     _presenter.getBestSeller();
-    _presenter.getWillBeEmpty();
     _presenter.getBills();
+    _presenter.getWillBeEmpty();
     _presenter.getMerchandises();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _viewModel.scaffKeyHomePage,
       appBar: AppBar(
         backgroundColor: Colors.blue[400],
         title: Container(
@@ -48,9 +49,19 @@ class _HomePageState extends State<HomePage> implements HomePageView {
             SizedBox(
               width: 10,
             ),
-            Text(
-              "${Common.selectedShop["name"]}",
-              style: TextStyle(color: Colors.white),
+            GestureDetector(
+              onTap: () {
+                _presenter.shopNameClick(context);
+              },
+              child: Container(
+                color: Colors.transparent,
+                height: 60,
+                alignment: Alignment.center,
+                child: Text(
+                  "${Common.selectedShop["name"]}",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             )
           ],
         )),
@@ -65,9 +76,18 @@ class _HomePageState extends State<HomePage> implements HomePageView {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 StreamBuilder(
-                    stream: _presenter.getStream(_presenter.DAY_OF_WEEK),
-                    builder: (context, snap) =>
-                        FillDate(snap.data, _viewModel)),
+                  stream: _presenter.getStream(_presenter.DAY_OF_WEEK),
+                  builder: (context, snap) => FillDate(
+                    snap.data,
+                    _viewModel,
+                    onClickFromDate: () {
+                      _presenter.onClickFromDate(context);
+                    },
+                    onClickToDate: () {
+                      _presenter.onClickToDate(context);
+                    },
+                  ),
+                ),
                 SizedBox(
                   height: 15,
                 ),

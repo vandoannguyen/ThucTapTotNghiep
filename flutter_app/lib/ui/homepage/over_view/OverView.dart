@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:init_app/common/Common.dart';
 import 'package:init_app/utils/BlogEvent.dart';
 
 class OverView extends StatefulWidget {
@@ -45,16 +46,20 @@ class OverViewState extends State<OverView> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             ItemOverlay(
-                              title: "Đơn nhâp",
+                              title: "Đơn nhập",
                               value: widget.data.value["countBillIn"],
                             ),
                             ItemOverlay(
                               title: "Tổng chi",
-                              value: widget.data.value["totalIn"],
+                              value: Common.CURRENCY_FORMAT
+                                      .format(widget.data.value["totalIn"]) +
+                                  " vnd",
                             ),
                             ItemOverlay(
                               title: "Tổng chi thực",
-                              value: widget.data.value["totalInReal"],
+                              value: Common.CURRENCY_FORMAT.format(
+                                      widget.data.value["totalInReal"]) +
+                                  " vnd",
                             ),
                             ItemOverlay(
                               title: "Đơn bán",
@@ -62,11 +67,15 @@ class OverViewState extends State<OverView> {
                             ),
                             ItemOverlay(
                               title: "Tổng thu",
-                              value: widget.data.value["totalOut"],
+                              value: Common.CURRENCY_FORMAT
+                                      .format(widget.data.value["totalOut"]) +
+                                  " vnd",
                             ),
                             ItemOverlay(
                               title: "Tổng thu thực",
-                              value: widget.data.value["totalOutReal"],
+                              value: Common.CURRENCY_FORMAT.format(
+                                      widget.data.value["totalOutReal"]) +
+                                  " vnd",
                             )
                           ]),
                     )
@@ -96,11 +105,22 @@ class ItemOverlay extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text("${title} : "),
+                Text(
+                  "${title} : ",
+                ),
+                Expanded(
+                  child: Container(),
+                ),
                 Text(
                   "${value}",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600),
                 ),
+                SizedBox(
+                  width: 10,
+                )
               ],
             ),
           ),

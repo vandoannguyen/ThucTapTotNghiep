@@ -28,6 +28,7 @@ dependencies:
   qrscan:
   image_picker:
   intl:
+  flutter_cupertino_date_picker: ^1.0.12
 
 dev_dependencies:
   flutter_test:

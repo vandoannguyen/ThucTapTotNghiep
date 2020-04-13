@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
@@ -37,12 +35,10 @@ class MorePresenter<V extends MoreView> extends BasePresenter<V> {
         .then((value) {
       _viewModel.isLoading = false;
       baseView.updateUI({});
-      if (value.statusCode == 200) {
-        jsonDecode(value.body)["message"] == "OK"
-            ? showSnackBar(color: Colors.blue, mess: "Đổi mật khẩu thành công")
-            : showSnackBar(
-                color: Colors.red, mess: "Đổi mật khẩu không thành công");
-      }
+      value["message"] == "OK"
+          ? showSnackBar(color: Colors.blue, mess: "Đổi mật khẩu thành công")
+          : showSnackBar(
+              color: Colors.red, mess: "Đổi mật khẩu không thành công");
     }).catchError((err) {
       print(err);
       _viewModel.isLoading = false;
