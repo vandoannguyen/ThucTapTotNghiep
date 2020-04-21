@@ -67,18 +67,26 @@ class MerchandiseStatus extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: Row(
         children: <Widget>[
-          value["image"] != null && value["image"] != ""
-              ? FadeInImage.assetNetwork(
-                  placeholder: "assets/images/default_image.png",
-                  image: "${Common.rootUrl}${value["image"]}",
-                  height: Common.heightOfScreen / 10,
-                  width: Common.heightOfScreen / 10,
-                )
-              : Image.asset(
-                  "assets/images/default_image.png",
-                  height: Common.heightOfScreen / 10,
-                  width: Common.heightOfScreen / 10,
-                ),
+          Card(
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            clipBehavior: Clip.antiAlias,
+            child: value["image"] != null && value["image"] != ""
+                ? FadeInImage.assetNetwork(
+                    placeholder: "assets/images/default_image.png",
+                    image: "${Common.rootUrl}${value["image"]}",
+                    height: Common.heightOfScreen / 10,
+                    width: Common.heightOfScreen / 10,
+                    fit: BoxFit.fill,
+                  )
+                : Image.asset(
+                    "assets/images/default_image.png",
+                    height: Common.heightOfScreen / 10,
+                    width: Common.heightOfScreen / 10,
+                    fit: BoxFit.fill,
+                  ),
+          ),
           SizedBox(
             width: 10,
           ),

@@ -18,5 +18,7 @@ class HomePageViewModel {
 
   HomePageViewModel() {
     scaffKeyHomePage = new GlobalKey();
+    firstDay = new DateTime.now();
+    endDay = new DateTime.now();
   }
 }

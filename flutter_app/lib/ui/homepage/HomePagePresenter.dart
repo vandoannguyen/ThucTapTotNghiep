@@ -22,7 +22,6 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
   String BEST_SALE = "best sale";
   String WARNING = "warning";
   String WAREHOUSE = "warehouse";
-
   String DAY_OF_WEEK = "dfw";
 
   HomePagePresenter(this._viewModel) {
@@ -49,9 +48,9 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
         firstDayOfWeek.add(Duration(days: firstDayOfWeek.weekday + 5));
     _viewModel.firstDay = firstDayOfWeek;
     _viewModel.endDay = endDayOfWeek;
-    getSink(DAY_OF_WEEK).add(
-        new BlocLoaded({"fristDay": firstDayOfWeek, "endDay": endDayOfWeek}));
-//    baseView.updateUI({});
+//    getSink(DAY_OF_WEEK).add(
+//        new BlocLoaded({"firstDay": firstDayOfWeek, "endDay": endDayOfWeek}));
+    baseView.updateUI({});
   }
 
   void getBestSeller() {
@@ -173,6 +172,7 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
                           getBills();
                           getWillBeEmpty();
                           getMerchandises();
+                          getPersonnels(Common.selectedShop["idShop"]);
                           Navigator.pop(context);
                           baseView.updateUI({});
                         },
@@ -181,6 +181,15 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
             ));
       },
     );
+  }
+
+  void getPersonnels(selectedShop) {
+    appDataHelper.getPersonnels(selectedShop).then((value) {
+      print("${value}");
+      Common.personnels = value;
+    }).catchError((err) {
+      print(err);
+    });
   }
 
   void onClickFromDate(context) {
@@ -217,6 +226,8 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
       },
       onConfirm: (dateTime, List<int> index) {
         _viewModel.firstDay = dateTime;
+        getSink(DAY_OF_WEEK).add(new BlocLoaded(
+            {"firstDay": dateTime, "endDay": _viewModel.endDay}));
         getBestSeller();
         getBills();
       },
@@ -257,6 +268,8 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
       },
       onConfirm: (dateTime, List<int> index) {
         _viewModel.endDay = dateTime;
+        getSink(DAY_OF_WEEK).add(new BlocLoaded(
+            {"firstDay": _viewModel.firstDay, "endDay": dateTime}));
         getBestSeller();
         getBills();
       },

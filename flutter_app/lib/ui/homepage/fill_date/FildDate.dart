@@ -13,10 +13,10 @@ class FillDate extends StatelessWidget {
 
   FillDate(this.data, this._viewModel,
       {this.onClickFromDate, this.onClickToDate});
-
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 4,
       child: Container(
         padding: EdgeInsets.all(10),
         width: Common.widthOfScreen - 100,
@@ -42,19 +42,17 @@ class FillDate extends StatelessWidget {
                       color: Colors.grey,
                     ),
                     Container(
-                      padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
-                      alignment: Alignment.centerLeft,
-                      child: data is BlocLoading
-                          ? Text("")
-                          : data is BlocLoaded
-                              ? TextDate(
-                                  Common.DATE_FORMAT(_viewModel.firstDay),
-                                  Common.DATE_FORMAT(_viewModel.endDay))
-                              : Text(
-                                  "${Common.DATE_FORMAT(_viewModel.firstDay)}   -   ${Common.DATE_FORMAT(_viewModel.endDay)}",
-                                  style: TextStyle(fontSize: 13),
-                                ),
-                    )
+                        padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
+                        alignment: Alignment.centerLeft,
+                        child: data is BlocLoading
+                            ? Text("")
+                            : data is BlocLoaded
+                                ? TextDate(
+                                    Common.DATE_FORMAT(data.value["firstDay"]),
+                                    Common.DATE_FORMAT(data.value["endDay"]))
+                                : TextDate(
+                                    Common.DATE_FORMAT(_viewModel.firstDay),
+                                    Common.DATE_FORMAT(_viewModel.endDay)))
                   ],
                 ),
               ),

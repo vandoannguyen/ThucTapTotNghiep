@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:init_app/common/Common.dart';
 import 'package:init_app/ui/billpage/BillPage.dart';
 import 'package:init_app/ui/homepage/HomePage.dart';
 import 'package:init_app/ui/merchandis_page/MerchandisPage.dart';
@@ -21,12 +22,18 @@ class _HomeScreenState extends State<HomeScreen> implements BaseView {
   PageController _pageController;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    // TODO: implement initState
+    super.initState();
     _viewmodel = new HomeViewModel();
     _presenter = new HomePresenter(_viewmodel);
     _pageController =
         new PageController(initialPage: _viewmodel.curentIndexNavBar);
     _presenter.intiView(this);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
       child: Column(
@@ -40,15 +47,18 @@ class _HomeScreenState extends State<HomeScreen> implements BaseView {
               },
               physics: ScrollPhysics(),
               controller: _pageController,
-              children: <Widget>[
-                HomePage(),
-                BillPage(),
-                MerchandisPage(),
-//                Container(
-//                  color: Colors.orange,
-//                ),
-                MorePage(),
-              ],
+              children: Common.user["idRole"] == 2
+                  ? <Widget>[
+                      HomePage(),
+                      BillPage(),
+                      MerchandisPage(),
+                      MorePage(),
+                    ]
+                  : [
+                      BillPage(),
+                      MerchandisPage(),
+                      MorePage(),
+                    ],
             ),
           ),
           Container(
@@ -72,32 +82,53 @@ class _HomeScreenState extends State<HomeScreen> implements BaseView {
               showUnselectedLabels: true,
               selectedIconTheme: IconThemeData(color: Colors.blue),
               unselectedIconTheme: IconThemeData(color: Colors.grey),
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  title: Text(
-                    "Trang chủ",
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.insert_drive_file),
-                  title: Text(
-                    "Đơn hàng",
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.folder_open),
-                  title: Text(
-                    "Sản phẩm",
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.info),
-                  title: Text(
-                    "Thông tin",
-                  ),
-                ),
-              ],
+              items: Common.user["idRole"] == 2
+                  ? [
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.home),
+                        title: Text(
+                          "Trang chủ",
+                        ),
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.insert_drive_file),
+                        title: Text(
+                          "Đơn hàng",
+                        ),
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.folder_open),
+                        title: Text(
+                          "Sản phẩm",
+                        ),
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.info),
+                        title: Text(
+                          "Thông tin",
+                        ),
+                      ),
+                    ]
+                  : [
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.insert_drive_file),
+                        title: Text(
+                          "Đơn hàng",
+                        ),
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.folder_open),
+                        title: Text(
+                          "Sản phẩm",
+                        ),
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.info),
+                        title: Text(
+                          "Thông tin",
+                        ),
+                      ),
+                    ],
             ),
           ))
         ],

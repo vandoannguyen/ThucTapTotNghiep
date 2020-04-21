@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/ui/meschandis_detail/MerchandisDetailViewModel.dart';
 import 'package:init_app/ui/meschandis_detail/MerchandiseView.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
 import 'MerchandisDetailPresenter.dart';
@@ -43,6 +44,10 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
     _presenter = new MerchandiseDetailPresenter(_viewModel);
     _presenter.getCategory();
     _presenter.intiView(this);
+    if (widget.value != null)
+      _presenter
+          .getSink(MerchandiseDetailPresenter.SET_AVATAR)
+          .add(new BlocLoaded(Common.rootUrl + widget.value["image"]));
   }
 
   @override
@@ -63,7 +68,8 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
         title: Text(widget.inputKey == MerchandiseDetail.DETAIL
             ? "Thông tin hàng"
             : "Thêm hàng"),
-        actions: widget.inputKey == MerchandiseDetail.DETAIL
+        actions: widget.inputKey == MerchandiseDetail.DETAIL &&
+                Common.user["idRole"] == 2
             ? [
                 IconButton(
                   onPressed: () {
@@ -96,38 +102,63 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                           _viewModel.isEditing ? openImageonCamera() : null;
                         },
                         child: Card(
-                          elevation: 4,
+                          elevation: 8,
+                          clipBehavior: Clip.antiAlias,
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
                           child: Container(
                               width: Common.widthOfScreen / 5,
-                              padding: EdgeInsets.all(5),
                               height: Common.widthOfScreen / 5,
-                              child: widget.inputKey != MerchandiseDetail.DETAIL
-                                  ? _viewModel.avatarImage != null
-                                      ? Image.file(
-                                          _viewModel.avatarImage.file,
-                                          fit: BoxFit.fill,
-                                        )
-                                      : Image.asset(
+                              child: StreamBuilder(
+                                stream: _presenter.getStream(
+                                    MerchandiseDetailPresenter.SET_AVATAR),
+                                builder: (ctx, snap) {
+                                  if (snap.data is BlocLoaded) {
+                                    if (snap.data.value == "") {
+                                      return Image.asset(
+                                        "assets/images/default_image.png",
+                                        fit: BoxFit.fill,
+                                      );
+                                    } else
+                                      return FadeInImage.assetNetwork(
+                                        placeholder:
+                                            "assets/images/default_image.png",
+                                        image: snap.data.value,
+                                        fit: BoxFit.fill,
+                                      );
+                                  } else {
+                                    if (snap.data is BlocSetFile) {
+                                      return Image.file(
+                                        snap.data.value.file,
+                                        fit: BoxFit.fill,
+                                      );
+                                    } else {
+                                      if (widget.value == null) {
+                                        return Image.asset(
                                           "assets/images/default_image.png",
                                           fit: BoxFit.fill,
-                                        )
-                                  : _viewModel.value["image"] != ""
-                                      ? FadeInImage.assetNetwork(
+                                        );
+                                      } else {
+                                        return FadeInImage.assetNetwork(
                                           placeholder:
                                               "assets/images/default_image.png",
-                                          image: _viewModel.value != null
-                                              ? "${Common.rootUrl}${_viewModel.value["image"]}"
-                                              : "assets/images/default_image.png")
-                                      : Image.asset(
-                                          "assets/images/default_image.png",
+                                          image: Common.rootUrl +
+                                              widget.value["image"],
                                           fit: BoxFit.fill,
-                                        )),
+                                        );
+                                      }
+                                    }
+                                  }
+                                },
+                              )),
                         ),
                       ),
                       Expanded(
                         child: Container(),
                       ),
-                      widget.inputKey == MerchandiseDetail.DETAIL
+                      widget.inputKey == MerchandiseDetail.DETAIL &&
+                              Common.user["idRole"] == 2
                           ? Container(
                               alignment: Alignment.topCenter,
                               child: IconButton(
@@ -236,7 +267,9 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                         ),
                         GestureDetector(
                           onTap: () {
-                            showDialogTheLoai(context);
+                            if (_viewModel.isEditing &&
+                                Common.user["idRole"] == 2)
+                              showDialogTheLoai(context);
                           },
                           child: Container(
                             padding:
@@ -539,6 +572,13 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
           keyInput == MerchandiseDetail.API_SUCCESS ? Colors.blue : Colors.red,
       content: Text(mess),
     ));
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _presenter.onDispose();
   }
 
   @override

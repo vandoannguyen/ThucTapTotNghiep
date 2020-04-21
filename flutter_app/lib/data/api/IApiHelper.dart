@@ -12,6 +12,7 @@ abstract class IApiHelper {
   Future createBill(bill);
 
   Future getMerchandisesByBill(idBill, idShop);
+
   Future getPersonnelByBill(idPersonnel);
 
   Future getMerchandisesByShop(idShop);
@@ -26,9 +27,15 @@ abstract class IApiHelper {
 
   Future registerAccount(data);
 
+  Future getPersonnels(idShop);
+
+  Future createPersonnel(data);
+
   Future createShop(data);
 
   Future updateMerchandise(data);
+
   Future getBestSeller(idShop, limits, fromDate, toDate);
+
   Future getWillBeEmpty(idShop, warningCount);
 }

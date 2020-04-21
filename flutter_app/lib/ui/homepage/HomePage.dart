@@ -25,6 +25,7 @@ class _HomePageState extends State<HomePage> implements HomePageView {
     _viewModel = new HomePageViewModel();
     _presenter = new HomePagePresenter<HomePageView>(_viewModel);
     _presenter.intiView(this);
+    _presenter.getPersonnels(Common.selectedShop["idShop"]);
     _presenter.getDayOfWeek();
     _presenter.getBestSeller();
     _presenter.getBills();

@@ -158,4 +158,16 @@ class AppDataHelper implements IAppDataHelper {
     // TODO: implement getPersonelByBill
     return apiHelper.getPersonnelByBill(idPersonel);
   }
+
+  @override
+  Future createPersonnel(data) {
+    // TODO: implement createPersonnel
+    return apiHelper.createPersonnel(data);
+  }
+
+  @override
+  Future getPersonnels(idShop) {
+    // TODO: implement getPersonnels
+    return apiHelper.getPersonnels(idShop);
+  }
 }

@@ -33,7 +33,7 @@ class LoginPresenter<V extends LoginView> extends BasePresenter<V> {
     }
     _viewModel.isLoading = true;
     baseView.updateUI({});
-    appDataHelper.postLogin(user).then((value) {
+    appDataHelper.postLogin(user).then((value) async {
       if (value != null && value["status"] != 400) {
         Common.user = value["user"];
         Common.loginToken = value["token"];
@@ -70,14 +70,11 @@ class LoginPresenter<V extends LoginView> extends BasePresenter<V> {
   void register(BuildContext context) {
     IntentAnimation.intentNomal(
             context: context,
-            screen: Register(),
+            screen: Register(Register.REGISTER),
             option: IntentAnimationOption.RIGHT_TO_LEFT,
             duration: Duration(milliseconds: 700))
         .then((value) {
       if (value != null) {
-        _viewModel.scaffoldKey = new GlobalKey();
-        _viewModel.userNameController = new TextEditingController();
-        _viewModel.passwordController = new TextEditingController();
         _viewModel.userNameController.text = value["username"];
         _viewModel.passwordController.text = value["password"];
         _viewModel.scaffoldKey.currentState.showSnackBar(

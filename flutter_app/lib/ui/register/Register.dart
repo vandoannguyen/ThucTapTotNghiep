@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:init_app/common/Common.dart';
 
 import 'RegisterPresenter.dart';
 import 'RegisterView.dart';
 import 'RegisterViewModel.dart';
 
 class Register extends StatefulWidget {
+  static final String REGISTER = "REGISTER";
+  static final String ADD_PERSONEL = "ADD_PERSONEL";
+  static final String DETAIL = "DETAIL";
+  String keyCheck;
+
+  Register(this.keyCheck);
+
   @override
   _RegisterState createState() => _RegisterState();
 }
@@ -13,13 +21,24 @@ class _RegisterState extends State<Register> implements RegisterView {
   RegisterPresenter _presenter;
   RegisterViewModel _viewModel;
   GlobalKey<FormState> _key;
+  GlobalKey<ScaffoldState> _keyS;
 
   @override
   void initState() {
     _key = new GlobalKey();
+    _keyS = new GlobalKey();
     _viewModel = new RegisterViewModel();
+    _viewModel.keyCheck = widget.keyCheck;
     _presenter = new RegisterPresenter(_viewModel);
     _presenter.intiView(this);
+    if (widget.keyCheck == Register.DETAIL) {
+      _viewModel.fullNameController.text = Common.user["name"];
+      _viewModel.usernameController.text = Common.user["username"];
+      _viewModel.passwordController.text = Common.user["password"];
+      _viewModel.emailController.text = Common.user["email"];
+      _viewModel.comfirmPassVisibile = false;
+      _viewModel.enableEdit = false;
+    }
     // TODO: implement initState
     super.initState();
   }
@@ -27,64 +46,132 @@ class _RegisterState extends State<Register> implements RegisterView {
   @override
   Widget build(BuildContext context) {
     _viewModel.context = context;
-    return Scaffold(
-      body: Container(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(top: 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.black,
-                    size: 18,
+    return Stack(
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/images/background_register.png"))),
+        ),
+        Scaffold(
+            backgroundColor: Colors.transparent,
+            key: _keyS,
+            body: SingleChildScrollView(
+              padding: EdgeInsets.only(top: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    child: Row(
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Card(
+                            elevation: 4,
+                            margin: EdgeInsets.only(left: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(30),
+                              ),
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.all(15),
+                              child: Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.black54,
+                                size: 15,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(),
+                        ),
+                        !_viewModel.enableEdit &&
+                                widget.keyCheck == Register.DETAIL
+                            ? GestureDetector(
+                                onTap: () {
+                                  _presenter.setEnableEdit();
+                                },
+                                child: Container(
+                                  color: Colors.transparent,
+                                  width: 50,
+                                  height: 50,
+                                  child: Icon(
+                                    Icons.edit,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    ),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 15),
-                  child: Text(
-                    "Đăng ký",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
+                  SizedBox(
+                    height: 10,
                   ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 5),
-                  child: Text(
-                    "Chào mừng bạn đến với SmartShop",
-                    style: TextStyle(fontSize: 16),
+                  Container(
+                    padding: EdgeInsets.only(top: 0, left: 15),
+                    child: Text(
+                      _viewModel.keyCheck == Register.REGISTER
+                          ? "Đăng ký\nTài khoản mới"
+                          : widget.keyCheck == Register.ADD_PERSONEL
+                              ? "Thêm\nNhân viên"
+                              : "Thông tin\n tài khoản",
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white),
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                GestureDetector(
-                    onTap: () {
-                      setImage();
-                    },
-                    child: avatar()),
-                SizedBox(
-                  height: 15,
-                ),
-                Form(
-                  key: _key,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        decoration: getDecorationInput(),
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: Row(
+                  _viewModel.keyCheck == Register.REGISTER
+                      ? Container(
+                          padding: EdgeInsets.only(top: 5, left: 15),
+                          child: Text(
+                            "Chào mừng bạn đến với SmartShop",
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.grey[300]),
+                          ),
+                        )
+                      : Container(),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        if (_viewModel.enableEdit) {
+                          setImage();
+                        }
+                      },
+                      child: avatar()),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Card(
+                    margin: EdgeInsets.only(left: 15, right: 15),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          top: 10, left: 10, right: 10, bottom: 20),
+                      child: Form(
+                        key: _key,
+                        child: Column(
                           children: <Widget>[
                             Container(
-                              padding: EdgeInsets.all(15),
-                              child: Icon(Icons.perm_contact_calendar),
-                            ),
-                            Expanded(
+                              padding: EdgeInsets.only(
+                                  bottom: 0, left: 20, right: 20),
                               child: TextFormField(
+                                enabled: _viewModel.enableEdit,
+                                scrollPadding: EdgeInsets.only(bottom: 0),
+                                maxLines: 1,
                                 onFieldSubmitted: (value) {
                                   _presenter.nameSummit();
                                 },
@@ -92,28 +179,22 @@ class _RegisterState extends State<Register> implements RegisterView {
                                 style: inputStyle(),
                                 controller: _viewModel.fullNameController,
                                 decoration: InputDecoration(
-                                    labelText: "Họ tên",
-                                    border: InputBorder.none,
-                                    hintText: "Họ tên"),
+                                    prefixIcon: Icon(
+                                      Icons.person,
+                                      size: prefixIconSize(),
+                                    ),
+                                    labelText: "Họ tên"),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        decoration: getDecorationInput(),
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(15),
-                              child: Icon(Icons.email),
                             ),
-                            Expanded(
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(
+                                  bottom: 0, left: 20, right: 20),
                               child: TextFormField(
+                                enabled: _viewModel.enableEdit,
+                                scrollPadding: EdgeInsets.only(bottom: 0),
                                 focusNode: _viewModel.fcEmail,
                                 onFieldSubmitted: (value) {
                                   _presenter.emailSummit();
@@ -122,28 +203,22 @@ class _RegisterState extends State<Register> implements RegisterView {
                                 style: inputStyle(),
                                 controller: _viewModel.emailController,
                                 decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    labelText: "Email",
-                                    hintText: "Email"),
+                                    prefixIcon: Icon(
+                                      Icons.email,
+                                      size: prefixIconSize(),
+                                    ),
+                                    labelText: "Email"),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        decoration: getDecorationInput(),
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(15),
-                              child: Icon(Icons.person),
                             ),
-                            Expanded(
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(
+                                  bottom: 0, left: 20, right: 20),
                               child: TextFormField(
+                                enabled: _viewModel.enableEdit,
+                                scrollPadding: EdgeInsets.only(bottom: 0),
                                 focusNode: _viewModel.fcUsername,
                                 onFieldSubmitted: (value) {
                                   _presenter.userNameSummit();
@@ -152,28 +227,21 @@ class _RegisterState extends State<Register> implements RegisterView {
                                 style: inputStyle(),
                                 controller: _viewModel.usernameController,
                                 decoration: InputDecoration(
-                                    labelText: "Username",
-                                    border: InputBorder.none,
-                                    hintText: "Username"),
+                                    prefixIcon: Icon(
+                                      Icons.person,
+                                      size: prefixIconSize(),
+                                    ),
+                                    labelText: "Họ và tên"),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        decoration: getDecorationInput(),
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(15),
-                              child: Icon(Icons.lock),
                             ),
-                            Expanded(
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(
+                                  bottom: 0, left: 20, right: 20),
                               child: TextFormField(
+                                enabled: _viewModel.enableEdit,
                                 focusNode: _viewModel.fcPassword,
                                 onFieldSubmitted: (value) {
                                   _presenter.passSumit();
@@ -184,9 +252,11 @@ class _RegisterState extends State<Register> implements RegisterView {
                                 obscureText: !_viewModel.passwordVisible,
                                 //This will obscure text dynamically
                                 decoration: InputDecoration(
-                                  border: InputBorder.none,
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                    size: prefixIconSize(),
+                                  ),
                                   labelText: 'Mật khẩu',
-                                  hintText: 'Mật khẩu',
                                   // Here is key idea
                                   suffixIcon: IconButton(
                                     icon: Icon(
@@ -195,6 +265,7 @@ class _RegisterState extends State<Register> implements RegisterView {
                                           ? Icons.visibility
                                           : Icons.visibility_off,
                                       color: Theme.of(context).primaryColorDark,
+                                      size: prefixIconSize(),
                                     ),
                                     onPressed: () {
                                       // Update the state i.e. toogle the state of passwordVisible variable
@@ -206,50 +277,47 @@ class _RegisterState extends State<Register> implements RegisterView {
                                   ),
                                 ),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        decoration: getDecorationInput(),
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(15),
-                              child: Icon(Icons.lock_outline),
                             ),
-                            Expanded(
-                              child: TextFormField(
-                                focusNode: _viewModel.fcConfirmPass,
-                                validator: _validateConfirmPass,
-                                keyboardType: TextInputType.text,
-                                controller: _viewModel.confirmPassController,
-                                obscureText: !_viewModel.passwordVisible,
-                                //This will obscure text dynamically
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  labelText: 'Nhập lại mất khẩu',
-                                  hintText: 'Nhập lại mật khẩu',
-                                  // Here is key idea
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      // Based on passwordVisible state choose the icon
-                                      _viewModel.passwordVisible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: Theme.of(context).primaryColorDark,
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Visibility(
+                              visible: _viewModel.comfirmPassVisibile,
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    bottom: 0, left: 20, right: 20),
+                                child: TextFormField(
+                                  focusNode: _viewModel.fcConfirmPass,
+                                  validator: _validateConfirmPass,
+                                  keyboardType: TextInputType.text,
+                                  controller: _viewModel.confirmPassController,
+                                  obscureText: !_viewModel.passwordVisible,
+                                  //This will obscure text dynamically
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(
+                                      Icons.lock_outline,
+                                      size: prefixIconSize(),
                                     ),
-                                    onPressed: () {
-                                      // Update the state i.e. toogle the state of passwordVisible variable
-                                      setState(() {
-                                        _viewModel.passwordVisible =
-                                            !_viewModel.passwordVisible;
-                                      });
-                                    },
+                                    labelText: 'Nhập lại mất khẩu',
+                                    // Here is key idea
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        // Based on passwordVisible state choose the icon
+                                        _viewModel.passwordVisible
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color:
+                                            Theme.of(context).primaryColorDark,
+                                        size: prefixIconSize(),
+                                      ),
+                                      onPressed: () {
+                                        // Update the state i.e. toogle the state of passwordVisible variable
+                                        setState(() {
+                                          _viewModel.passwordVisible =
+                                              !_viewModel.passwordVisible;
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
@@ -257,42 +325,46 @@ class _RegisterState extends State<Register> implements RegisterView {
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    dangKy(context);
-                  },
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: double.infinity,
-                    margin: EdgeInsets.only(left: 50, right: 50),
-                    padding: EdgeInsets.all(15),
-                    decoration: getDecorationInput(color: Colors.blue),
-                    child: Text(
-                      "Đăng ký",
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 15,
-                )
-              ],
-            ),
-          ),
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("assets/images/bluebackground.png"),
-                  fit: BoxFit.fill)),
-          padding: EdgeInsets.all(15)),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (widget.keyCheck == Register.REGISTER)
+                          register(context);
+                        else
+                          createPersonnel(context);
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: 200,
+                        padding: EdgeInsets.only(top: 13, bottom: 13),
+                        decoration: getDecorationInput(color: Colors.blue),
+                        child: Text(
+                          widget.keyCheck == Register.REGISTER
+                              ? "Đăng ký"
+                              : widget.keyCheck == Register.ADD_PERSONEL
+                                  ? "Thêm nhân viên"
+                                  : "Sửa tài khoản",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  )
+                ],
+              ),
+            )),
+      ],
     );
   }
 
@@ -308,10 +380,10 @@ class _RegisterState extends State<Register> implements RegisterView {
           borderRadius: BorderRadius.all(Radius.circular(40)),
           boxShadow: [
             BoxShadow(
-                color: Colors.grey[600],
+                color: Colors.grey,
                 spreadRadius: 1,
                 blurRadius: 4,
-                offset: Offset(2, 2)),
+                offset: Offset(3, 3)),
           ]);
     else
       return BoxDecoration(
@@ -334,16 +406,25 @@ class _RegisterState extends State<Register> implements RegisterView {
             onTap: () {
               openImageonCamera();
             },
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.blue,
-                  border: Border.all(color: Colors.blue, width: 3),
-                  borderRadius: BorderRadius.all(Radius.circular(70))),
-              child: CircleAvatar(
-                radius: 70,
-                backgroundImage: _viewModel.avatarImage != null
-                    ? _viewModel.avatarImage
-                    : AssetImage("assets/images/defAvatar.png"),
+            child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(70),
+                ),
+              ),
+              child: Container(
+                padding: EdgeInsets.all(5),
+                child: widget.key != Register.DETAIL
+                    ? CircleAvatar(
+                        radius: 60,
+                        backgroundImage: _viewModel.avatarImage != null
+                            ? _viewModel.avatarImage
+                            : AssetImage("assets/images/defAvatar.png"),
+                      )
+                    : FadeInImage.assetNetwork(
+                        placeholder: "assets/images/defAvatar.png",
+                        image: Common.rootUrl + Common.user["image"]),
               ),
             ),
           ),
@@ -389,7 +470,7 @@ class _RegisterState extends State<Register> implements RegisterView {
 
   String _validateUsername(String value) {
     if (value.length > 0) return null;
-    return "Nhập thiếu Username";
+    return "Nhập thiếu Tên người dùng";
   }
 
   String _validatePassword(String value) {
@@ -402,8 +483,8 @@ class _RegisterState extends State<Register> implements RegisterView {
     return null;
   }
 
-  void dangKy(BuildContext context) {
-    if (_key.currentState.validate()) _presenter.dangKy();
+  void register(BuildContext context) {
+//    if (_key.currentState.validate()) _presenter.register();
   }
 
   void openImageonCamera() {
@@ -425,5 +506,25 @@ class _RegisterState extends State<Register> implements RegisterView {
     if (_viewModel.context != null) {
       Navigator.pop(_viewModel.context, value);
     }
+  }
+
+  @override
+  void showSnackbar(String mess, String status) {
+    // TODO: implement showSnackbar
+    _keyS.currentState.showSnackBar(
+      new SnackBar(
+        content: Text(mess),
+        duration: Duration(seconds: 2),
+        backgroundColor: status == "w" ? Colors.red : Colors.blue,
+      ),
+    );
+  }
+
+  prefixIconSize() {
+    return 17.0;
+  }
+
+  void createPersonnel(BuildContext context) {
+    if (_key.currentState.validate()) _presenter.createPersonnel();
   }
 }

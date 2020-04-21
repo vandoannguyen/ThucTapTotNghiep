@@ -50,13 +50,25 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
       option: IntentAnimationOption.RIGHT_TO_LEFT,
       duration: Duration(milliseconds: 500),
     );
-    if (sp != null &&
-        _viewmodel.listMerchandis
-                .where((element) => element["barcode"] == sp["barcode"])
-                .length ==
-            0) {
-      sp["countsp"] = 1;
-      _viewmodel.listMerchandis.add(sp);
+    if (sp != null) {
+      if (_viewmodel.listMerchandis
+              .where((element) => element["barcode"] == sp["barcode"])
+              .length ==
+          0) {
+        sp["countsp"] = 1;
+        _viewmodel.listMerchandis.add(sp);
+      }
+      if (_viewmodel.listMerchandis
+              .where((element) => element["barcode"] == sp["barcode"])
+              .length >
+          0) {
+        _viewmodel.listMerchandis = _viewmodel.listMerchandis.map((element) {
+          if (element["barcode"] == sp["barcode"]) {
+            element["countsp"]++;
+          }
+          return element;
+        }).toList();
+      }
       getSink(MERCHANDISE).add(new BlocLoaded(_viewmodel.listMerchandis));
       calculateTotalMerchandises();
       calculateTotalPrice();
@@ -69,10 +81,34 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
         (element) => element["barcode"] == barcode,
         orElse: () => null);
     if (merchandis != null) {
-      merchandis["countsp"] = 1;
-      _viewmodel.listMerchandis.add(merchandis);
-      getSink(MERCHANDISE).add(new BlocLoaded(_viewmodel.listMerchandis));
+      print(
+          "00000000000000${_viewmodel.listMerchandis.where((element) => element["barcode"] == merchandis["barcode"]).length}");
+      if (_viewmodel.listMerchandis
+              .where((element) => element["barcode"] == merchandis["barcode"])
+              .length ==
+          0) {
+        merchandis["countsp"] = 1;
+        _viewmodel.listMerchandis.add(merchandis);
+      } else {
+        _viewmodel.listMerchandis = _viewmodel.listMerchandis.map((element) {
+          if (element["barcode"] == merchandis["barcode"]) {
+            if (element["countsp"] + 1 > element["count"]) {
+              _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+                content: Text("Nhập quá số lượng!"),
+                elevation: 4,
+                backgroundColor: Colors.red,
+              ));
+            } else {
+              element["countsp"]++;
+            }
+          }
+          return element;
+        }).toList();
+      }
     }
+    getSink(MERCHANDISE).add(new BlocLoaded(_viewmodel.listMerchandis));
+    calculateTotalMerchandises();
+    calculateTotalPrice();
   }
 
   void chietKhauSubmitted(String value) {
@@ -87,7 +123,7 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
     dynamic bill = {
       "listMer": _viewmodel.listMerchandis,
       "name": "OUT${DateTime.now().millisecondsSinceEpoch}",
-      "status": 0,
+      "status": 1,
       "idSeller": Common.user["idUser"],
       "dateCreate": DateTime.now().toIso8601String().replaceFirst("T", " "),
       "discount": double.parse(_viewmodel.chietKhauController.text == ''
@@ -139,7 +175,7 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
     dynamic bill = {
       "listMer": _viewmodel.listMerchandis,
       "name": "IN${DateTime.now().millisecondsSinceEpoch}",
-      "status": 1,
+      "status": 0,
       "idSeller": Common.user["idUser"],
       "dateCreate": DateTime.now().toIso8601String().replaceFirst("T", " "),
       "discount": double.parse(_viewmodel.chietKhauController.text == ''

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/utils/BasePresenter.dart';
 import 'package:init_app/utils/CallNativeUtils.dart';
@@ -19,7 +20,7 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
     appDataHelper = new AppDataHelper();
   }
 
-  void dangKy() {
+  void register() {
     dynamic data = {
       "username": _viewModel.usernameController.text,
       "password": _viewModel.passwordController.text,
@@ -32,7 +33,28 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
     appDataHelper.registerAccount(jsonEncode(data)).then((onvalue) {
       print(onvalue);
       baseView.backView(data);
+      print(onvalue);
     }).catchError((err) {
+      baseView.showSnackbar(err, "w");
+    });
+  }
+
+  void createPersonnel() {
+    dynamic data = {
+      "username": _viewModel.usernameController.text,
+      "password": _viewModel.passwordController.text,
+      "email": _viewModel.emailController.text,
+      "name": _viewModel.fullNameController.text,
+      "image": _viewModel.avatarImage != null ? _viewModel.base64Image : "",
+      "role": "1",
+      "idShop": Common.selectedShop["idShop"],
+      "status": 1
+    };
+    print(data);
+    appDataHelper.createPersonnel(jsonEncode(data)).then((onvalue) {
+      baseView.backView(data);
+    }).catchError((err) {
+//      if(err["message"])
       print(err);
     });
   }
@@ -45,7 +67,8 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
   }
 
   void getImage(calback) async {
-    File image = await ImagePicker.pickImage(source: ImageSource.camera);
+    File image = await ImagePicker.pickImage(
+        source: ImageSource.camera, maxHeight: 640, maxWidth: 480);
     _viewModel.avatarImage = FileImage(image);
     List<int> imageBytes = image.readAsBytesSync();
     print(imageBytes);
@@ -75,5 +98,10 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
     if (_viewModel.fcUsername != null) _viewModel.fcUsername.dispose();
     if (_viewModel.fcPassword != null) _viewModel.fcPassword.dispose();
     if (_viewModel.fcName != null) _viewModel.fcName.dispose();
+  }
+
+  void setEnableEdit() {
+    _viewModel.enableEdit = true;
+    baseView.updateUI({});
   }
 }

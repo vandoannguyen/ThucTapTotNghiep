@@ -133,14 +133,13 @@ function getBills(data) {
             });
         }
         if (data["user"]["idRole"] == 1) {
-            var query = "SELECT * FROM bill WHERE dateCreate BETWEEN ? AND ? And idShop=? ";
+            var query = "SELECT * FROM bill WHERE dateCreate BETWEEN ? AND ? And idShop=? AND idSeller=? ";
             if (status == 0 || status == 1)
                 query += ("AND status=" + status + " ");
             pool.query(query, [statDate, endDate, data["idShop"], data["user"]["idUser"]], (err, result) => {
                 if (err) {
                     console.log(err);
                     reject(err);
-                    throw err;
                 }
                 else {
                     console.log(result);

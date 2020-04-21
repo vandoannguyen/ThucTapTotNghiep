@@ -166,7 +166,7 @@ class _BillPageState extends State<BillPage> implements BaseView {
                                     ? Text("")
                                     : snap.data is BlocLoaded
                                         ? Text(
-                                            "${Common.CURRENCY_FORMAT.format(getTongTien(snap.data.value))}")
+                                            "${Common.CURRENCY_FORMAT.format(getTongTien(snap.data.value))} vnd")
                                         : Text("")
                               ],
                             ),

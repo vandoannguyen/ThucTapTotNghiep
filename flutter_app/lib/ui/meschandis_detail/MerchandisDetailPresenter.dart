@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,6 +7,7 @@ import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/ui/meschandis_detail/MechandisDetail.dart';
 import 'package:init_app/ui/meschandis_detail/MerchandiseView.dart';
 import 'package:init_app/utils/BasePresenter.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 import 'package:qrscan/qrscan.dart' as scan;
 
@@ -18,8 +18,11 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
   MerchandiseDetailViewModel _viewModel;
   IAppDataHelper appDataHelper;
 
-  MerchandiseDetailPresenter(this._viewModel) {
+  static final String SET_AVATAR = "SET_AVATAR";
+
+  MerchandiseDetailPresenter(this._viewModel) : super() {
     appDataHelper = new AppDataHelper();
+    addStreamController(SET_AVATAR);
   }
 
   void showBarcode() async {
@@ -31,12 +34,15 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
   }
 
   void getAvatar() async {
-    File image = await ImagePicker.pickImage(source: ImageSource.camera);
-    _viewModel.avatarImage = FileImage(image);
-    List<int> imageBytes = image.readAsBytesSync();
-    print(imageBytes);
-    _viewModel.base64Image = base64Encode(imageBytes);
-    baseView.updateUI({});
+    ImagePicker.pickImage(
+            source: ImageSource.camera, maxHeight: 360, maxWidth: 480)
+        .then((image) {
+      _viewModel.avatarImage = FileImage(image);
+      List<int> imageBytes = image.readAsBytesSync();
+      _viewModel.base64Image = base64Encode(imageBytes);
+      getSink(SET_AVATAR).add(new BlocSetFile(_viewModel.avatarImage));
+//      baseView.updateUI({});
+    });
   }
 
   void getCategory() async {
@@ -175,4 +181,10 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
       }
     });
   }
+}
+
+class BlocSetFile extends BlocEvent {
+  FileImage value;
+
+  BlocSetFile(this.value);
 }

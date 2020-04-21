@@ -54,14 +54,17 @@ class _ListMerchandisState extends State<ListMerchandis>
         title: Text("Danh sách sản phẩm"),
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              addMerchandise(context);
-            },
-            icon: Icon(
-              Icons.add,
-              size: 25,
-              color: Colors.white,
+          Visibility(
+            visible: Common.user["idRole"] == 2,
+            child: IconButton(
+              onPressed: () {
+                addMerchandise(context);
+              },
+              icon: Icon(
+                Icons.add,
+                size: 25,
+                color: Colors.white,
+              ),
             ),
           ),
           IconButton(
@@ -165,21 +168,23 @@ class _ListMerchandisState extends State<ListMerchandis>
         selectCategory(index);
       },
       child: Card(
-        elevation: 3,
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20))),
         color: _viewModel.categories[index]["selected"]
             ? Colors.blue
             : Colors.white,
         child: Container(
-          height: 40,
           alignment: Alignment.center,
-          padding: EdgeInsets.all(10),
+          height: 20,
+          padding: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
           child: Text(
             "${_viewModel.categories[index]["nameCategory"]}",
             style: TextStyle(
                 color: _viewModel.categories[index]["selected"]
                     ? Colors.white
                     : Colors.blue,
-                fontSize: 17),
+                fontSize: 15),
           ),
         ),
       ),
@@ -195,6 +200,7 @@ class _ListMerchandisState extends State<ListMerchandis>
         clipBehavior: Clip.antiAlias,
         elevation: 4,
         child: Container(
+          height: 90,
           color: Colors.transparent,
           padding: EdgeInsets.all(10),
           child: Row(
@@ -202,26 +208,38 @@ class _ListMerchandisState extends State<ListMerchandis>
               Container(
                 height: 70,
                 width: 70,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, blurRadius: 7, offset: Offset(4, 4))
+                  ],
+                ),
                 child: _viewModel.selectedListMerchandise[index]["image"] != ''
-                    ? FadeInImage.assetNetwork(
-                        image: Common.rootUrl +
-                            _viewModel.selectedListMerchandise[index]["image"],
-                        placeholder: "assets/images/default_image.png",
-                        fit: BoxFit.cover,
-                        height: Common.heightOfScreen / 10,
-                        width: Common.heightOfScreen / 10,
-                      )
-                    : Image.asset(
-                        "assets/images/default_image.png",
-                        height: Common.heightOfScreen / 10,
-                        width: Common.heightOfScreen / 10,
-                        fit: BoxFit.fill,
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: FadeInImage.assetNetwork(
+                          image: Common.rootUrl +
+                              _viewModel.selectedListMerchandise[index]
+                                  ["image"],
+                          placeholder: "assets/images/default_image.png",
+                          fit: BoxFit.cover,
+                          height: Common.heightOfScreen / 10,
+                          width: Common.heightOfScreen / 10,
+                        ))
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          "assets/images/default_image.png",
+                          height: Common.heightOfScreen / 10,
+                          width: Common.heightOfScreen / 10,
+                          fit: BoxFit.fill,
+                        ),
                       ),
               ),
               SizedBox(
                 width: 10,
               ),
-              Container(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -229,25 +247,77 @@ class _ListMerchandisState extends State<ListMerchandis>
                     Text(
                       "${_viewModel.selectedListMerchandise[index]["nameMerchandise"]}",
                       style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w600),
+                          fontSize: 18,
+                          color: Colors.blueGrey,
+                          fontWeight: FontWeight.w400),
                     ),
                     Container(
                       child: Row(
                         children: <Widget>[
                           Text(
-                            "Có thể bán: ",
-                            style: TextStyle(fontSize: 13, color: Colors.grey),
+                            "Số lượng: ",
+                            style: TextStyle(fontSize: 11, color: Colors.grey),
                           ),
                           Text(
                             "${_viewModel.selectedListMerchandise[index]["count"]}",
-                            style: TextStyle(fontSize: 13, color: Colors.blue),
+                            style: TextStyle(fontSize: 11, color: Colors.blue),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                Image.asset(
+                                  "assets/icons/in_price.png",
+                                  width: 15,
+                                  height: 15,
+                                  fit: BoxFit.fill,
+                                ),
+                                Text(
+                                  "${Common.CURRENCY_FORMAT.format(_viewModel.selectedListMerchandise[index]["inputPrice"])} VND",
+                                  style: textItemPriceMerchandise(),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 50,
+                          ),
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                Image.asset(
+                                  "assets/icons/out_price.png",
+                                  width: 15,
+                                  height: 15,
+                                  fit: BoxFit.fill,
+                                ),
+                                Text(
+                                  "${Common.CURRENCY_FORMAT.format(_viewModel.selectedListMerchandise[index]["outputPrice"])} VND",
+                                  style: textItemPriceMerchandise(),
+                                )
+                              ],
+                            ),
                           )
                         ],
                       ),
                     )
                   ],
+                ),
+              ),
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                child: Container(
+                  child: Icon(
+                    Icons.navigate_next,
+                    color: Colors.blueGrey,
+                  ),
                 ),
               )
             ],
@@ -291,5 +361,9 @@ class _ListMerchandisState extends State<ListMerchandis>
 
   void addMerchandise(context) {
     _presenter.addMerchandise(context);
+  }
+
+  textItemPriceMerchandise() {
+    return TextStyle(fontSize: 11, color: Colors.black45);
   }
 }

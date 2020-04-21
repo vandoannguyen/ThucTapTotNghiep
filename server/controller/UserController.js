@@ -25,30 +25,12 @@ async function createUser(req, res) {
                         success: true,
                     })
                 }).catch((err) => {
-                    res.json({
-                        message: "Can not create user " + err,
-                        success: false
+                    res.status(400).json({
+                        error: "Username đã tồn tại"
                     })
                 })
             }
         });
-        // var imageInfo = base64ToImage(req.body["image"].toString(), path, optionalObj);
-        // console.log(imageInfo);
-
-        // Note base64ToImage function returns imageInfo which is an object with imageType and fileName.
-
-        // req.body["image"] = i
-        // userModel.createUser(req.body).then((value) => {
-        //     res.json({
-        //         message: "Create user success",
-        //         success: true,
-        //     })
-        // }).catch((err) => {
-        //     res.json({
-        //         message: "Can not create user " + err,
-        //         success: false
-        //     })
-        // })
     }
     else
         req.body["image"] = "";
@@ -58,9 +40,8 @@ async function createUser(req, res) {
             success: true,
         })
     }).catch((err) => {
-        res.json({
-            message: "Can not create user " + err,
-            success: false
+        res.status(400).json({
+            error: "Username đã tồn tại"
         })
     })
 }
@@ -74,6 +55,14 @@ async function userLogin(req, res) {
                 if (result[0]["idRole"] == 2) {
                     result[0]["password"] = req.body["password"];
                     shops = await shopModel.getListShop(result[0]["idUser"]);
+                }
+                else {
+                    if (result[0]["idRole"] == 1) {
+                        result[0]["password"] = req.body["password"];
+                        var personnel = await userModel.getPersonnel(result[0]["idUser"])
+                        shops = await shopModel.getShop(personnel["idShop"]);
+                        console.log(shops);
+                    }
                 }
                 var token = jwt.sign(req.body, 'token', { expiresIn: "3h" });
                 res.status(200);
@@ -118,12 +107,77 @@ async function getUser(req, res) {
     }).catch((err) => {
         console.log("err", err);
         res.json(err);
-        res,status(200);
+        res, status(200);
     });
+}
+async function createPersonnel(req, res) {
+    if (req.body["image"] != null && req.body["image"] != "") {
+        var path = './public';
+        var optionalObj = { 'fileName': "image" + Date.now(), 'type': 'png' };
+        var base64Data = req.body["image"].replace(/^data:image\/png;base64,/, "");
+        var imageName = "/upload/" + "image" + Date.now() + ".png";
+        require("fs").writeFile(path + imageName, base64Data, 'base64', function (err) {
+            if (err) res.json({ status: 500, message: err })
+            else {
+                console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo2");
+
+                req.body["image"] = imageName;
+                userModel.createUser(req.body).then((value) => {
+                    console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo1");
+                    userModel.getUser(req.body["username"]).then((valuee) => {
+                        console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo");
+                        console.log(valuee);
+                        req.body["idUser"] = valuee[0]["idUser"];
+                        userModel.createPersonnel(req.body).then((value) => {
+                            res.json({
+                                message: "Create user success",
+                                success: true,
+                            })
+                        }).catch((err) => {
+                            res.status(400).json({ error: "Username đã tồn tại" });
+                        });
+                    })
+
+                }).catch((err) => {
+                    res.status(400).json({ error: "Username đã tồn tại" });
+                })
+            }
+        });
+    }
+    else {
+        req.body["image"] = "";
+        userModel.createUser(req.body).then((value) => {
+            userModel.getUser(req.body["username"]).then((valuee) => {
+                console.log(valuee);
+                req.body["idUser"] = valuee[0]["idUser"];
+                userModel.createPersonnel(req.body).then((value) => {
+                    res.json({
+                        message: "Create user success",
+                        success: true,
+                    })
+                }).catch((err) => {
+                    res.status(400).json({ error: "Username đã tồn tại" });
+                });
+            })
+        }).catch((err) => {
+            res.status(400).json({ error: "Username đã tồn tại" });
+        })
+    }
+}
+
+async function getpersonnels(req, res) {
+    userModel.getpersonnels(req.query.idShop).then((value) => {
+        console.log(value);
+        res.status(200).json(value);
+    }).catch(err => {
+        res.status(400).json(err);
+    })
 }
 module.exports = {
     userLogin: userLogin,
     createUser: createUser,
     changePass: changePass,
     getUser: getUser,
+    createPersonnel: createPersonnel,
+    getpersonnels: getpersonnels,
 }

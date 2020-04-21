@@ -7,7 +7,7 @@ import 'package:init_app/utils/BaseView.dart';
 import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
-import 'ListBill.dart';
+import '../list_bill/ListBill.dart';
 
 class BillPagePresenter extends BasePresenter {
   BillPageViewModel _viewModel;
@@ -35,10 +35,11 @@ class BillPagePresenter extends BasePresenter {
   }
 
   void getBillCurrentDay() {
+    print("getBillCurrentDay");
     getSink(CURRENT_BILLS).add(new BlocLoading());
     appDataHelper
         .getBillByDay(
-            Common.selectedShop["idShop"], DateTime.now(), DateTime.now(), 0)
+            Common.selectedShop["idShop"], DateTime.now(), DateTime.now(), 1)
         .then((value) {
       print(value);
       _viewModel.listBill = value;
@@ -46,6 +47,7 @@ class BillPagePresenter extends BasePresenter {
 //      baseView.updateUI({});
     }).catchError((onError) {
       getSink(CURRENT_BILLS).add(new BlocFailed(onError));
+      print(onError);
     });
   }
 

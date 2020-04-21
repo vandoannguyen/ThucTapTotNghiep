@@ -58,9 +58,18 @@ function deleteShop(id) {
         });
     })
 }
-
+function getShop(idShop) {
+    return new Promise((reslove, reject) => {
+        pool.query("SELECT * FROM shop WHERE idShop=?", [idShop], (err, rows) => {
+            if (err)
+                reject(err);
+            else reslove(rows);
+        })
+    })
+}
 module.exports = {
     createShop: createShop,
     getListShop: getListShop,
     updateShop: updateShop,
+    getShop: getShop,
 }

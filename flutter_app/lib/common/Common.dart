@@ -17,6 +17,7 @@ class Common {
   static var widthOfScreen = 0.0;
   static final CURRENCY_FORMAT = NumberFormat("#,###,###,##0", "en_US");
   static final String KEY_CHECK_CREATE_SHOP = "create";
+  static dynamic personnels = [];
 
   static String DATE_FORMAT(DateTime dateTime) {
     return new DateFormat("dd/MM/yyyy").format(dateTime);

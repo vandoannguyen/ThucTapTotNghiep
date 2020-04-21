@@ -3,6 +3,7 @@ import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/ui/category/Category.dart';
 import 'package:init_app/ui/personnel/Personnel.dart';
+import 'package:init_app/ui/register/Register.dart';
 import 'package:init_app/ui/shop/ShopDetail.dart';
 import 'package:init_app/utils/BasePresenter.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
@@ -142,4 +143,12 @@ class MorePresenter<V extends MoreView> extends BasePresenter<V> {
 
   @override
   V baseView;
+
+  void clickAccountDetail(context) {
+    IntentAnimation.intentNomal(
+        context: context,
+        screen: Register(Register.DETAIL),
+        option: IntentAnimationOption.RIGHT_TO_LEFT,
+        duration: Duration(milliseconds: 500));
+  }
 }

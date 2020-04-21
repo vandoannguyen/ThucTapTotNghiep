@@ -7,13 +7,20 @@ class RegisterViewModel {
       emailController,
       passwordController,
       confirmPassController;
-  var avatarImage;
+  FileImage avatarImage;
 
   var passwordVisible = false;
 
   String base64Image = "";
 
   BuildContext context;
+
+  String keyCheck = "";
+
+  bool comfirmPassVisibile = true;
+
+  bool enableEdit = true;
+
   RegisterViewModel() {
     fcName = new FocusNode();
     fcEmail = new FocusNode();

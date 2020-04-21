@@ -47,31 +47,29 @@ class ApiHelper implements IApiHelper {
   @override
   Future getBillByDay(idShop, startDate, endDate, status) {
     Completer com = new Completer();
-    if (Common.user["idRole"] == 2) {
-      var now = new DateTime.now();
-      print(now.toIso8601String());
-      http
-          .post("${Common.rootUrlApi}bill/getBills",
-              headers: {
-                HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
-                HttpHeaders.contentTypeHeader: 'application/json'
-              },
-              body: jsonEncode({
-                "user": Common.user,
-                "startDate": startDate.toIso8601String().replaceFirst("T", " "),
-                "endDate": endDate.toIso8601String().replaceFirst("T", " "),
-                "status": status,
-                "idShop": idShop
-              }))
-          .then((value) {
-        print(value);
-        if (value.statusCode == 200) {
-          com.complete(jsonDecode(value.body));
-        }
-      }).catchError((err) {
-        com.completeError(err);
-      });
-    }
+    var now = new DateTime.now();
+    print(now.toIso8601String());
+    http
+        .post("${Common.rootUrlApi}bill/getBills",
+            headers: {
+              HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: jsonEncode({
+              "user": Common.user,
+              "startDate": startDate.toIso8601String().replaceFirst("T", " "),
+              "endDate": endDate.toIso8601String().replaceFirst("T", " "),
+              "status": status,
+              "idShop": idShop
+            }))
+        .then((value) {
+      print(value);
+      if (value.statusCode == 200) {
+        com.complete(jsonDecode(value.body));
+      }
+    }).catchError((err) {
+      com.completeError(err);
+    });
     // TODO: implement getBillCurrentDay
     return com.future;
   }
@@ -231,14 +229,18 @@ class ApiHelper implements IApiHelper {
   @override
   Future registerAccount(data) {
     // TODO: implement registerAccount
-    print(data);
     Completer completer = new Completer();
     http.post("${Common.rootUrlApi}register",
         body: data,
         headers: {'content-type': 'application/json'}).then((value) {
-      completer.complete(jsonDecode(value.body));
+      print(value.statusCode);
+      if (value.statusCode == 400) {
+        completer.completeError(jsonDecode(value.body)["error"]);
+      } else
+        completer.complete(jsonDecode(value.body));
     }).catchError((err) {
-      completer.completeError(err);
+      print(err);
+      completer.completeError("err");
     });
     return completer.future;
   }
@@ -327,6 +329,43 @@ class ApiHelper implements IApiHelper {
     }).catchError((err) {
       completer.completeError(err);
       print(err);
+    });
+    return completer.future;
+  }
+
+  @override
+  Future createPersonnel(data) {
+    // TODO: implement createPersonnel
+    print(data);
+    Completer completer = new Completer();
+    http
+        .post("${Common.rootUrlApi}users/createpersonnel",
+            body: data, headers: _getHeader())
+        .then((value) {
+      if (value.statusCode == 200) completer.complete(jsonDecode(value.body));
+      if (value.statusCode == 400) {
+        completer.completeError(jsonDecode(value.body)["error"]);
+      }
+    }).catchError((err) {
+      completer.completeError(err);
+    });
+    return completer.future;
+  }
+
+  @override
+  Future getPersonnels(idShop) {
+    // TODO: implement getPersonnels
+    Completer completer = new Completer();
+    http
+        .get("${Common.rootUrlApi}users/getpersonnels?idShop=$idShop",
+            headers: _getHeader())
+        .then((value) {
+      if (value.statusCode == 200) completer.complete(jsonDecode(value.body));
+      if (value.statusCode == 400) {
+        print("error load data");
+      }
+    }).catchError((err) {
+      completer.completeError(err);
     });
     return completer.future;
   }

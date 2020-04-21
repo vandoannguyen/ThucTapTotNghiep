@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/common/CustomButton.dart';
@@ -38,157 +39,232 @@ class _MorePageState extends State<MorePage> implements MoreView {
       ),
       body: Stack(
         children: <Widget>[
-          SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    child: Row(
-                      children: <Widget>[
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: Common.user["image"] == null ||
-                                  Common.user["image"] == ""
-                              ? AssetImage("assets/images/defAvatar.png")
-                              : NetworkImage(
-                                  Common.rootUrl + Common.user["image"]),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                Common.user["name"],
-                                style: TextStyle(fontSize: 20),
+          Container(
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    children: <Widget>[
+                      Card(
+                        clipBehavior: Clip.antiAlias,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(80))),
+                        child: Common.user["image"] == null ||
+                                Common.user["image"] == ""
+                            ? Image.asset(
+                                "assets/images/defAvatar.png",
+                                height: 80,
+                                width: 80,
+                              )
+                            : FadeInImage.assetNetwork(
+                                placeholder: "assets/images/defAvatar.png",
+                                image: Common.rootUrl + Common.user["image"],
+                                height: 80,
+                                width: 80,
                               ),
-                              Text(Common.user["email"])
-                            ],
-                          ),
-                        )
-                      ],
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              Common.user["name"],
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            Text(Common.user["email"])
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Common.user["idRole"] == 2
+                          ? Column(
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                    child: CustomButton(
+                                  onTap: () {
+                                    nhanVien(context);
+                                  },
+                                  iconLeft: Icons.people,
+                                  colorIconLeft: Colors.blue,
+                                  lable: "Quản lý nhân viên",
+                                  buttonTextStyle: buttonTextStyle(),
+                                )),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                    color: Colors.transparent,
+                                    child: CustomButton(
+                                        iconLeft: Icons.perm_contact_calendar,
+                                        colorIconLeft: Colors.blue,
+                                        lable: "Thông tin tài khoản",
+                                        buttonTextStyle: buttonTextStyle(),
+                                        onTap: () {
+                                          _presenter
+                                              .clickAccountDetail(context);
+                                        })),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                    child: CustomButton(
+                                  onTap: () {
+                                    _presenter.intentThemCuaHang(context);
+                                  },
+                                  perfixIcon: Image.asset(
+                                    "assets/icons/shop.png",
+                                    width: 25,
+                                    height: 25,
+                                  ),
+                                  colorIconLeft: Colors.blue,
+                                  lable: "Thêm cửa hàng",
+                                  buttonTextStyle: buttonTextStyle(),
+                                )),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                    child: CustomButton(
+                                  onTap: () {
+                                    _presenter.intentThongTinCuaHang(context);
+                                  },
+                                  iconLeft: Icons.store,
+                                  colorIconLeft: Colors.blue,
+                                  lable: "Thông tin cửa hàng",
+                                  buttonTextStyle: buttonTextStyle(),
+                                )),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                    child: CustomButton(
+                                  onTap: () {
+                                    _presenter.intentLoaiMatHang(context);
+                                  },
+                                  iconLeft: Icons.category,
+                                  colorIconLeft: Colors.blue,
+                                  lable: "Loại mặt hàng",
+                                  buttonTextStyle: buttonTextStyle(),
+                                )),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                    child: CustomButton(
+                                  onTap: () {
+                                    showDialogChangePass(context);
+                                  },
+                                  iconLeft: Icons.vpn_key,
+                                  colorIconLeft: Colors.blue,
+                                  lable: "Đổi mật khẩu",
+                                  buttonTextStyle: buttonTextStyle(),
+                                )),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                    child: CustomButton(
+                                  onTap: () {
+                                    IntentAnimation.intentPushReplacement(
+                                        context: context,
+                                        screen: Login(),
+                                        exitScreen: widget,
+                                        option: IntentAnimationOption
+                                            .EXIT_LEFT_TO_RIGHT,
+                                        duration: Duration(milliseconds: 500));
+                                  },
+                                  iconLeft: Icons.settings_power,
+                                  colorIconLeft: Colors.blue,
+                                  lable: "Đăng xuất",
+                                  buttonTextStyle: buttonTextStyle(),
+                                )),
+                              ],
+                            )
+                          : Column(
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  child: CustomButton(
+                                      iconLeft: Icons.perm_contact_calendar,
+                                      colorIconLeft: Colors.blue,
+                                      lable: "Thông tin tài khoản",
+                                      buttonTextStyle: buttonTextStyle(),
+                                      onTap: () {
+                                        _presenter.clickAccountDetail(context);
+                                      }),
+                                ),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                    child: CustomButton(
+                                  onTap: () {
+                                    _presenter.intentThongTinCuaHang(context);
+                                  },
+                                  iconLeft: Icons.store,
+                                  colorIconLeft: Colors.blue,
+                                  lable: "Thông tin cửa hàng",
+                                  buttonTextStyle: buttonTextStyle(),
+                                )),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                    child: CustomButton(
+                                  onTap: () {
+                                    showDialogChangePass(context);
+                                  },
+                                  iconLeft: Icons.vpn_key,
+                                  colorIconLeft: Colors.blue,
+                                  lable: "Đổi mật khẩu",
+                                  buttonTextStyle: buttonTextStyle(),
+                                )),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                    child: CustomButton(
+                                  onTap: () {
+                                    IntentAnimation.intentPushReplacement(
+                                        context: context,
+                                        screen: Login(),
+                                        exitScreen: widget,
+                                        option: IntentAnimationOption
+                                            .EXIT_LEFT_TO_RIGHT,
+                                        duration: Duration(milliseconds: 500));
+                                  },
+                                  iconLeft: Icons.settings_power,
+                                  colorIconLeft: Colors.blue,
+                                  lable: "Đăng xuất",
+                                  buttonTextStyle: buttonTextStyle(),
+                                )),
+                              ],
+                            ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                      child: CustomButton(
-                    onTap: () {
-                      nhanVien(context);
-                    },
-                    iconLeft: Icons.people,
-                    colorIconLeft: Colors.blue,
-                    lable: "Quản lý nhân viên",
-                    buttonTextStyle: buttonTextStyle(),
-                  )),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                      child: CustomButton(
-                    iconLeft: Icons.perm_contact_calendar,
-                    colorIconLeft: Colors.blue,
-                    lable: "Thông tin tài khoản",
-                    buttonTextStyle: buttonTextStyle(),
-                  )),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                      child: CustomButton(
-                    onTap: () {
-                      _presenter.intentThemCuaHang(context);
-                    },
-                    perfixIcon: Image.asset(
-                      "assets/icons/shop.png",
-                      width: 25,
-                      height: 25,
-                    ),
-                    colorIconLeft: Colors.blue,
-                    lable: "Thêm cửa hàng",
-                    buttonTextStyle: buttonTextStyle(),
-                  )),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                      child: CustomButton(
-                    onTap: () {
-                      _presenter.intentThongTinCuaHang(context);
-                    },
-                    iconLeft: Icons.store,
-                    colorIconLeft: Colors.blue,
-                    lable: "Thông tin cửa hàng",
-                    buttonTextStyle: buttonTextStyle(),
-                  )),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                      child: CustomButton(
-                    onTap: () {
-                      _presenter.showDialogChangeShop(context);
-                    },
-                    iconLeft: Icons.sync,
-                    colorIconLeft: Colors.blue,
-                    lable: "Đổi cửa hàng",
-                    buttonTextStyle: buttonTextStyle(),
-                  )),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                      child: CustomButton(
-                    onTap: () {
-                      _presenter.intentLoaiMatHang(context);
-                    },
-                    iconLeft: Icons.category,
-                    colorIconLeft: Colors.blue,
-                    lable: "Loại mặt hàng",
-                    buttonTextStyle: buttonTextStyle(),
-                  )),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                      child: CustomButton(
-                    onTap: () {
-                      showDialogChangePass(context);
-                    },
-                    iconLeft: Icons.vpn_key,
-                    colorIconLeft: Colors.blue,
-                    lable: "Đổi mật khẩu",
-                    buttonTextStyle: buttonTextStyle(),
-                  )),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                      child: CustomButton(
-                    onTap: () {
-                      IntentAnimation.intentPushReplacement(
-                          context: context,
-                          screen: Login(),
-                          exitScreen: widget,
-                          option: IntentAnimationOption.EXIT_LEFT_TO_RIGHT,
-                          duration: Duration(milliseconds: 500));
-                    },
-                    iconLeft: Icons.settings_power,
-                    colorIconLeft: Colors.blue,
-                    lable: "Đăng xuất",
-                    buttonTextStyle: buttonTextStyle(),
-                  )),
-                ],
-              ),
+                )
+              ],
             ),
           ),
           Visibility(

@@ -33,36 +33,40 @@ class _MerchandisPageState extends State<MerchandisPage> implements BaseView {
         alignment: Alignment.center,
         child: Column(
           children: <Widget>[
-            GestureDetector(
-              onTap: () {
-                themSanPham(context);
-              },
-              child: Container(
-                color: Colors.transparent,
-                width: Common.widthOfScreen,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(left: 18),
-                      child: Image.asset(
-                        "assets/icons/add_merchandis.png",
-                        height: Common.heightOfScreen / 5,
+            Common.user["idRole"] == 2
+                ? GestureDetector(
+                    onTap: () {
+                      themSanPham(context);
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                      width: Common.widthOfScreen,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(left: 18),
+                            child: Image.asset(
+                              "assets/icons/add_merchandis.png",
+                              height: Common.heightOfScreen / 5,
+                            ),
+                          ),
+                          Text(
+                            "Thêm sản phẩm",
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w700),
+                            textAlign: TextAlign.left,
+                          )
+                        ],
                       ),
                     ),
-                    Text(
-                      "Thêm sản phẩm",
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700),
-                      textAlign: TextAlign.left,
-                    )
-                  ],
-                ),
-              ),
-            ),
+                  )
+                : Container(
+                    child: Image.asset("assets/images/logo.png"),
+                  ),
             SizedBox(
               height: 10,
             ),
