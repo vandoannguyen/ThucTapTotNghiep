@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/src/painting/image_provider.dart';
 
 class ShopDetailViewModel {
@@ -12,6 +13,7 @@ class ShopDetailViewModel {
   FocusNode fcNameShop, fcAdd, fcPhonenum, fcDess;
 
   GlobalKey<FormState> formKey;
+  GlobalKey<ScaffoldState> scaffoldKey;
 
   bool isEditEnable = true;
 
@@ -27,5 +29,6 @@ class ShopDetailViewModel {
     fcPhonenum = new FocusNode();
     fcDess = new FocusNode();
     formKey = new GlobalKey();
+    scaffoldKey = new GlobalKey();
   }
 }

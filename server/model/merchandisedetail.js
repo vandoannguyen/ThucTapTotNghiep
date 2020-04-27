@@ -88,7 +88,7 @@ async function getMerchandiseWillEmpty(params) {
         console.log(params["warningCount"] + "    " +  params["idShop"] + "okok");
         
         var query =
-            "Select idShop, barcode, nameMerchandise, count as countsp, image FROM merchandisedetail where count <= ? and idShop = ?";
+            "Select idShop, barcode, nameMerchandise, inputPrice, outputPrice, count as countsp, image FROM merchandisedetail where count <= ? and idShop = ?";
         pool.query(query, [params["warningCount"], params["idShop"]], (err, rows) => {
             if (err) {
                 reject(err);

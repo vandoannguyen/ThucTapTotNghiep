@@ -12,4 +12,5 @@ router.get("/listshop", authenMiddlware,shopController.getListShop);
 //     image: ''
 //   }
 router.post("/createshop", authenMiddlware, shopController.createShop);
+router.post("/updateshop", authenMiddlware, shopController.updateShop);
 module.exports = router;

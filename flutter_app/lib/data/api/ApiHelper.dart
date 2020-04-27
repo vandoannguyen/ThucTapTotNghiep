@@ -219,7 +219,11 @@ class ApiHelper implements IApiHelper {
             },
             body: jsonEncode({"idUser": idUser, "password": password}))
         .then((value) {
-      completer.complete(jsonDecode(value.body));
+      if (value.statusCode == 200) {
+        completer.complete(jsonDecode(value.body));
+      } else {
+        completer.completeError(jsonDecode(value.body));
+      }
     }).catchError((err) {
       completer.completeError(err);
     });
@@ -405,6 +409,30 @@ class ApiHelper implements IApiHelper {
       }
     }).catchError((onError) {
       completer.completeError(onError);
+    });
+    return completer.future;
+  }
+
+  @override
+  Future updateShop(data) {
+    Completer completer = new Completer();
+    http
+        .post("${Common.rootUrlApi}shop/updateShop",
+            headers: {
+              HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: jsonEncode(data))
+        .then((value) {
+      if (value.statusCode == 200) {
+        completer.complete("Cập nhật thông tin thành công");
+      }
+      if (value.statusCode == 400) {
+        completer.completeError("Cập nhật thông tin không thành công!");
+      }
+    }).catchError((err) {
+      completer.completeError("Cập nhật thông tin không thành công!");
+      print(err);
     });
     return completer.future;
   }

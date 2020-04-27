@@ -87,12 +87,13 @@ async function userLogin(req, res) {
 }
 async function changePass(req, res) {
     userModel.changePass(req.body).then((value) => {
+        console.log(value);
         res.status(200);
         if (value["affectedRows"] > 0) {
-            res.status(200).json({ "mess": "Đổi mật khẩu thành công" })
+            res.status(200).json({ "message": "Đổi mật khẩu thành công" })
         }
         else {
-            res.status(400).json("Đổi mật khẩu không thành công");
+            res.status(400).json({"message":"Đổi mật khẩu không thành công"});
         }
         // res.json(
         //     { "status": 200, "message": value["affectedRows"] > 0 ? "OK" : "NOT_OK" }
@@ -100,7 +101,7 @@ async function changePass(req, res) {
     }).catch((err) => {
         console.log(err);
         res.status(400);
-        res.status(400).json("Đổi mật khẩu không thành công");
+        res.status(400).json({"message":"Đổi mật khẩu không thành công"});
     });
 
 }

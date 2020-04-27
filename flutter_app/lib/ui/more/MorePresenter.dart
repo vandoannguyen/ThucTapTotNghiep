@@ -36,11 +36,10 @@ class MorePresenter<V extends MoreView> extends BasePresenter<V> {
         .then((value) {
       _viewModel.isLoading = false;
       baseView.updateUI({});
-      value["message"] == "OK"
-          ? showSnackBar(color: Colors.blue, mess: "Đổi mật khẩu thành công")
-          : showSnackBar(
-              color: Colors.red, mess: "Đổi mật khẩu không thành công");
+      showSnackBar(color: Colors.blue, mess: "Đổi mật khẩu thành công");
     }).catchError((err) {
+      showSnackBar(
+          color: Colors.red, mess: "Đổi mật khẩu không thành công");
       print(err);
       _viewModel.isLoading = false;
       baseView.updateUI({});
@@ -118,7 +117,8 @@ class MorePresenter<V extends MoreView> extends BasePresenter<V> {
   void showDialogChangeShop(BuildContext context) {
     showDialog(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) =>
+            AlertDialog(
               title: Text("Danh sách loại mặt hàng"),
               actions: <Widget>[
                 GestureDetector(

@@ -82,9 +82,9 @@ class ListBillPresenter<V extends ListBillView> extends BasePresenter<V> {
               getSink(DAY_OF_WEEK).add(new BlocLoaded(
                   {"firstDay": _viewModel.firstDay, "endDay": value}));
               getListBill(_viewModel.firstDay, value);
+            } else {
+              baseView.showMess(false, "Vui lòng chọn lại ngày");
             }
-          } else {
-            baseView.showMess(false, "Vui lòng chọn lại ngày");
           }
         });
   }

@@ -13,6 +13,7 @@ class FillDate extends StatelessWidget {
 
   FillDate(this.data, this._viewModel,
       {this.onClickFromDate, this.onClickToDate});
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -74,40 +75,51 @@ class FillDate extends StatelessWidget {
                 onClickFromDate();
               }
             },
-            child: Container(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  children: <Widget>[
-                    Icon(Icons.date_range),
-                    Text(
-                      "${date_format}",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                  ],
-                )),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Container(
+                  padding:
+                      EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.date_range),
+                      Text(
+                        "${date_format}",
+                        style: TextStyle(fontSize: 13),
+                      ),
+                    ],
+                  )),
+            ),
           ),
           Container(
             child: Text("-"),
           ),
           GestureDetector(
-            onTap: () {
-              if (onClickToDate != null) {
-                onClickToDate();
-              }
-            },
-            child: Container(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: <Widget>[
-                  Icon(Icons.date_range),
-                  Text(
-                    "${date_format2}",
-                    style: TextStyle(fontSize: 13),
-                  )
-                ],
-              ),
-            ),
-          )
+              onTap: () {
+                if (onClickToDate != null) {
+                  onClickToDate();
+                }
+              },
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                child: Container(
+                  padding:
+                      EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.date_range),
+                      Text(
+                        "${date_format2}",
+                        style: TextStyle(fontSize: 13),
+                      )
+                    ],
+                  ),
+                ),
+              ))
         ],
       ),
     );

@@ -58,7 +58,7 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
     appDataHelper
         .getBestSeller(
             Common.selectedShop["idShop"],
-            5,
+            10,
             _viewModel.firstDay.toIso8601String().replaceFirst("T", " "),
             _viewModel.endDay.toIso8601String().replaceFirst("T", " "))
         .then((value) {

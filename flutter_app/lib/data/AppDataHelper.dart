@@ -182,4 +182,10 @@ class AppDataHelper implements IAppDataHelper {
     // TODO: implement deletePersonnel
     return apiHelper.deletePersonnel(idUser);
   }
+
+  @override
+  Future updateShop(data) {
+    // TODO: implement updateShop
+    return apiHelper.updateShop(data);
+  }
 }

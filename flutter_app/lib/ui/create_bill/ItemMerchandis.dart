@@ -149,11 +149,16 @@ class _ItemMerchandisState extends State<ItemMerchandis> {
 
   void pressAdd(context) {
     setState(() {
-      if (widget.viewmodel.listMerchandis[widget.index]["countsp"] <
-          widget.viewmodel.listMerchandis[widget.index]["count"])
+      if (widget.viewmodel.keyCheck ==
+          CreateBill.KEY_CHECK_EXPORT_MERCHANDISE) {
+        if (widget.viewmodel.listMerchandis[widget.index]["countsp"] >
+            widget.viewmodel.listMerchandis[widget.index]["count"]) {
+          showAlertTypeOverload(context, "Quá số lượng trong kho");
+        } else {
+          widget.viewmodel.listMerchandis[widget.index]["countsp"]++;
+        }
+      } else {
         widget.viewmodel.listMerchandis[widget.index]["countsp"]++;
-      else {
-        showAlertTypeOverload(context, "Quá số lượng trong kho");
       }
     });
     widget.onPressButton();

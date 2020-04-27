@@ -8,8 +8,8 @@ class Common {
 //  static var rootUrlApi = "https://thuc-tap-tot-nhiep.herokuapp.com/api/";
 //  static var rootUrl = "https://thuc-tap-tot-nhiep.herokuapp.com/";
 
-  static var rootUrlApi = "https://192.168.0.102:3000/api/";
-  static var rootUrl = "https://192.168.0.102:3000/";
+  static var rootUrlApi = "http://192.168.0.102:3000/api/";
+  static var rootUrl = "http://192.168.0.102:3000/";
 
   static String loginToken = "";
   static dynamic user = {};

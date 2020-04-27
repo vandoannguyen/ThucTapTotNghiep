@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
+import 'package:init_app/ui/merchandise_status_more/MerchandiseStatusMore.dart';
 import 'package:init_app/utils/BlogEvent.dart';
+import 'package:init_app/utils/IntentAnimation.dart';
 
 // ignore: must_be_immutable
 class MerchandiseStatus extends StatelessWidget {
@@ -17,15 +19,44 @@ class MerchandiseStatus extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.all(10),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              keyCheck == MerchandiseStatus.WARNING
-                  ? "HÀNG SẮP HẾT"
-                  : "HÀNG BÁN CHẠY",
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-            ),
-          ),
+              padding: EdgeInsets.only(left: 10),
+              alignment: Alignment.centerLeft,
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    keyCheck == MerchandiseStatus.WARNING
+                        ? "HÀNG SẮP HẾT"
+                        : "HÀNG BÁN CHẠY",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                  Expanded(
+                    child: Container(),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      if (keyCheck == INFOR) {
+                        IntentAnimation.intentNomal(
+                            context: context,
+                            screen: MerchandiseStatusMore(
+                                keyCheck: MerchandiseStatusMore.INFOR,
+                                value: data.value),
+                            option: IntentAnimationOption.RIGHT_TO_LEFT,
+                            duration: Duration(milliseconds: 500));
+                      }
+                      if (keyCheck == WARNING) {
+                        IntentAnimation.intentNomal(
+                            context: context,
+                            screen: MerchandiseStatusMore(
+                                keyCheck: MerchandiseStatusMore.WARNING,
+                                value: data.value),
+                            option: IntentAnimationOption.RIGHT_TO_LEFT,
+                            duration: Duration(milliseconds: 500));
+                      }
+                    },
+                    icon: Icon(Icons.more_vert),
+                  )
+                ],
+              )),
           Card(
             elevation: 4,
             child: data is BlocLoading
@@ -49,7 +80,8 @@ class MerchandiseStatus extends StatelessWidget {
                             ),
                         itemBuilder: (ctx, index) => ItemView(
                             keyCheck: keyCheck, value: data.value[index]),
-                        itemCount: data.value.length)
+                        itemCount:
+                            data.value.length < 3 ? data.value.length : 3)
                     : data is BlocFailed
                         ? Container(
                             padding: EdgeInsets.only(top: 10, bottom: 10),

@@ -25,6 +25,7 @@ class CategoryPresenter<V extends CategoryView> extends BasePresenter<V> {
         .then((value) {
       print(value);
       _viewModel.danhSachLoaiMatHang = value;
+      Common.categories = value;
       getSink(LIST_CATEGORY).add(BlocLoaded(value));
     }).catchError((err) {
       print(err);

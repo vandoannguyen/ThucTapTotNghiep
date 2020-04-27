@@ -8,10 +8,11 @@ import 'ShopDetailViewModel.dart';
 
 class ShopDetail extends StatefulWidget {
   var keyCheck, value;
-
+  static const String DETAIL = "detail";
+  static const String CREATE = "create";
   ShopDetail({@required this.keyCheck, this.value}) {
     if (keyCheck == null) throw "keyChack mush not be null";
-    if (keyCheck != "create" && (value == null || value == {}))
+    if (keyCheck != CREATE && (value == null || value == {}))
       throw "value mush not be null";
   }
 
@@ -31,7 +32,7 @@ class _ShopDetailState extends State<ShopDetail> implements ShopDetailView {
     _viewModel = new ShopDetailViewModel();
     _presenter = new ShopDetailPresenter(_viewModel);
     _presenter.intiView(this);
-    _viewModel.isEditEnable = widget.keyCheck != "detail";
+    _viewModel.isEditEnable = widget.keyCheck != ShopDetail.DETAIL;
     if (!_viewModel.isEditEnable) {
       print(widget.value);
       _viewModel.shopNameCtrl.text = widget.value["name"];
@@ -47,6 +48,7 @@ class _ShopDetailState extends State<ShopDetail> implements ShopDetailView {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      key: _viewModel.scaffoldKey,
       appBar: AppBar(
         actions: widget.keyCheck == "detail"
             ? <Widget>[
@@ -206,7 +208,9 @@ class _ShopDetailState extends State<ShopDetail> implements ShopDetailView {
                             ),
                             GestureDetector(
                               onTap: () {
-                                _presenter.addShop();
+                                widget.keyCheck == ShopDetail.CREATE
+                                    ? _presenter.addShop()
+                                    : _presenter.updateShop();
                               },
                               child: Container(
                                 alignment: Alignment.center,

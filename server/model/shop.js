@@ -35,13 +35,18 @@ function createShop(value) {
             });
     })
 }
-function updateShop(params) {
+function updateShop(value) {
     return new Promise((reslove, reject) => {
-        pool.query("UPDATE shop SET name=?,address=?,idShopkepper=?,image=? WHERE idShop=?",
-            [params["name"],
-            params["address"],
-            params["idShopkepper"],
-            params["image"]],
+        var warningCount = value["warningCount"];
+        console.log(warningCount);
+        
+        if (warningCount == null || warningCount == 0)
+            warningCount = 10;
+        pool.query("UPDATE shop SET name=?,address=?,idShopkepper=?,image=?,phoneNumber=?,description=?,warningCount=? WHERE idShop=?",
+            [value["name"],
+            value["address"],
+            value["idShopkepper"],
+            value["image"],value["phoneNumber"],value["description"], warningCount, value["idShop"]],
             (err, rows) => {
                 if (err)
                     reject(err);
