@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
+import 'package:init_app/ui/create_bill/CreateBill.dart';
 import 'package:init_app/ui/create_bill/CreateBillView.dart';
 import 'package:init_app/ui/search_merchandis/SearchSanPham.dart';
 import 'package:init_app/utils/BasePresenter.dart';
@@ -60,7 +61,15 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
       } else {
         _viewmodel.listMerchandis = _viewmodel.listMerchandis.map((element) {
           if (element["barcode"] == sp["barcode"]) {
-            element["countsp"]++;
+            if (element["countsp"] + 1 <= element["count"] &&
+                _viewmodel.keyCheck ==
+                    CreateBill.KEY_CHECK_EXPORT_MERCHANDISE) {
+              element["countsp"]++;
+            }
+            if (_viewmodel.keyCheck ==
+                CreateBill.KEY_CHECK_IMPORT_MERCHANDISE) {
+              element["countsp"]++;
+            }
           }
           return element;
         }).toList();

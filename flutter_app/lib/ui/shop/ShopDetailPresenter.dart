@@ -42,8 +42,19 @@ class ShopDetailPresenter<V extends ShopDetailView> extends BasePresenter<V> {
 
     print(data);
     if (_viewModel.formKey.currentState.validate()) {
-      appDataHelper.createShop(data).then((value) {}).catchError((err) {
-        print(err);
+      appDataHelper.createShop(data).then((value) {
+        _viewModel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+          content: Text(value),
+          elevation: 4,
+          backgroundColor: Colors.blue,
+        ));
+        Common.shops.add(data);
+      }).catchError((err) {
+        _viewModel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+          content: Text(err),
+          elevation: 4,
+          backgroundColor: Colors.blue,
+        ));
       });
     }
   }

@@ -42,59 +42,33 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
             color: Colors.grey[700],
           ),
         ),
+        centerTitle: true,
         title: Container(
-          padding: EdgeInsets.all(10),
-          color: Colors.grey[300],
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                width: Common.widthOfScreen - 150,
-                color: Colors.transparent,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      child: Icon(
-                        Icons.search,
-                        size: 20,
-                        color: Colors.grey[700],
-                      ),
-                      padding: EdgeInsets.only(right: 10),
-                    ),
-                    Container(
-                      width: Common.widthOfScreen - 200,
-                      padding: EdgeInsets.only(bottom: 20),
-                      height: 50,
-                      child: TextField(
-                        decoration: InputDecoration.collapsed(
-                          hintText: "Nhập tên tìm kiếm",
-                          hintStyle: TextStyle(
-                              color: Colors.grey[700],
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        style: TextStyle(
-                            color: Colors.grey[700],
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
+          height: 50,
+          width: Common.widthOfScreen - 130,
+          child: TextFormField(
+            onChanged: (value) {
+              _presenter.onTextInputChange(value);
+            },
+            maxLines: 1,
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.search),
+              suffixIcon: IconButton(
+                onPressed: () {
                   showBarcode(context);
                 },
-                child: Container(
-                  child: Icon(
-                    Icons.flip,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              )
-            ],
+                icon: Icon(Icons.flip),
+              ),
+              hintText: "Nhập tên tìm kiếm",
+              hintStyle: TextStyle(
+                  color: Colors.grey[700],
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400),
+            ),
+            style: TextStyle(
+                color: Colors.grey[700],
+                fontSize: 15,
+                fontWeight: FontWeight.w400),
           ),
         ),
       ),

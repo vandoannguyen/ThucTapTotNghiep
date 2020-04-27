@@ -11,7 +11,7 @@ class ShopDetail extends StatefulWidget {
   static const String DETAIL = "detail";
   static const String CREATE = "create";
   ShopDetail({@required this.keyCheck, this.value}) {
-    if (keyCheck == null) throw "keyChack mush not be null";
+    if (keyCheck == null) throw "keyCheck mush not be null";
     if (keyCheck != CREATE && (value == null || value == {}))
       throw "value mush not be null";
   }

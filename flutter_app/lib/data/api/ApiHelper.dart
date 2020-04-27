@@ -253,12 +253,22 @@ class ApiHelper implements IApiHelper {
   Future createShop(data) {
     // TODO: implement createShop
     Completer completer = new Completer();
-    http.post("${Common.rootUrlApi}shop/createshop",
-        headers: {
-          HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
-          HttpHeaders.contentTypeHeader: 'application/json'
-        },
-        body: jsonEncode(data));
+    http
+        .post("${Common.rootUrlApi}shop/createshop",
+            headers: {
+              HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: jsonEncode(data))
+        .then((value) {
+      if (value.statusCode == 200) {
+        completer.complete("Thêm cửa hàng thàng công");
+      } else {
+        completer.completeError("Thêm cửa hàng không thành công");
+      }
+    }).catchError((err) {
+      completer.completeError("Thêm cửa hàng không thành công");
+    });
     return completer.future;
   }
 

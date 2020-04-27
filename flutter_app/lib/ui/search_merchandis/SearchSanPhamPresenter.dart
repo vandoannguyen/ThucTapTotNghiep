@@ -36,4 +36,20 @@ class SearchSanPhamPresenter extends BasePresenter {
       print(err);
     });
   }
+
+  void onTextInputChange(String value) {
+//    String a;
+//    a.contains(other)
+//    print(_viewModel.listSanPham);
+    var list = _viewModel.listSanPham
+        .where(
+            (element) => _equalsIgnoreCase(element["nameMerchandise"], value))
+        .toList();
+    print(list);
+    getSink(LIST_MERCHANDISE).add(new BlocLoaded(list));
+  }
+
+  bool _equalsIgnoreCase(String string1, String string2) {
+    return string1?.toLowerCase().contains(string2?.toLowerCase());
+  }
 }
