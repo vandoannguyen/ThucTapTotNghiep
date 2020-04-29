@@ -86,17 +86,33 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
                     ),
                   )
                 : snap.data is BlocLoaded
-                    ? ListView.builder(
-                        itemBuilder: (ctx, index) =>
-                            itemMerchandis(context, snap.data.value[index]),
-                        physics: ScrollPhysics(),
-                        itemCount: snap.data.value.length,
-                      )
+                    ? snap.data.value.length > 0
+                        ? ListView.builder(
+                            itemBuilder: (ctx, index) =>
+                                itemMerchandis(context, snap.data.value[index]),
+                            physics: ScrollPhysics(),
+                            itemCount: snap.data.value.length,
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              _presenter.addMerchandise(context);
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: Image.asset(
+                                "assets/images/add_merchandis.png",
+                                width: 100,
+                                height: 100,
+                              ),
+                            ),
+                          )
                     : snap.data is BlocFailed
                         ? Container(
                             child: Text(snap.data.mess),
                           )
-                        : Container()),
+                        : Container(
+                            color: Colors.red,
+                          )),
       ),
     );
   }

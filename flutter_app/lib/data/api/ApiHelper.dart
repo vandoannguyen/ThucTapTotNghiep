@@ -199,8 +199,18 @@ class ApiHelper implements IApiHelper {
           HttpHeaders.authorizationHeader: "Bearer " + Common.loginToken,
           HttpHeaders.contentTypeHeader: 'application/json'
         }).then((value) {
-      print(value);
-      completer.complete(jsonDecode(value.body));
+      print(value.body);
+      if (value.statusCode == 200) {
+        completer.complete("Thêm sản phẩm thành công");
+      }
+      if (value.statusCode == 400) {
+        if (value.body.contains("ER_DUP_ENTRY"))
+          completer.completeError("Sản phẩm đã có trong cửa hàng");
+        else {
+          print(value.body);
+          completer.completeError(value.body);
+        }
+      }
     }).catchError((onError) {
       completer.completeError(onError);
     });
@@ -445,5 +455,39 @@ class ApiHelper implements IApiHelper {
       print(err);
     });
     return completer.future;
+  }
+
+  @override
+  Future deleteMerchandise(barcode, idShop) {
+    // TODO: implement deleteMerchandise
+    Completer completer = new Completer();
+    http
+        .post("${Common.rootUrlApi}merchandise/deleteMerchandise",
+            body: jsonEncode({
+              "barcode": barcode,
+              "idShop": idShop,
+            }),
+            headers: _getHeader())
+        .then((value) {
+      print(value.body);
+      if (value.statusCode == 200) completer.complete("Xóa thành công");
+      print(value.statusCode);
+    }).catchError((err) {
+      completer.completeError("Xóa không thành công!");
+    });
+    return completer.future;
+  }
+
+  @override
+  Future deleteCategory(idCategory, idNoCategory, idShop) {
+    // TODO: implement deleteCategory
+    Completer completer = new Completer();
+    http.post("${Common.rootUrlApi}/category/delete",
+        body: jsonEncode({
+          "idCategory": idCategory,
+          "idNoCategory": idNoCategory,
+          "idShop": idShop
+        }));
+    return null;
   }
 }

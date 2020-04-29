@@ -4,4 +4,5 @@ var authenMiddlware = require("../../middleware/authenmiddleware");
 var categoryController = require("../../controller/CategoryController");
 router.get("/listCategory", authenMiddlware, categoryController.getListCategory);
 router.post("/insert", authenMiddlware, categoryController.insertCategory);
+router.post("/delete", authenMiddlware, categoryController.deleteCategory);
 module.exports = router;

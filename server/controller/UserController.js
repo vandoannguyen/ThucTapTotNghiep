@@ -4,6 +4,7 @@ const cryptr = new Cryptr('myTotalySecretKey');
 var jwt = require("jsonwebtoken");
 var userModel = require("../model/user");
 var shopModel = require("../model/shop");
+var merchandiseModel = require("../model/merchandisedetail")
 var base64ToImage = require('base64-to-image');
 
 
@@ -58,6 +59,7 @@ async function userLogin(req, res) {
                     if (result[0]["idRole"] == 1) {
                         result[0]["password"] = req.body["password"];
                         var personnel = await userModel.getPersonnel(result[0]["idUser"])
+                        result[0]["personnel"] = personnel;
                         shops = await shopModel.getShop(personnel["idShop"]);
                         console.log(shops);
                     }

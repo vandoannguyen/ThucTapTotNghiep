@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 
 import 'RegisterPresenter.dart';
 import 'RegisterView.dart';
@@ -374,6 +375,23 @@ class _RegisterState extends State<Register> implements RegisterView {
                 ],
               ),
             )),
+        Positioned(
+          bottom: 10,
+          left: 0,
+          right: 0,
+          child: StreamBuilder(
+            stream: _presenter.getStream(RegisterPresenter.LOADING),
+            builder: (ctx, snap) => snap.data is BlocLoaded
+                ? Container(
+                    child: Image.asset(
+                      "assets/icons/loading.gif",
+                      width: 30,
+                      height: 30,
+                    ),
+                  )
+                : Container(),
+          ),
+        )
       ],
     );
   }
@@ -492,17 +510,25 @@ class _RegisterState extends State<Register> implements RegisterView {
   }
 
   String _validateUsername(String value) {
-    if (value.length > 0) return null;
-    return "Nhập thiếu Tên người dùng";
+    if (value.length == 0) return "Nhập thiếu Tên người dùng";
+    if (!RegExp(r"^[a-zA-Z0-9]+$").hasMatch(value))
+      return "Username chỉ tồn tại a-z,A-Z và 0-9 ";
+    if (value.length < 6) return "Tên người dùng phải trên 6 ký tự";
+    return null;
   }
 
   String _validatePassword(String value) {
+    if (value.length == 0) return "Nhập thiếu";
+    if (!RegExp(r"^[a-zA-Z0-9]+$").hasMatch(value))
+      return "Username chỉ tồn tại a-z,A-Z và 0-9 ";
     if (value.length < 6) return "Mật khẩu quá ngắn";
     return null;
   }
 
   String _validateConfirmPass(String value) {
-    if (value.length < 6) return "Mật khẩu quá ngắn";
+    if (value.length == 0) return "Nhập thiếu";
+    if (value != _viewModel.passwordController.text)
+      return "Không khớp với mật khẩu";
     return null;
   }
 

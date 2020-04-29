@@ -8,8 +8,8 @@ class Common {
 //  static var rootUrlApi = "https://thuc-tap-tot-nhiep.herokuapp.com/api/";
 //  static var rootUrl = "https://thuc-tap-tot-nhiep.herokuapp.com/";
 
-  static var rootUrlApi = "http://1.2.3.127:3000/api/";
-  static var rootUrl = "http://1.2.3.127:3000/";
+  static var rootUrlApi = "http://192.168.0.102:3000/api/";
+  static var rootUrl = "http://192.168.0.102:3000/";
 
   static String loginToken = "";
   static dynamic user = {};
@@ -22,6 +22,8 @@ class Common {
   static final String KEY_CHECK_CREATE_SHOP = "create";
   static dynamic personnels = [];
   static dynamic categories = [];
+
+  static var merchandises = [];
 
   static String DATE_FORMAT(DateTime dateTime) {
     return new DateFormat("dd/MM/yyyy").format(dateTime);

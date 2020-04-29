@@ -38,6 +38,7 @@ class _PersonnelState extends State<Personnel> implements PersonnelView {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      key: _viewModel.scaffKey,
       appBar: AppBar(
         centerTitle: true,
         title: Text("Nhân viên"),

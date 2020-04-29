@@ -23,6 +23,7 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
   String WARNING = "warning";
   String WAREHOUSE = "warehouse";
   String DAY_OF_WEEK = "dfw";
+  String MERCHANDISE_NULL = "MERCHANDISE_NULL";
 
   HomePagePresenter(this._viewModel) {
     appDataHelper = new AppDataHelper();
@@ -62,8 +63,10 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
             _viewModel.firstDay.toIso8601String().replaceFirst("T", " "),
             _viewModel.endDay.toIso8601String().replaceFirst("T", " "))
         .then((value) {
-      _viewModel.bestSellers = value;
-      getSink(BEST_SALE).add(new BlocLoaded(value));
+      if (value.length > 0)
+        _viewModel.bestSellers =
+            value.where((element) => element["status"] == 1).toList();
+      getSink(BEST_SALE).add(new BlocLoaded(_viewModel.bestSellers));
     }).catchError((err) {
       getSink(BEST_SALE).add(new BlocFailed(err));
     });
@@ -79,8 +82,11 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
         .getWillBeEmpty(Common.selectedShop["idShop"], warningCoutn)
         .then((value) {
       print(value);
-      _viewModel.marchandiseWillEmpty = value;
-      getSink(WARNING).add(new BlocLoaded(value));
+      if (value.length > 0)
+        _viewModel.marchandiseWillEmpty =
+            value.where((element) => element["status"] == 1).toList();
+      print(_viewModel.marchandiseWillEmpty[0]);
+      getSink(WARNING).add(new BlocLoaded(_viewModel.marchandiseWillEmpty));
     }).catchError((err) {
       getSink(WARNING).add(new BlocFailed(err));
     });
@@ -142,6 +148,9 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
       print("on valu $value");
       var countMerchandise = 0;
       var totalPrice = 0;
+      if (value.length == 0) {
+        showSnackBar();
+      }
       value.forEach((element) {
         countMerchandise += element["count"];
         totalPrice += element["inputPrice"] * element["count"];
@@ -283,6 +292,19 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
     }).catchError((err) {
       print(err);
     });
+  }
+
+  void showSnackBar() {
+    print("000000000000000");
+    _viewModel.scaffKeyHomePage.currentState.showSnackBar(new SnackBar(
+      content: Text(
+        "Cửa hàng chưa có mặt hàng nào",
+        style: TextStyle(color: Colors.white),
+      ),
+      elevation: 4,
+      backgroundColor: Colors.red,
+      duration: Duration(seconds: 10),
+    ));
   }
 }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/ui/list_merchandis/ListMerchandisView.dart';
-import 'package:init_app/ui/meschandis_detail/MechandisDetail.dart';
 import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
 
@@ -40,6 +39,7 @@ class _ListMerchandisState extends State<ListMerchandis>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _viewModel.scaffState,
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -194,7 +194,7 @@ class _ListMerchandisState extends State<ListMerchandis>
   merchandisItem(int index) {
     return GestureDetector(
       onTap: () {
-        merchandiseDetail(context, index);
+        _presenter.merchandiseDetail(context, index);
       },
       child: Card(
         clipBehavior: Clip.antiAlias,
@@ -345,20 +345,11 @@ class _ListMerchandisState extends State<ListMerchandis>
     _viewModel.selectedCategory = _viewModel.categories[index];
     _viewModel.selectedListMerchandise = _viewModel.merchandises
         .where((element) =>
-            element["idCategory"] == _viewModel.selectedCategory["idCategory"])
+            element["idCategory"] ==
+                _viewModel.selectedCategory["idCategory"] &&
+            element["status"] == 1)
         .toList();
     setState(() {});
-  }
-
-  void merchandiseDetail(contex, index) {
-    print(_viewModel.selectedListMerchandise[index]);
-    IntentAnimation.intentNomal(
-        context: contex,
-        screen: MerchandiseDetail(
-            inputKey: MerchandiseDetail.DETAIL,
-            value: _viewModel.selectedListMerchandise[index]),
-        option: IntentAnimationOption.RIGHT_TO_LEFT,
-        duration: Duration(milliseconds: 500));
   }
 
   void addMerchandise(context) {

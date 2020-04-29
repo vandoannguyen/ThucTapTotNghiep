@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
@@ -42,9 +43,10 @@ class ListMerchandisPresenter<V extends ListMerchandisView>
       _viewModel.selectedListMerchandise = _viewModel.merchandises
           .where((element) =>
               element["idCategory"] ==
-              _viewModel.selectedCategory["idCategory"])
+                  _viewModel.selectedCategory["idCategory"] &&
+              element["status"] == 1)
           .toList();
-      getSink(CATEGORY).add(BlocLoaded(_viewModel.categories));
+      getSink(CATEGORY).add(BlocLoaded(_viewModel.selectedListMerchandise));
     }).catchError((err) {});
   }
 
@@ -88,6 +90,28 @@ class ListMerchandisPresenter<V extends ListMerchandisView>
       _viewModel.merchandises = value;
     }).catchError((err) {
       print(err);
+    });
+  }
+
+  void merchandiseDetail(contex, index) {
+    print(_viewModel.selectedListMerchandise[index]);
+    IntentAnimation.intentNomal(
+            context: contex,
+            screen: MerchandiseDetail(
+                inputKey: MerchandiseDetail.DETAIL,
+                value: _viewModel.selectedListMerchandise[index]),
+            option: IntentAnimationOption.RIGHT_TO_LEFT,
+            duration: Duration(milliseconds: 500))
+        .then((value) {
+      if (value != null && value == "ok") {
+        getData();
+        _viewModel.scaffState.currentState.showSnackBar(new SnackBar(
+          content: Text("Xóa sản phẩm thành công"),
+          elevation: 4,
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.blue,
+        ));
+      }
     });
   }
 }

@@ -10,5 +10,6 @@ router.post("/createMerchandise", authenMiddlware, merchandiseController.createM
 router.post("/updatemerchandise", authenMiddlware, merchandiseController.updateMerchandises);
 router.post("/getbestseller", authenMiddlware, merchandiseController.getBestSeller);
 router.post("/getMerchandisewillempty", authenMiddlware, merchandiseController.getMerchandiseWillEmpty);
+router.post("/deleteMerchandise", authenMiddlware, merchandiseController.deletemerchandise);
 
 module.exports = router;

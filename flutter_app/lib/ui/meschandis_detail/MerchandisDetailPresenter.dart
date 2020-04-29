@@ -112,7 +112,13 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
     }
   }
 
-  void deleteMerchandise(value) {}
+  void deleteMerchandise(context, value) {
+    appDataHelper
+        .deleteMerchandise(value["barcode"], value["idShop"])
+        .then((value) {
+      Navigator.pop(context, "ok");
+    }).catchError((onError) {});
+  }
 
   void _showDialogSuccess(context) {
     showDialog<String>(
@@ -123,50 +129,45 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
           content: Text("Thêm thành công.\nBạn có muốn tiếp tục?"),
           actions: <Widget>[
             GestureDetector(
-              onTap: () {
-                IntentAnimation.intentBack(context: dialogContext);
-              },
-              child: Container(
-                padding:
-                    EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
-                decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 5,
-                          offset: Offset(3, 3))
-                    ]),
-                alignment: Alignment.center,
-                width: 100,
-                child: Text(
-                  "Có",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ),
-            ),
+                onTap: () {
+                  IntentAnimation.intentBack(context: dialogContext);
+                },
+                child: Card(
+                  elevation: 4,
+                  clipBehavior: Clip.antiAlias,
+                  child: Container(
+                    padding:
+                        EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                    ),
+                    alignment: Alignment.center,
+                    width: 100,
+                    child: Text(
+                      "Có",
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    ),
+                  ),
+                )),
             GestureDetector(
               onTap: () {
                 IntentAnimation.intentBack(context: context, result: "back");
               },
-              child: Container(
-                padding:
-                    EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
-                decoration: BoxDecoration(
+              child: Card(
+                elevation: 4,
+                clipBehavior: Clip.antiAlias,
+                child: Container(
+                  padding:
+                      EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
+                  decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 5,
-                          offset: Offset(3, 3))
-                    ]),
-                alignment: Alignment.center,
-                width: 100,
-                child: Text(
-                  "Không",
-                  style: TextStyle(color: Colors.grey, fontSize: 18),
+                  ),
+                  alignment: Alignment.center,
+                  width: 100,
+                  child: Text(
+                    "Không",
+                    style: TextStyle(color: Colors.blue, fontSize: 15),
+                  ),
                 ),
               ),
             ),

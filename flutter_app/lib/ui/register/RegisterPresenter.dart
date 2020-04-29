@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/utils/BasePresenter.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 import 'package:init_app/utils/CallNativeUtils.dart';
 
 import 'RegisterView.dart';
@@ -16,11 +17,15 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
   RegisterViewModel _viewModel;
   IAppDataHelper appDataHelper;
 
-  RegisterPresenter(this._viewModel) {
+  static const String LOADING = "LOADING";
+
+  RegisterPresenter(this._viewModel) : super() {
+    addStreamController(LOADING);
     appDataHelper = new AppDataHelper();
   }
 
   void register() {
+    getSink(LOADING).add(BlocLoaded(""));
     dynamic data = {
       "username": _viewModel.usernameController.text,
       "password": _viewModel.passwordController.text,
@@ -32,9 +37,11 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
     print(data);
     appDataHelper.registerAccount(jsonEncode(data)).then((onvalue) {
       print(onvalue);
+      getSink(LOADING).add(BlocLoading());
       baseView.backView(data);
       print(onvalue);
     }).catchError((err) {
+      getSink(LOADING).add(BlocLoading());
       baseView.showSnackbar(err, "w");
     });
   }

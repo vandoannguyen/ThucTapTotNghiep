@@ -70,24 +70,32 @@ class MerchandiseStatus extends StatelessWidget {
                     ),
                   )
                 : data is BlocLoaded
-                    ? ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        separatorBuilder: (ctx, inde) => Container(
-                              margin: EdgeInsets.only(left: 10, right: 10),
-                              height: 0.5,
-                              color: Colors.grey,
-                            ),
-                        itemBuilder: (ctx, index) => ItemView(
-                            keyCheck: keyCheck, value: data.value[index]),
-                        itemCount:
-                            data.value.length < 3 ? data.value.length : 3)
+                    ? data.value.length > 0
+                        ? ListView.separated(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            separatorBuilder: (ctx, index) => Container(
+                                  margin: EdgeInsets.only(left: 10, right: 10),
+                                  height: 0.5,
+                                  color: Colors.grey,
+                                ),
+                            itemBuilder: (ctx, index) => ItemView(
+                                keyCheck: keyCheck, value: data.value[index]),
+                            itemCount:
+                                data.value.length < 3 ? data.value.length : 3)
+                        : Container(
+                            height: 30,
+                            alignment: Alignment.center,
+                            child: Text("..."),
+                          )
                     : data is BlocFailed
                         ? Container(
                             padding: EdgeInsets.only(top: 10, bottom: 10),
                             child: Text(data.mess),
                           )
-                        : Container(),
+                        : Container(
+                            height: 30,
+                          ),
           )
         ],
       ),

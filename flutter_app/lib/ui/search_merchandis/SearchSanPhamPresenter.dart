@@ -1,8 +1,10 @@
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
+import 'package:init_app/ui/meschandis_detail/MechandisDetail.dart';
 import 'package:init_app/utils/BasePresenter.dart';
 import 'package:init_app/utils/BaseView.dart';
 import 'package:init_app/utils/BlogEvent.dart';
+import 'package:init_app/utils/IntentAnimation.dart';
 
 import 'SearchSanPhamViewModel.dart';
 
@@ -51,5 +53,21 @@ class SearchSanPhamPresenter extends BasePresenter {
 
   bool _equalsIgnoreCase(String string1, String string2) {
     return string1?.toLowerCase().contains(string2?.toLowerCase());
+  }
+
+  void addMerchandise(context) {
+    IntentAnimation.intentNomal(
+            context: context,
+            screen: MerchandiseDetail(
+              inputKey: MerchandiseDetail.CREATE,
+            ),
+            option: IntentAnimationOption.RIGHT_TO_LEFT,
+            duration: Duration(milliseconds: 500))
+        .then((value) {
+      print(value);
+      if (value != null && value == "ok") {
+        getListSanPham();
+      }
+    });
   }
 }

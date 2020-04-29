@@ -41,16 +41,10 @@ async function createMerchandise(req, res) {
         else {
             req.body["image"] = imageName;
             merchandiseModel.createMerchandise(req.body).then((value) => {
-                res.status = 200,
-                console.log(value);
-                
-                    console.log("ok");
-                res.json({ "success": true, "value":value })
+                res.status(200).json({ "success": true, "value": value })
             }).catch((err) => {
                 console.log(err);
-
-                res.status = 500,
-                    res.json({ "success": false, "message": err })
+                res.status(400).json({ "success": false, "message": err })
             })
         }
     });
@@ -108,6 +102,20 @@ async function getMerchandiseWillEmpty(req, res) {
     }
     else res.json([]);
 }
+function deletemerchandise(req, res) {
+    console.log(req.body);
+
+    merchandiseModel.deletemerchandise(req.body["barcode"], req.body["idShop"]).then((value) => {
+        if(value["affectedRows"] >0){
+            res.status(200).json({"status":"ok"});
+        }
+        else res.status(400).json({"status":"notok"});
+        console.log(value);
+    }).catch((err) => {
+        console.log(err);
+        res.status(400).json({"status":"notok"});
+    })
+}
 module.exports = {
     getMerchandises: getMerchandises,
     createMerchandise: createMerchandise,
@@ -115,5 +123,6 @@ module.exports = {
     getMerchandisesByBill: getMerchandisesByBill,
     getBestSeller: getBestSeller,
     getMerchandiseWillEmpty: getMerchandiseWillEmpty,
-    updateMerchandises: updateMerchandises
-}
+    updateMerchandises: updateMerchandises,
+    deletemerchandise: deletemerchandise,
+}   

@@ -44,4 +44,7 @@ abstract class IApiHelper {
   Future deletePersonnel(idUser);
 
   Future updateShop(data);
+
+  Future deleteMerchandise(barcode, idShop);
+  Future deleteCategory(idCategory, idNoCategory, idShop);
 }

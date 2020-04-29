@@ -43,4 +43,12 @@ class CategoryPresenter<V extends CategoryView> extends BasePresenter<V> {
       print(err);
     });
   }
+
+  void deldeteCategory(idCategory, idNoCategory) {
+    appDataHelper
+        .deleteCategory(
+            idCategory, idNoCategory, Common.selectedShop["'idShop"])
+        .then((value) {})
+        .catchError((onError) {});
+  }
 }

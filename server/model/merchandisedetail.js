@@ -36,22 +36,25 @@ async function getListMerchandiseByBill(params) {
 function createMerchandise(params) {
     console.log("paramas ===========", params)
     return new Promise((reslove, reject) => {
-        var sql = "INSERT INTO merchandisedetail (barcode, image, idShop, nameMerchandise, idCategory, inputPrice, outputPrice, count) VALUES (?,?,?,?,?,?,?,?)"
-        try{
+        var sql = "CALL insertMerchandise(?,?,?,?,?,?,?,?,?)"
+        try {
             pool.query(sql, [
                 params["barcode"],
-                params["image"],
-                params["idShop"],
-                params["nameMerchandise"],
-                params["idCategory"],
-                params["inputPrice"],
-                params["outputPrice"],
                 params["count"],
+                params["idCategory"],
+                params["idShop"],
+                params["image"],
+                params["inputPrice"],
+                params["nameMerchandise"],
+                params["outputPrice"],
+                1,
             ], (err, rows) => {
                 if (err) {
-                    console.log(err);
-                    throw err,
-                    reject(err);
+                    if (err.toString().includes("ER_DUP_ENTRY"))
+                        // console.log("1234567890\n");
+                        // console.log(err);
+                        reject("ER_DUP_ENTRY");
+                    else reject(err);
                 }
                 else {
                     console.log(
@@ -60,7 +63,7 @@ function createMerchandise(params) {
                 }
             });
         }
-        catch(err){
+        catch (err) {
             reject(err);
         }
     })
@@ -85,10 +88,10 @@ async function getBestSeller(params) {
 }
 async function getMerchandiseWillEmpty(params) {
     return new Promise((reslove, reject) => {
-        console.log(params["warningCount"] + "    " +  params["idShop"] + "okok");
-        
+        console.log(params["warningCount"] + "    " + params["idShop"] + "okok");
+
         var query =
-            "Select idShop, barcode, nameMerchandise, inputPrice, outputPrice, count as countsp, image FROM merchandisedetail where count <= ? and idShop = ?";
+            "Select idShop, barcode, nameMerchandise, inputPrice, outputPrice, count as countsp, image, status FROM merchandisedetail where count <= ? and idShop = ?";
         pool.query(query, [params["warningCount"], params["idShop"]], (err, rows) => {
             if (err) {
                 reject(err);
@@ -114,7 +117,7 @@ async function updateMerchandises(params) {
             params["outputPrice"],
             params["barcode"],
             params["idShop"],
-        ], (err, rows) => { 
+        ], (err, rows) => {
             if (err) {
                 reject(err);
                 throw err;
@@ -124,6 +127,15 @@ async function updateMerchandises(params) {
     })
 
 }
+function deletemerchandise(barcode, idShop) {
+    return new Promise((reslove, reject) => {
+        var query = "UPDATE merchandisedetail SET count=0,image='',inputPrice=0,outputPrice=0,status=0 WHERE barcode=? AND idShop=?";
+        pool.query(query, [barcode, idShop], (err, rows) => {
+            if (err) reject(err);
+            else reslove(rows);
+        })
+    })
+}
 module.exports = {
     getListMerchandise: getListMerchandise,
     createMerchandise: createMerchandise,
@@ -131,4 +143,5 @@ module.exports = {
     getBestSeller: getBestSeller,
     getMerchandiseWillEmpty: getMerchandiseWillEmpty,
     updateMerchandises: updateMerchandises,
+    deletemerchandise: deletemerchandise,
 }

@@ -73,7 +73,7 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
             ? [
                 IconButton(
                   onPressed: () {
-                    deteteSp();
+                    deteteSp(context);
                   },
                   icon: Icon(
                     Icons.delete_forever,
@@ -500,34 +500,29 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
 
   void deleteMerchandis() {}
 
-  void deteteSp() async {
+  void deteteSp(context) async {
     var result = await showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-              title: Text("Xóa sản phẩm này ?"),
+        builder: (ctx) => AlertDialog(
+              content: Text("Xóa sản phẩm này ?"),
               actions: <Widget>[
                 GestureDetector(
                   onTap: () {
                     IntentAnimation.intentBack(context: context, result: "ok");
-                    deleteMerchandis();
                   },
-                  child: Container(
-                    padding:
-                        EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
-                    decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.all(Radius.circular(25)),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 5,
-                              offset: Offset(3, 3))
-                        ]),
-                    alignment: Alignment.center,
-                    width: 100,
-                    child: Text(
-                      "Xóa",
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                  child: Card(
+                    elevation: 4,
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          top: 5, bottom: 5, left: 10, right: 10),
+                      decoration: BoxDecoration(color: Colors.red),
+                      alignment: Alignment.center,
+                      width: 100,
+                      child: Text(
+                        "Xóa",
+                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      ),
                     ),
                   ),
                 ),
@@ -535,30 +530,29 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                   onTap: () {
                     IntentAnimation.intentBack(context: context);
                   },
-                  child: Container(
-                    padding:
-                        EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
-                    decoration: BoxDecoration(
+                  child: Card(
+                    elevation: 4,
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          top: 5, bottom: 5, left: 10, right: 10),
+                      decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(25)),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 5,
-                              offset: Offset(3, 3))
-                        ]),
-                    alignment: Alignment.center,
-                    width: 100,
-                    child: Text(
-                      "Hủy",
-                      style: TextStyle(color: Colors.grey, fontSize: 18),
+                      ),
+                      alignment: Alignment.center,
+                      width: 100,
+                      child: Text(
+                        "Hủy",
+                        style: TextStyle(color: Colors.blue, fontSize: 15),
+                      ),
                     ),
                   ),
                 ),
               ],
             ));
     if (result != null && result == "ok") {
-      _presenter.deleteMerchandise(_viewModel.value);
+      _presenter.deleteMerchandise(context, _viewModel.value);
     }
   }
 

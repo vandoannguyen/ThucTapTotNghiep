@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/utils/BasePresenter.dart';
+import 'package:init_app/utils/BlogEvent.dart';
 
 import 'ShopDetailView.dart';
 import 'ShopDetailViewModel.dart';
@@ -14,8 +15,9 @@ import 'ShopDetailViewModel.dart';
 class ShopDetailPresenter<V extends ShopDetailView> extends BasePresenter<V> {
   ShopDetailViewModel _viewModel;
   IAppDataHelper appDataHelper;
-
-  ShopDetailPresenter(this._viewModel) {
+  static const String LOADING = "LOADING";
+  ShopDetailPresenter(this._viewModel) : super() {
+    addStreamController(LOADING);
     appDataHelper = new AppDataHelper();
   }
 
@@ -29,6 +31,7 @@ class ShopDetailPresenter<V extends ShopDetailView> extends BasePresenter<V> {
   }
 
   void addShop() {
+    getSink(LOADING).add(new BlocLoading());
     dynamic data = {
       "name": _viewModel.shopNameCtrl.text,
       "address": _viewModel.addressCtrl.text,
@@ -49,7 +52,9 @@ class ShopDetailPresenter<V extends ShopDetailView> extends BasePresenter<V> {
           backgroundColor: Colors.blue,
         ));
         Common.shops.add(data);
+        getSink(LOADING).add(new BlocLoaded(""));
       }).catchError((err) {
+        getSink(LOADING).add(new BlocLoaded(""));
         _viewModel.scaffoldKey.currentState.showSnackBar(new SnackBar(
           content: Text(err),
           elevation: 4,
@@ -64,6 +69,7 @@ class ShopDetailPresenter<V extends ShopDetailView> extends BasePresenter<V> {
   }
 
   updateShop() {
+    getSink(LOADING).add(new BlocLoading());
     dynamic data = {
       "name": _viewModel.shopNameCtrl.text,
       "address": _viewModel.addressCtrl.text,
@@ -81,12 +87,14 @@ class ShopDetailPresenter<V extends ShopDetailView> extends BasePresenter<V> {
         print(value);
         data["dateCreate"] = Common.selectedShop["dateCreate"];
         Common.selectedShop = data;
+        getSink(LOADING).add(new BlocLoaded(""));
         _viewModel.scaffoldKey.currentState.showSnackBar(new SnackBar(
           content: Text(value),
           elevation: 4,
           backgroundColor: Colors.blue,
         ));
       }).catchError((err) {
+        getSink(LOADING).add(new BlocLoaded(""));
         _viewModel.scaffoldKey.currentState.showSnackBar(new SnackBar(
           content: Text("Cập nhật thông tin không thành công!"),
           elevation: 4,

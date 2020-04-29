@@ -56,7 +56,12 @@ class _CategoryState extends State<Category> implements CategoryView {
               )
             : snap.data is BlocLoaded
                 ? ListView.builder(
-                    itemBuilder: (context, index) => itemView(index),
+                    itemBuilder: (context, index) => GestureDetector(
+                      onLongPress: () {
+                        showDialogDelete(context, index);
+                      },
+                      child: itemView(index),
+                    ),
                     itemCount: _viewModel.danhSachLoaiMatHang.length,
                   )
                 : snap.data is BlocFailed
@@ -176,5 +181,57 @@ class _CategoryState extends State<Category> implements CategoryView {
         child: Text(mess),
       ),
     ));
+  }
+
+  void showDialogDelete(BuildContext context, int index) async {
+    var result = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              content: Text("Bạn có muốn xóa loại mặt hàng này?"),
+              actions: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Card(
+                    elevation: 4,
+                    color: Colors.red,
+                    child: Container(
+                      width: 90,
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.only(
+                          left: 15, right: 15, top: 5, bottom: 5),
+                      child: Text(
+                        "Có",
+                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: Card(
+                    elevation: 4,
+                    color: Colors.white,
+                    child: Container(
+                      width: 90,
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.only(
+                          left: 15, right: 15, top: 5, bottom: 5),
+                      child: Text(
+                        "Không",
+                        style: TextStyle(color: Colors.blue, fontSize: 15),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ));
+    if (result) {
+//      _presenter
+//          .deldeteCategory(_viewModel.danhSachLoaiMatHang[index]["idCategory"]);
+    }
   }
 }

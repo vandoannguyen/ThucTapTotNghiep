@@ -16,6 +16,7 @@ class PersonnelPresenter<V extends PersonnelView> extends BasePresenter<V> {
   PersonnelPresenter(PersonnelViewModel viewModel) : super() {
     appDataHelper = new AppDataHelper();
     _viewModel = viewModel;
+    _viewModel = viewModel;
     addStreamController(GET_LIST_PERSONNEL);
   }
 
@@ -42,30 +43,37 @@ class PersonnelPresenter<V extends PersonnelView> extends BasePresenter<V> {
                     onTap: () {
                       Navigator.pop(context, "OK");
                     },
-                    child: Container(
-                      width: 100,
-                      height: 40,
-                      alignment: Alignment.centerRight,
-                      color: Colors.transparent,
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        "Có",
-                        style: TextStyle(color: Colors.red),
+                    child: Card(
+                      color: Colors.red,
+                      elevation: 4,
+                      child: Container(
+                        width: 80,
+                        alignment: Alignment.center,
+                        color: Colors.transparent,
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, top: 5, bottom: 5),
+                        child: Text(
+                          "Có",
+                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        ),
                       ),
                     )),
                 GestureDetector(
                     onTap: () {
                       Navigator.pop(context, "NO");
                     },
-                    child: Container(
-                      width: 100,
-                      height: 40,
-                      color: Colors.transparent,
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        "KHÔNG",
-                        style: TextStyle(color: Colors.blue),
+                    child: Card(
+                      elevation: 4,
+                      child: Container(
+                        width: 80,
+                        color: Colors.transparent,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, top: 5, bottom: 5),
+                        child: Text(
+                          "KHÔNG",
+                          style: TextStyle(color: Colors.blue),
+                        ),
                       ),
                     ))
               ],
@@ -74,7 +82,13 @@ class PersonnelPresenter<V extends PersonnelView> extends BasePresenter<V> {
       appDataHelper
           .deletePersonnel(_viewModel.personnels[index]["idPersonnel"])
           .then((value) {
-        print(value);
+        getPersonnel();
+        _viewModel.scaffKey.currentState.showSnackBar(SnackBar(
+          content: Text(value),
+          elevation: 4,
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.blue,
+        ));
       }).catchError((err) {
         print(err);
       });

@@ -23,10 +23,10 @@ function updateCategory(params) {
         });
     })
 }
-function deleteCategory(id) {
+function deleteCategory(id, idNoCategory, idShop) {
     return new Promise((reslove, reject)=>{
-        pool.query("DELETE FROM category WHERE  idCategory=?",
-        [id],
+        pool.query("CALL deleteCategory(?,?,?)",
+        [id, idNoCategory, idShop],
         (err, rows)=>{
             if(err)
             reject(err);
@@ -50,5 +50,4 @@ module.exports={
     updateCategory:updateCategory,
     getListCategory:getListCategory,
     deleteCategory:deleteCategory,
-    
 }

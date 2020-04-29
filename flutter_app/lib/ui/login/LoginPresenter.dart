@@ -38,18 +38,33 @@ class LoginPresenter<V extends LoginView> extends BasePresenter<V> {
         Common.user = value["user"];
         Common.loginToken = value["token"];
         Common.shops = value["shop"];
+        print(Common.user);
         Common.selectedShop = Common.shops.length > 0 ? Common.shops[0] : {};
         if (Common.shops.length > 0) {
           appDataHelper
               .getCategories(Common.selectedShop["idShop"])
               .then((value) {
+            _viewModel.isLoading = false;
+            baseView.updateUI({});
             Common.categories = value;
-            print(value);
-            IntentAnimation.intentPushReplacement(
-                context: _viewModel.context,
-                screen: HomeScreen(),
-                option: IntentAnimationOption.RIGHT_TO_LEFT,
-                duration: Duration(milliseconds: 800));
+            if (Common.user["personnel"] != null &&
+                Common.user["personnel"]["status"] == 0) {
+              _viewModel.scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text(
+                  "Đăng nhập không thành công!",
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.red,
+                elevation: 4,
+                duration: Duration(seconds: 2),
+              ));
+            } else {
+              IntentAnimation.intentPushReplacement(
+                  context: _viewModel.context,
+                  screen: HomeScreen(),
+                  option: IntentAnimationOption.RIGHT_TO_LEFT,
+                  duration: Duration(milliseconds: 800));
+            }
           }).catchError((err) {
             print(err);
           });

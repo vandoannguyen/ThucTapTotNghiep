@@ -281,7 +281,16 @@ class _ListBillState extends State<ListBill> implements ListBillView {
                                             ],
                                           ),
                                         )
-                                  : Container(),
+                                  : snap.data is BlocLoading
+                                      ? Container(
+                                          alignment: Alignment.center,
+                                          child: Image.asset(
+                                            "assets/icons/loading.gif",
+                                            width: 30,
+                                            height: 30,
+                                          ),
+                                        )
+                                      : Container(),
                             ),
                           )
                         ],

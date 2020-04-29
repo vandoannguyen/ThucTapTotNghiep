@@ -151,7 +151,7 @@ class _ItemMerchandisState extends State<ItemMerchandis> {
     setState(() {
       if (widget.viewmodel.keyCheck ==
           CreateBill.KEY_CHECK_EXPORT_MERCHANDISE) {
-        if (widget.viewmodel.listMerchandis[widget.index]["countsp"] >
+        if (widget.viewmodel.listMerchandis[widget.index]["countsp"] + 1 >
             widget.viewmodel.listMerchandis[widget.index]["count"]) {
           showAlertTypeOverload(context, "Quá số lượng trong kho");
         } else {

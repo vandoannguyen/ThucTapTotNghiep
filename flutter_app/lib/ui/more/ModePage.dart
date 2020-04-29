@@ -160,6 +160,19 @@ class _MorePageState extends State<MorePage> implements MoreView {
                                 Container(
                                     child: CustomButton(
                                   onTap: () {
+                                    _presenter.changeShop(context);
+                                  },
+                                  iconLeft: Icons.sync,
+                                  colorIconLeft: Colors.blue,
+                                  lable: "Đổi cửa hàng",
+                                  buttonTextStyle: buttonTextStyle(),
+                                )),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                    child: CustomButton(
+                                  onTap: () {
                                     _presenter.intentLoaiMatHang(context);
                                   },
                                   iconLeft: Icons.category,

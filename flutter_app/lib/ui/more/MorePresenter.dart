@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/ui/category/Category.dart';
+import 'package:init_app/ui/homepage/HomePagePresenter.dart';
 import 'package:init_app/ui/personnel/Personnel.dart';
 import 'package:init_app/ui/register/Register.dart';
 import 'package:init_app/ui/shop/ShopDetail.dart';
@@ -38,8 +39,7 @@ class MorePresenter<V extends MoreView> extends BasePresenter<V> {
       baseView.updateUI({});
       showSnackBar(color: Colors.blue, mess: "Đổi mật khẩu thành công");
     }).catchError((err) {
-      showSnackBar(
-          color: Colors.red, mess: "Đổi mật khẩu không thành công");
+      showSnackBar(color: Colors.red, mess: "Đổi mật khẩu không thành công");
       print(err);
       _viewModel.isLoading = false;
       baseView.updateUI({});
@@ -117,8 +117,7 @@ class MorePresenter<V extends MoreView> extends BasePresenter<V> {
   void showDialogChangeShop(BuildContext context) {
     showDialog(
         context: context,
-        builder: (context) =>
-            AlertDialog(
+        builder: (context) => AlertDialog(
               title: Text("Danh sách loại mặt hàng"),
               actions: <Widget>[
                 GestureDetector(
@@ -150,5 +149,31 @@ class MorePresenter<V extends MoreView> extends BasePresenter<V> {
         screen: Register(Register.DETAIL),
         option: IntentAnimationOption.RIGHT_TO_LEFT,
         duration: Duration(milliseconds: 500));
+  }
+
+  void changeShop(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+            elevation: 4,
+            title: Text('Danh sách cửa hàng'),
+            content: Container(
+              height: 200,
+              width: 200,
+              child: ListView.builder(
+                  physics: ScrollPhysics(),
+                  itemCount: Common.shops.length,
+                  itemBuilder: (ctx, index) => GestureDetector(
+                        onTap: () {
+                          Common.selectedShop = Common.shops[index];
+                          Navigator.pop(context);
+                          baseView.updateUI({});
+                        },
+                        child: ItemShop(Common.shops[index]),
+                      )),
+            ));
+      },
+    );
   }
 }
