@@ -74,6 +74,7 @@ class LoginPresenter<V extends LoginView> extends BasePresenter<V> {
           baseView.showSnackBar(key: "shop", message: "");
         }
       } else {
+        print(value["status"]);
         _viewModel.isLoading = false;
         baseView.updateUI({});
         if (value["status"] == 400) {

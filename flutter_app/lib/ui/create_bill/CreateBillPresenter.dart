@@ -18,12 +18,15 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
 
   static final String MERCHANDISE = "MERCHANDISE";
 
+  static final String LOADING = "LOADING";
+
 //  static final String PERSONNEL = "PERSONNEL";
 
   CreateBillPresenter(this._viewmodel) {
     appDataHelper = new AppDataHelper();
     addStreamController(PERSONNEL);
     addStreamController(MERCHANDISE);
+    addStreamController(LOADING);
   }
 
   IAppDataHelper appDataHelper;
@@ -40,7 +43,18 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
   void calculateTotalPrice() {
     _viewmodel.tongTien = 0;
     _viewmodel.listMerchandis.forEach((element) {
-      _viewmodel.tongTien += element["countsp"] * element["outputPrice"];
+      if (_viewmodel.keyCheck == CreateBill.KEY_CHECK_EXPORT_MERCHANDISE)
+        _viewmodel.tongTien += element["countsp"] * element["outputPrice"];
+      else if (_viewmodel.keyCheck == CreateBill.KEY_CHECK_IMPORT_MERCHANDISE) {
+        _viewmodel.tongTien += element["countsp"] * element["inputPrice"];
+      }
+    });
+  }
+
+  void caculateTotalInputPrice() {
+    _viewmodel.tongTienNhap = 0;
+    _viewmodel.listMerchandis.forEach((element) {
+      _viewmodel.tongTienNhap += element["countsp"] * element["inputPrice"];
     });
   }
 
@@ -77,6 +91,7 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
       getSink(MERCHANDISE).add(new BlocLoaded(_viewmodel.listMerchandis));
       calculateTotalMerchandises();
       calculateTotalPrice();
+      caculateTotalInputPrice();
     }
   }
 
@@ -86,8 +101,6 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
         (element) => element["barcode"] == barcode,
         orElse: () => null);
     if (merchandis != null) {
-      print(
-          "00000000000000${_viewmodel.listMerchandis.where((element) => element["barcode"] == merchandis["barcode"]).length}");
       if (_viewmodel.listMerchandis
               .where((element) => element["barcode"] == merchandis["barcode"])
               .length ==
@@ -114,6 +127,7 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
     getSink(MERCHANDISE).add(new BlocLoaded(_viewmodel.listMerchandis));
     calculateTotalMerchandises();
     calculateTotalPrice();
+    caculateTotalInputPrice();
   }
 
   void chietKhauSubmitted(String value) {
@@ -121,6 +135,7 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
   }
 
   void createBillExport() {
+    getSink(LOADING).add(new BlocLoading());
     print(Common.user);
     print(Common.selectedShop["idShop"]);
     print("OUT${DateTime.now().millisecondsSinceEpoch}");
@@ -139,33 +154,33 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
       "description": _viewmodel.ghiChuController.text
     };
     print(bill);
-    appDataHelper
-        .createBill(bill)
-        .then((value) {
-          _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
-            content: Text("Thêm đơn thành công"),
-            elevation: 4,
-            backgroundColor: Colors.blue,
-          ));
-          baseView.backView("ok");
-        })
-        .catchError((onError) {})
-        .catchError((onError) {
-          _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
-            content: Text("Thêm không thành công!"),
-            elevation: 4,
-            backgroundColor: Colors.blue,
-          ));
-        });
+    appDataHelper.createBill(bill).then((value) {
+      getSink(LOADING).add(new BlocLoaded({}));
+      _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+        content: Text("Thêm đơn thành công"),
+        elevation: 4,
+        backgroundColor: Colors.blue,
+      ));
+      baseView.backView("ok");
+    }).catchError((onError) {
+      getSink(LOADING).add(new BlocLoaded({}));
+      _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
+        content: Text("Thêm không thành công!"),
+        elevation: 4,
+        backgroundColor: Colors.blue,
+      ));
+    });
   }
 
   void getMerchandisesByBill(idBill, idShop) async {
     getSink(MERCHANDISE).add(new BlocLoading());
     print('Bearer ' + Common.loginToken);
     appDataHelper.getMerchandisesByBill(idBill, idShop).then((value) {
+      print(value);
       _viewmodel.listMerchandis = value;
       getSink(MERCHANDISE).add(new BlocLoaded(value));
       calculateTotalMerchandises();
+      caculateTotalInputPrice();
       baseView.updateUI({});
     }).catchError((onError) {
       print(onError);
@@ -173,6 +188,7 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
   }
 
   void createBillImport() {
+    getSink(LOADING).add(new BlocLoading());
     print(Common.user);
     print(Common.selectedShop["idShop"]);
     print("OUT${DateTime.now().millisecondsSinceEpoch}");
@@ -192,12 +208,14 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
     };
     print(bill);
     appDataHelper.createBill(bill).then((value) {
+      getSink(LOADING).add(new BlocLoaded({}));
       _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
         content: Text("Thêm đơn thành công"),
         elevation: 4,
         backgroundColor: Colors.blue,
       ));
     }).catchError((onError) {
+      getSink(LOADING).add(new BlocLoaded({}));
       _viewmodel.scaffoldKey.currentState.showSnackBar(new SnackBar(
         content: Text("Thêm không thành công!"),
         elevation: 4,

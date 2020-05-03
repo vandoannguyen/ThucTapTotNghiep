@@ -13,4 +13,5 @@ router.get("/listshop", authenMiddlware,shopController.getListShop);
 //   }
 router.post("/createshop", authenMiddlware, shopController.createShop);
 router.post("/updateshop", authenMiddlware, shopController.updateShop);
+router.post("/deleteShop", authenMiddlware, shopController.deleteShop);
 module.exports = router;

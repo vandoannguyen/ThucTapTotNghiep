@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 class SearchSanPhamViewModel {
   dynamic _listSanPham = [];
 
@@ -6,4 +9,10 @@ class SearchSanPhamViewModel {
   set listSanPham(dynamic value) {
     _listSanPham = value;
   }
+  GlobalKey<ScaffoldState> scaffoldSearSanPham;
+
+  SearchSanPhamViewModel(){
+    scaffoldSearSanPham = new GlobalKey();
+  }
+
 }

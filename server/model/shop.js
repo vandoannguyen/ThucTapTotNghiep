@@ -39,14 +39,14 @@ function updateShop(value) {
     return new Promise((reslove, reject) => {
         var warningCount = value["warningCount"];
         console.log(warningCount);
-        
+
         if (warningCount == null || warningCount == 0)
             warningCount = 10;
         pool.query("UPDATE shop SET name=?,address=?,idShopkepper=?,image=?,phoneNumber=?,description=?,warningCount=? WHERE idShop=?",
             [value["name"],
             value["address"],
             value["idShopkepper"],
-            value["image"],value["phoneNumber"],value["description"], warningCount, value["idShop"]],
+            value["image"], value["phoneNumber"], value["description"], warningCount, value["idShop"]],
             (err, rows) => {
                 if (err)
                     reject(err);
@@ -55,6 +55,8 @@ function updateShop(value) {
     })
 }
 function deleteShop(id) {
+    console.log(id);
+    
     return new Promise((reslove, reject) => {
         pool.query("DELETE FROM shop WHERE idShop=?", [id], (err, rows) => {
             if (err)
@@ -77,4 +79,5 @@ module.exports = {
     getListShop: getListShop,
     updateShop: updateShop,
     getShop: getShop,
+    deleteShop: deleteShop,
 }

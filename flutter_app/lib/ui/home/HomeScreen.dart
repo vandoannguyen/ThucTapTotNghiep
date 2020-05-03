@@ -143,6 +143,12 @@ class _HomeScreenState extends State<HomeScreen> implements BaseView {
   bottomNavigationIconSize() {}
 
   void bottomNavOnTap(int index) {}
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _presenter.onDispose();
+  }
 
   @override
   void updateUI(dynamic) {

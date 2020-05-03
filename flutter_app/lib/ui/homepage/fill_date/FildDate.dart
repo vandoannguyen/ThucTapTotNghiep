@@ -20,7 +20,6 @@ class FillDate extends StatelessWidget {
       elevation: 4,
       child: Container(
         padding: EdgeInsets.all(10),
-        width: Common.widthOfScreen - 100,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

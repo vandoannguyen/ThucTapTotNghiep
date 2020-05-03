@@ -84,7 +84,6 @@ class ShopDetailPresenter<V extends ShopDetailView> extends BasePresenter<V> {
     print(data);
     if (_viewModel.formKey.currentState.validate()) {
       appDataHelper.updateShop(data).then((value) {
-        print(value);
         data["dateCreate"] = Common.selectedShop["dateCreate"];
         Common.selectedShop = data;
         getSink(LOADING).add(new BlocLoaded(""));

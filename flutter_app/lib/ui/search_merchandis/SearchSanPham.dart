@@ -30,6 +30,7 @@ class _SearchSanPhamScreenState extends State<SearchSanPhamScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _viewModel.scaffoldSearSanPham,
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(

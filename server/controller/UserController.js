@@ -60,8 +60,14 @@ async function userLogin(req, res) {
                         result[0]["password"] = req.body["password"];
                         var personnel = await userModel.getPersonnel(result[0]["idUser"])
                         result[0]["personnel"] = personnel;
-                        shops = await shopModel.getShop(personnel["idShop"]);
-                        console.log(shops);
+                        if (personnel != undefined) {
+                            shops = await shopModel.getShop(personnel["idShop"]);
+                        }
+                        else {
+                            res.status(400).json({"status": 400, "message": "Đăng nhập không thành công!" });
+                            userModel.deleteUser(result[0]["idUser"]);
+                            return;
+                        }
                     }
                 }
                 var token = jwt.sign(req.body, 'token', { expiresIn: "3h" });
@@ -95,7 +101,7 @@ async function changePass(req, res) {
             res.status(200).json({ "message": "Đổi mật khẩu thành công" })
         }
         else {
-            res.status(400).json({"message":"Đổi mật khẩu không thành công"});
+            res.status(400).json({ "message": "Đổi mật khẩu không thành công" });
         }
         // res.json(
         //     { "status": 200, "message": value["affectedRows"] > 0 ? "OK" : "NOT_OK" }
@@ -103,7 +109,7 @@ async function changePass(req, res) {
     }).catch((err) => {
         console.log(err);
         res.status(400);
-        res.status(400).json({"message":"Đổi mật khẩu không thành công"});
+        res.status(400).json({ "message": "Đổi mật khẩu không thành công" });
     });
 
 }

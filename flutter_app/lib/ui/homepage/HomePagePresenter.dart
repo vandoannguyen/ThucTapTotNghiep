@@ -47,8 +47,10 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
         curentDate.subtract(Duration(days: curentDate.weekday - 1));
     var endDayOfWeek =
         firstDayOfWeek.add(Duration(days: firstDayOfWeek.weekday + 5));
-    _viewModel.firstDay = firstDayOfWeek;
-    _viewModel.endDay = endDayOfWeek;
+    _viewModel.firstDay = new DateTime(firstDayOfWeek.year,
+        firstDayOfWeek.month, firstDayOfWeek.day, 0, 0, 0, 0, 0);
+    _viewModel.endDay = new DateTime(endDayOfWeek.year, endDayOfWeek.month,
+        endDayOfWeek.day, 23, 59, 59, 0, 0);
 //    getSink(DAY_OF_WEEK).add(
 //        new BlocLoaded({"firstDay": firstDayOfWeek, "endDay": endDayOfWeek}));
     baseView.updateUI({});
@@ -63,6 +65,7 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
             _viewModel.firstDay.toIso8601String().replaceFirst("T", " "),
             _viewModel.endDay.toIso8601String().replaceFirst("T", " "))
         .then((value) {
+      _viewModel.bestSellers = [];
       if (value.length > 0)
         _viewModel.bestSellers =
             value.where((element) => element["status"] == 1).toList();
@@ -82,10 +85,11 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
         .getWillBeEmpty(Common.selectedShop["idShop"], warningCoutn)
         .then((value) {
       print(value);
+      _viewModel.marchandiseWillEmpty = [];
       if (value.length > 0)
         _viewModel.marchandiseWillEmpty =
             value.where((element) => element["status"] == 1).toList();
-      print(_viewModel.marchandiseWillEmpty[0]);
+//      print(_viewModel.marchandiseWillEmpty[0]);
       getSink(WARNING).add(new BlocLoaded(_viewModel.marchandiseWillEmpty));
     }).catchError((err) {
       getSink(WARNING).add(new BlocFailed(err));
@@ -161,36 +165,38 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
   }
 
   void shopNameClick(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-            elevation: 4,
-            title: Text('Danh sách cửa hàng'),
-            content: Container(
-              height: 200,
-              width: 200,
-              child: ListView.builder(
-                  physics: ScrollPhysics(),
-                  itemCount: Common.shops.length,
-                  itemBuilder: (ctx, index) => GestureDetector(
-                        onTap: () {
-                          Common.selectedShop = Common.shops[index];
-                          getDayOfWeek();
-                          getBestSeller();
-                          getBills();
-                          getWillBeEmpty();
-                          getMerchandises();
-                          getPersonnels(Common.selectedShop["idShop"]);
-                          getCategories();
-                          Navigator.pop(context);
-                          baseView.updateUI({});
-                        },
-                        child: ItemShop(Common.shops[index]),
-                      )),
-            ));
-      },
-    );
+    if (Common.shops.length > 1) {
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+              elevation: 4,
+              title: Text('Danh sách cửa hàng'),
+              content: Container(
+                height: 200,
+                width: 200,
+                child: ListView.builder(
+                    physics: ScrollPhysics(),
+                    itemCount: Common.shops.length,
+                    itemBuilder: (ctx, index) => GestureDetector(
+                          onTap: () {
+                            Common.selectedShop = Common.shops[index];
+                            getDayOfWeek();
+                            getBestSeller();
+                            getBills();
+                            getWillBeEmpty();
+                            getMerchandises();
+                            getPersonnels(Common.selectedShop["idShop"]);
+                            getCategories();
+                            Navigator.pop(context);
+//                          baseView.updateUI({});
+                          },
+                          child: ItemShop(Common.shops[index]),
+                        )),
+              ));
+        },
+      );
+    }
   }
 
   void getPersonnels(selectedShop) {
@@ -210,43 +216,49 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
     String _format = 'yyyy-MMMM-dd';
     DateTimePickerLocale _locale = DateTimePickerLocale.en_us;
     _dateTime = DateTime.parse(INIT_DATETIME);
-    DatePicker.showDatePicker(
-      context,
-      pickerTheme: DateTimePickerTheme(
-        showTitle: true,
-        titleHeight: 30,
-        confirm: Icon(
-          Icons.done,
-          color: Colors.blue,
+    DatePicker.showDatePicker(context,
+        pickerTheme: DateTimePickerTheme(
+          showTitle: true,
+          titleHeight: 30,
+          confirm: Icon(
+            Icons.done,
+            color: Colors.blue,
+          ),
+          cancel: Icon(
+            Icons.close,
+            color: Colors.red,
+          ),
         ),
-        cancel: Icon(
-          Icons.close,
-          color: Colors.red,
-        ),
-      ),
-      minDateTime: DateTime.parse(MIN_DATETIME),
-      maxDateTime: DateTime.parse(MAX_DATETIME),
-      initialDateTime: _dateTime,
-      dateFormat: _format,
-      locale: _locale,
-      onClose: () => {},
-      onCancel: () => {},
-      onChange: (dateTime, List<int> index) {
-        print(dateTime);
-      },
-      onConfirm: (dateTime, List<int> index) {
-        _viewModel.firstDay = dateTime;
-        getSink(DAY_OF_WEEK).add(new BlocLoaded(
-            {"firstDay": dateTime, "endDay": _viewModel.endDay}));
-        getBestSeller();
-        getBills();
-      },
-    );
+        minDateTime: DateTime.parse(MIN_DATETIME),
+        maxDateTime: DateTime.parse(MAX_DATETIME),
+        initialDateTime: new DateTime.now(),
+        dateFormat: _format,
+        locale: _locale,
+        onClose: () => {},
+        onCancel: () => {},
+        onChange: (dateTime, List<int> index) {
+          print(dateTime);
+        },
+        onConfirm: (dateTime, List<int> index) {
+          if (dateTime.isBefore(_viewModel.endDay)) {
+            _viewModel.firstDay = new DateTime(
+                dateTime.year, dateTime.month, dateTime.day, 0, 0, 0, 0, 0);
+            getSink(DAY_OF_WEEK).add(new BlocLoaded(
+                {"firstDay": dateTime, "endDay": _viewModel.endDay}));
+            getBestSeller();
+            getBills();
+          } else {
+            _viewModel.scaffKeyHomePage.currentState.showSnackBar(new SnackBar(
+              content: Text("Vui lòng chọn lại ngày"),
+              backgroundColor: Colors.blue,
+            ));
+          }
+        });
   }
 
   void onClickToDate(context) {
     const String MIN_DATETIME = '1998-01-01';
-    const String MAX_DATETIME = '2050-12-31';
+    const String MAX_DATETIME = '2100-12-31';
     const String INIT_DATETIME = '2020-04-13';
     DateTime _dateTime;
     String _format = 'yyyy-MMMM-dd';
@@ -268,7 +280,7 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
       ),
       minDateTime: DateTime.parse(MIN_DATETIME),
       maxDateTime: DateTime.parse(MAX_DATETIME),
-      initialDateTime: _dateTime,
+      initialDateTime: new DateTime.now(),
       dateFormat: _format,
       locale: _locale,
       onClose: () => print(_dateTime),
@@ -277,11 +289,20 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
         print(dateTime);
       },
       onConfirm: (dateTime, List<int> index) {
-        _viewModel.endDay = dateTime;
-        getSink(DAY_OF_WEEK).add(new BlocLoaded(
-            {"firstDay": _viewModel.firstDay, "endDay": dateTime}));
-        getBestSeller();
-        getBills();
+        if (dateTime.isAfter(_viewModel.firstDay)) {
+          _viewModel.endDay = new DateTime(
+              dateTime.year, dateTime.month, dateTime.day, 24, 59, 59, 0, 0);
+          print(_viewModel.endDay);
+          getSink(DAY_OF_WEEK).add(new BlocLoaded(
+              {"firstDay": _viewModel.firstDay, "endDay": dateTime}));
+          getBestSeller();
+          getBills();
+        } else {
+          _viewModel.scaffKeyHomePage.currentState.showSnackBar(new SnackBar(
+            content: Text("Vui lòng chọn lại ngày"),
+            backgroundColor: Colors.blue,
+          ));
+        }
       },
     );
   }
@@ -295,7 +316,6 @@ class HomePagePresenter<V extends HomePageView> extends BasePresenter<V> {
   }
 
   void showSnackBar() {
-    print("000000000000000");
     _viewModel.scaffKeyHomePage.currentState.showSnackBar(new SnackBar(
       content: Text(
         "Cửa hàng chưa có mặt hàng nào",

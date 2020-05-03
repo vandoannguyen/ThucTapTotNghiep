@@ -113,7 +113,7 @@ class ListBillPresenter<V extends ListBillView> extends BasePresenter<V> {
       ),
       minDateTime: DateTime.parse(MIN_DATETIME),
       maxDateTime: DateTime.parse(MAX_DATETIME),
-      initialDateTime: _dateTime,
+      initialDateTime: DateTime.now(),
       dateFormat: _format,
       locale: _locale,
       onClose: () => {},
@@ -196,66 +196,78 @@ class ListBillPresenter<V extends ListBillView> extends BasePresenter<V> {
                         height: 10,
                       ),
                       Container(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                        child: Column(
                           children: <Widget>[
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context, DATE);
-                              },
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(15))),
-                                elevation: 4,
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 5, bottom: 5),
-                                  child: Text("Ngày tạo"),
-                                ),
+                            Container(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context, DATE);
+                                    },
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15))),
+                                      elevation: 4,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 15,
+                                            right: 15,
+                                            top: 5,
+                                            bottom: 5),
+                                        child: Text("Ngày tạo"),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context, PRICE);
+                                    },
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15))),
+                                      elevation: 4,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 12,
+                                            right: 12,
+                                            top: 5,
+                                            bottom: 5),
+                                        child: Text("Giá trị"),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context, DISCOUNT);
+                                    },
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15))),
+                                      elevation: 4,
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 15,
+                                            right: 15,
+                                            top: 5,
+                                            bottom: 5),
+                                        child: Text("Chiết khấu"),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context, PRICE);
-                              },
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(15))),
-                                elevation: 4,
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 5, bottom: 5),
-                                  child: Text("Giá trị"),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context, DISCOUNT);
-                              },
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(15))),
-                                elevation: 4,
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 5, bottom: 5),
-                                  child: Text("Chiết khấu"),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
+                            )
                           ],
                         ),
                       )

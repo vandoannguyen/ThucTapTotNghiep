@@ -125,33 +125,57 @@ class _ListMerchandisState extends State<ListMerchandis>
                                   _viewModel.selectedListMerchandise.length ==
                                       0,
                               child: Container(
-                                height: Common.heightOfScreen,
-                                width: Common.widthOfScreen,
-                                alignment: Alignment.center,
-                                color: Colors.white,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    addMerchandise(context);
-                                  },
-                                  child: Container(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Container(
-                                          height: Common.heightOfScreen / 5,
-                                          child: Image.asset(
-                                              "assets/icons/add_merchandis.png"),
-                                        ),
-                                        Text(
-                                          "Loại hàng này chưa có hàng\n Click để thêm...",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(color: Colors.blue),
+                                  height: Common.heightOfScreen,
+                                  width: Common.widthOfScreen,
+                                  alignment: Alignment.center,
+                                  color: Colors.white,
+                                  child: Common.user["idRole"] == 2
+                                      ? GestureDetector(
+                                          onTap: () {
+                                            addMerchandise(context);
+                                          },
+                                          child: Container(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Container(
+                                                  height:
+                                                      Common.heightOfScreen / 5,
+                                                  child: Image.asset(
+                                                      "assets/icons/add_merchandis.png"),
+                                                ),
+                                                Text(
+                                                  "Loại hàng này chưa có hàng\n Click để thêm...",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.blue),
+                                                )
+                                              ],
+                                            ),
+                                          ),
                                         )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                                      : Container(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Container(
+                                                height:
+                                                    Common.heightOfScreen / 5,
+                                                child: Image.asset(
+                                                    "assets/icons/empty.png"),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                "Loại hàng này không có hàng",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.blue),
+                                              )
+                                            ],
+                                          ),
+                                        )),
                             )
                           ],
                         ),
@@ -267,6 +291,7 @@ class _ListMerchandisState extends State<ListMerchandis>
                     ),
                     Container(
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Container(
                             child: Row(
@@ -284,9 +309,9 @@ class _ListMerchandisState extends State<ListMerchandis>
                               ],
                             ),
                           ),
-                          SizedBox(
-                            width: 50,
-                          ),
+//                          SizedBox(
+//                            width: 50,
+//                          ),
                           Container(
                             child: Row(
                               children: <Widget>[

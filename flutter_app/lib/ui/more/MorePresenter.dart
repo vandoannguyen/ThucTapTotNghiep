@@ -3,6 +3,7 @@ import 'package:init_app/common/Common.dart';
 import 'package:init_app/data/AppDataHelper.dart';
 import 'package:init_app/ui/category/Category.dart';
 import 'package:init_app/ui/homepage/HomePagePresenter.dart';
+import 'package:init_app/ui/list_shop/ListShop.dart';
 import 'package:init_app/ui/personnel/Personnel.dart';
 import 'package:init_app/ui/register/Register.dart';
 import 'package:init_app/ui/shop/ShopDetail.dart';
@@ -82,6 +83,14 @@ class MorePresenter<V extends MoreView> extends BasePresenter<V> {
     print(Common.user["password"] + "1234567890");
     if (_viewModel.curentPass.text != Common.user["password"])
       return "Mật khẩu không đúng";
+  }
+
+  void intentListShop(context) {
+    IntentAnimation.intentNomal(
+        context: context,
+        screen: ListShop(),
+        option: IntentAnimationOption.RIGHT_TO_LEFT,
+        duration: Duration(milliseconds: 500));
   }
 
   void intentThongTinCuaHang(BuildContext context) {

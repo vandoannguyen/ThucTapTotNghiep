@@ -200,4 +200,10 @@ class AppDataHelper implements IAppDataHelper {
     // TODO: implement deleteCategory
     return apiHelper.deleteCategory(idCategory, idNoCategory, idShop);
   }
+
+  @override
+  Future deleteShop(idShop) {
+    // TODO: implement deleteShop
+    return apiHelper.deleteShop(idShop);
+  }
 }

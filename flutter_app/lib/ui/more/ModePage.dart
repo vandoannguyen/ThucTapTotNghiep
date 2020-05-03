@@ -127,31 +127,32 @@ class _MorePageState extends State<MorePage> implements MoreView {
                                 SizedBox(
                                   height: 15,
                                 ),
+//                                Container(
+//                                    child: CustomButton(
+//                                  onTap: () {
+//                                    _presenter.intentThemCuaHang(context);
+//                                  },
+//                                  perfixIcon: Image.asset(
+//                                    "assets/icons/shop.png",
+//                                    width: 25,
+//                                    height: 25,
+//                                  ),
+//                                  colorIconLeft: Colors.blue,
+//                                  lable: "Thêm cửa hàng",
+//                                  buttonTextStyle: buttonTextStyle(),
+//                                )),
+//                                SizedBox(
+//                                  height: 15,
+//                                ),
                                 Container(
                                     child: CustomButton(
                                   onTap: () {
-                                    _presenter.intentThemCuaHang(context);
-                                  },
-                                  perfixIcon: Image.asset(
-                                    "assets/icons/shop.png",
-                                    width: 25,
-                                    height: 25,
-                                  ),
-                                  colorIconLeft: Colors.blue,
-                                  lable: "Thêm cửa hàng",
-                                  buttonTextStyle: buttonTextStyle(),
-                                )),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                Container(
-                                    child: CustomButton(
-                                  onTap: () {
-                                    _presenter.intentThongTinCuaHang(context);
+//                                    _presenter.intentThongTinCuaHang(context);
+                                    _presenter.intentListShop(context);
                                   },
                                   iconLeft: Icons.store,
                                   colorIconLeft: Colors.blue,
-                                  lable: "Thông tin cửa hàng",
+                                  lable: "Quản lý cửa hàng",
                                   buttonTextStyle: buttonTextStyle(),
                                 )),
                                 SizedBox(

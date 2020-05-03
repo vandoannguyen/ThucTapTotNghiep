@@ -274,7 +274,7 @@ class _ListBillState extends State<ListBill> implements ListBillView {
                                                 height: 5,
                                               ),
                                               Text(
-                                                "List is empty",
+                                                "      List is empty",
                                                 style: TextStyle(
                                                     color: Colors.grey),
                                               )

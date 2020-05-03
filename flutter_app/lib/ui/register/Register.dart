@@ -63,10 +63,11 @@ class _RegisterState extends State<Register> implements RegisterView {
     return Stack(
       children: <Widget>[
         Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("assets/images/background_register.png"))),
-        ),
+            height: Common.heightOfScreen,
+            child: Image.asset(
+              "assets/images/background_register.png",
+              fit: BoxFit.fill,
+            )),
         Scaffold(
             backgroundColor: Colors.transparent,
             key: _keyS,

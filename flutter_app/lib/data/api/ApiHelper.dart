@@ -482,12 +482,41 @@ class ApiHelper implements IApiHelper {
   Future deleteCategory(idCategory, idNoCategory, idShop) {
     // TODO: implement deleteCategory
     Completer completer = new Completer();
-    http.post("${Common.rootUrlApi}/category/delete",
-        body: jsonEncode({
-          "idCategory": idCategory,
-          "idNoCategory": idNoCategory,
-          "idShop": idShop
-        }));
-    return null;
+    http
+        .post("${Common.rootUrlApi}/category/delete",
+            body: jsonEncode({
+              "idCategory": idCategory,
+              "idNoCategory": idNoCategory,
+              "idShop": idShop
+            }))
+        .then((value) {
+      if (value.statusCode == 2) {
+        completer.complete({});
+      }
+    }).catchError((err) {
+      completer.completeError(err);
+    });
+    return completer.future;
+  }
+
+  @override
+  Future deleteShop(idShop) {
+    // TODO: implement deleteShop
+    Completer completer = new Completer();
+    http
+        .post("${Common.rootUrlApi}shop/deleteShop",
+            body: jsonEncode({"idShop": idShop}), headers: _getHeader())
+        .then((value) {
+      if (value.statusCode == 200) {
+        print("Xóa THành công");
+        completer.complete("Xóa thành cửa hàng thành công.");
+      } else {
+        completer.completeError("Xóa không thành công");
+      }
+    }).catchError((err) {
+      print(err);
+      completer.completeError("Xóa không thành công");
+    });
+    return completer.future;
   }
 }

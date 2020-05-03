@@ -18,6 +18,8 @@ class CreateBillViewmodel {
   GlobalKey<ScaffoldState> scaffoldKey;
 
   var keyCheck = "";
+
+  int tongTienNhap = 0;
   CreateBillViewmodel() {
     scaffoldKey = new GlobalKey();
     editEnable = true;

@@ -131,52 +131,86 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
               ),
         centerTitle: true,
       ),
-      body: Container(
-          padding: EdgeInsets.all(10),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  height: 15,
-                ),
-                Card(
-                  elevation: 6,
-                  child: StreamBuilder(
-                    stream:
-                        _presenter.getStream(CreateBillPresenter.MERCHANDISE),
-                    builder: (ctx, snap) => snap.data is BlocLoading
-                        ? Card(
-                            child: Container(
-                              child: Image.asset(
-                                "assets/icons/loading.gif",
-                                width: 30,
-                                height: 30,
-                              ),
-                            ),
-                          )
-                        : snap.data is BlocLoaded
-                            ? snap.data.value.length > 0
-                                ? ListView.separated(
-                                    separatorBuilder: (ctx, index) => Container(
-                                      height: 0.5,
-                                      color: Colors.grey,
-                                    ),
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder: (context, index) =>
-                                        ItemMerchandis(
-                                      index,
-                                      _viewmodel,
-                                      () {
-                                        tinhTongSo();
-                                        tinhTongTien();
-                                        setState(() {});
-                                      },
-                                      enable: _viewmodel.editEnable,
-                                    ),
-                                    itemCount: _viewmodel.listMerchandis.length,
-                                  )
+      body: Stack(
+        children: <Widget>[
+          Container(
+              padding: EdgeInsets.all(10),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Card(
+                      elevation: 6,
+                      child: StreamBuilder(
+                        stream: _presenter
+                            .getStream(CreateBillPresenter.MERCHANDISE),
+                        builder: (ctx, snap) => snap.data is BlocLoading
+                            ? Card(
+                                child: Container(
+                                  child: Image.asset(
+                                    "assets/icons/loading.gif",
+                                    width: 30,
+                                    height: 30,
+                                  ),
+                                ),
+                              )
+                            : snap.data is BlocLoaded
+                                ? snap.data.value.length > 0
+                                    ? ListView.separated(
+                                        separatorBuilder: (ctx, index) =>
+                                            Container(
+                                          height: 0.5,
+                                          color: Colors.grey,
+                                        ),
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        scrollDirection: Axis.vertical,
+                                        itemBuilder: (context, index) =>
+                                            ItemMerchandis(
+                                          index,
+                                          _viewmodel,
+                                          () {
+                                            tinhTongSo();
+                                            tinhTongTien();
+                                            setState(() {});
+                                          },
+                                          enable: _viewmodel.editEnable,
+                                        ),
+                                        itemCount:
+                                            _viewmodel.listMerchandis.length,
+                                      )
+                                    : GestureDetector(
+                                        onTap: () {
+                                          searchSanPham(context);
+                                        },
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: EdgeInsets.all(10),
+                                          height: Common.heightOfScreen / 4,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Image.asset(
+                                                  "assets/icons/ic_create_order_intro.png",
+                                                  fit: BoxFit.fitHeight,
+                                                ),
+                                              ),
+                                              Container(
+                                                height: 50,
+                                                child: Text(
+                                                  "Đơn hàng này của bạn \n chưa có sản phẩm nào!",
+                                                  style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 13),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )
                                 : GestureDetector(
                                     onTap: () {
                                       searchSanPham(context);
@@ -206,193 +240,210 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
                                         ],
                                       ),
                                     ),
-                                  )
-                            : GestureDetector(
-                                onTap: () {
-                                  searchSanPham(context);
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.all(10),
-                                  height: Common.heightOfScreen / 4,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Image.asset(
-                                          "assets/icons/ic_create_order_intro.png",
-                                          fit: BoxFit.fitHeight,
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 50,
-                                        child: Text(
-                                          "Đơn hàng này của bạn \n chưa có sản phẩm nào!",
-                                          style: TextStyle(
-                                              color: Colors.grey, fontSize: 13),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      )
-                                    ],
                                   ),
-                                ),
-                              ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                customItemButton("Tổng số lượng:", "${_viewmodel.tongSo}"),
-                customItemButton("Tổng tiền hàng:",
-                    "${Common.CURRENCY_FORMAT.format(_viewmodel.tongTien)}"),
-                GestureDetector(
-                  onTap: () {
-                    FocusScope.of(context)
-                        .requestFocus(_viewmodel.focusNodeChietKhau);
-                  },
-                  child: customItemButton("Chiết khấu:", "0"),
-                ),
-                customItemButton("Giá tạm tính:",
-                    "${Common.CURRENCY_FORMAT.format(_viewmodel.tongTien - _viewmodel.chietKhau)}"),
-                Container(
-                  width: Common.widthOfScreen,
-                  padding: EdgeInsets.all(10),
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.only(top: 5),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Colors.grey,
-                          width: 0.5,
-                          style: BorderStyle.solid)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        child: Text(
-                          "Ghi chú",
-                          style: lableStyle(),
-                        ),
                       ),
-                      SizedBox(
-                        height: 5,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    customItemButton("Tổng số lượng:", "${_viewmodel.tongSo}"),
+                    customItemButton("Tổng tiền hàng:",
+                        "${Common.CURRENCY_FORMAT.format(_viewmodel.tongTien)}"),
+                    GestureDetector(
+                      onTap: () {
+                        FocusScope.of(context)
+                            .requestFocus(_viewmodel.focusNodeChietKhau);
+                      },
+                      child: customItemButton("Chiết khấu:", "0"),
+                    ),
+                    _viewmodel.keyCheck != CreateBill.KEY_CHECK_DETAIL
+                        ? customItemButton("Giá tạm tính:",
+                            "${Common.CURRENCY_FORMAT.format(_viewmodel.tongTien - _viewmodel.chietKhau)}")
+                        : Container(),
+                    _viewmodel.keyCheck ==
+                                CreateBill.KEY_CHECK_EXPORT_MERCHANDISE ||
+                            (_viewmodel.keyCheck ==
+                                    CreateBill.KEY_CHECK_DETAIL &&
+                                widget.value["status"] != 0)
+                        ? customItemButton("Lãi xuất:",
+                            "${Common.CURRENCY_FORMAT.format(_viewmodel.tongTien - _viewmodel.chietKhau - _viewmodel.tongTienNhap)}")
+                        : Container(),
+                    Container(
+                      width: Common.widthOfScreen,
+                      padding: EdgeInsets.all(10),
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(top: 5),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 0.5,
+                              style: BorderStyle.solid)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            child: Text(
+                              "Ghi chú",
+                              style: lableStyle(),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          _viewmodel.editEnable
+                              ? TextField(
+                                  controller: _viewmodel.ghiChuController,
+                                  maxLines: 5,
+                                  minLines: 1,
+                                  decoration: InputDecoration(
+                                    labelText: "Ghi chú",
+                                  ),
+                                )
+                              : Text("${_viewmodel.ghiChuController.text}")
+                        ],
                       ),
-                      _viewmodel.editEnable
-                          ? TextField(
-                              controller: _viewmodel.ghiChuController,
-                              maxLines: 5,
-                              minLines: 1,
-                              decoration: InputDecoration(
-                                labelText: "Ghi chú",
-                              ),
-                            )
-                          : Text("${_viewmodel.ghiChuController.text}")
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                widget.keyCheck == CreateBill.KEY_CHECK_DETAIL
-                    ? StreamBuilder(
-                        stream:
-                            _presenter.getStream(CreateBillPresenter.PERSONNEL),
-                        builder: (ctx, snap) => snap.data is BlocLoading
-                            ? Container(
-                                child: Image.asset(
-                                  "assets/icons/loading.gif",
-                                  width: 30,
-                                  height: 30,
-                                ),
-                              )
-                            : snap.data is BlocLoaded
-                                ? containerNguoiBan(snap.data.value)
-                                : Container(),
-                      )
-                    : Container(),
-                _viewmodel.editEnable
-                    ? Container(
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            _viewmodel.listMerchandis.length > 0 &&
-                                    _viewmodel.tongSo > 0
-                                ? GestureDetector(
-                                    onTap: () {
-                                      if (widget.keyCheck ==
-                                          CreateBill
-                                              .KEY_CHECK_EXPORT_MERCHANDISE)
-                                        _presenter.createBillExport();
-                                      if (widget.keyCheck ==
-                                          CreateBill
-                                              .KEY_CHECK_IMPORT_MERCHANDISE)
-                                        _presenter.createBillImport();
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.only(
-                                          bottom: 15, right: 50),
-                                      decoration: BoxDecoration(
-                                          color: Colors.blue,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(25)),
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: Colors.grey,
-                                                blurRadius: 5,
-                                                offset: Offset(3, 3))
-                                          ]),
-                                      alignment: Alignment.center,
-                                      width: Common.widthOfScreen / 3,
-                                      padding: EdgeInsets.only(
-                                          top: 10,
-                                          bottom: 10,
-                                          left: 15,
-                                          right: 15),
-                                      child: Text(
-                                        "Thêm",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 16),
-                                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    widget.keyCheck == CreateBill.KEY_CHECK_DETAIL
+                        ? StreamBuilder(
+                            stream: _presenter
+                                .getStream(CreateBillPresenter.PERSONNEL),
+                            builder: (ctx, snap) => snap.data is BlocLoading
+                                ? Container(
+                                    child: Image.asset(
+                                      "assets/icons/loading.gif",
+                                      width: 30,
+                                      height: 30,
                                     ),
                                   )
-                                : Container(),
-                            GestureDetector(
-                              onTap: () {
+                                : snap.data is BlocLoaded
+                                    ? containerNguoiBan(snap.data.value)
+                                    : Container(),
+                          )
+                        : Container(),
+                    _viewmodel.editEnable
+                        ? Container(
+                            alignment: Alignment.center,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                _viewmodel.listMerchandis.length > 0 &&
+                                        _viewmodel.tongSo > 0
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          if (_viewmodel.tongTien -
+                                                  _viewmodel.tongTienNhap >=
+                                              0) {
+                                            if (widget.keyCheck ==
+                                                CreateBill
+                                                    .KEY_CHECK_EXPORT_MERCHANDISE)
+                                              _presenter.createBillExport();
+                                            if (widget.keyCheck ==
+                                                CreateBill
+                                                    .KEY_CHECK_IMPORT_MERCHANDISE)
+                                              _presenter.createBillImport();
+                                          } else {
+//                                        print("")
+                                          }
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              bottom: 15, right: 50),
+                                          decoration: BoxDecoration(
+                                              color: Colors.blue,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(25)),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Colors.grey,
+                                                    blurRadius: 5,
+                                                    offset: Offset(3, 3))
+                                              ]),
+                                          alignment: Alignment.center,
+                                          width: Common.widthOfScreen / 3,
+                                          padding: EdgeInsets.only(
+                                              top: 10,
+                                              bottom: 10,
+                                              left: 15,
+                                              right: 15),
+                                          child: Text(
+                                            "Thêm",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
+                                GestureDetector(
+                                  onTap: () {
 //                                _presenter.createBillExport();
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(bottom: 15),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(25)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.grey,
-                                          blurRadius: 5,
-                                          offset: Offset(3, 3))
-                                    ]),
-                                alignment: Alignment.center,
-                                width: Common.widthOfScreen / 3,
-                                padding: EdgeInsets.only(
-                                    top: 10, bottom: 10, left: 15, right: 15),
-                                child: Text(
-                                  "Hủy",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.black87, fontSize: 16),
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 15),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(25)),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.grey,
+                                              blurRadius: 5,
+                                              offset: Offset(3, 3))
+                                        ]),
+                                    alignment: Alignment.center,
+                                    width: Common.widthOfScreen / 3,
+                                    padding: EdgeInsets.only(
+                                        top: 10,
+                                        bottom: 10,
+                                        left: 15,
+                                        right: 15),
+                                    child: Text(
+                                      "Hủy",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.black87, fontSize: 16),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
+                          )
+                        : Container()
+                  ],
+                ),
+              )),
+          StreamBuilder(
+              stream: _presenter.getStream(CreateBillPresenter.LOADING),
+              builder: (ctx, snap) => snap.data is BlocLoading
+                  ? Positioned(
+                      bottom: 10,
+                      left: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: () {
+                          print("loading");
+                        },
+                        child: Container(
+                          height: 50,
+                          color: Colors.transparent,
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            "assets/icons/loading.gif",
+                            width: 30,
+                            height: 30,
+                          ),
                         ),
-                      )
-                    : Container()
-              ],
-            ),
-          )),
+                      ),
+                    )
+                  : Container()),
+        ],
+      ),
     );
   }
 
@@ -433,7 +484,7 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
                         ),
                       )
                     : Text(
-                        "${_viewmodel.chietKhau}",
+                        "${Common.CURRENCY_FORMAT.format(_viewmodel.chietKhau)}",
                         style: valueStyle(),
                       )
                 : Text(
@@ -468,6 +519,7 @@ class _CreateBillState extends State<CreateBill> implements CreateBillView {
 
   void tinhTongTien() {
     _presenter.calculateTotalPrice();
+    _presenter.caculateTotalInputPrice();
   }
 
   @override

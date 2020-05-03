@@ -137,13 +137,11 @@ class _ItemMerchandisState extends State<ItemMerchandis> {
   }
 
   void pressMinus(context) {
-    if (widget.viewmodel.listMerchandis[widget.index]["countsp"] > 0) {
+    if (widget.viewmodel.listMerchandis[widget.index]["countsp"] - 1 > 0) {
       setState(() {
         widget.viewmodel.listMerchandis[widget.index]["countsp"]--;
       });
       widget.onPressButton();
-    } else {
-      showAlertTypeOverload(context, "Không nhập số âm");
     }
   }
 

@@ -30,8 +30,24 @@ function updateShop(req, res) {
     })
 
 }
+function deleteShop(req, res) {
+    shopModel.deleteShop(req.body.idShop).then((value) => {
+        if(value.affectedRows >0){
+            res.status(200).json({"message":"OK"});
+        }
+        else{
+            res.status(400).json({"err":"not ok"})
+        }
+        
+    }).catch((err) => {
+        console.log(err);
+        res.status(400).json({"err":err})
+        
+    });
+}
 module.exports = {
     getListShop: getListShop,
     createShop: createShop,
     updateShop: updateShop,
+    deleteShop: deleteShop,
 }
