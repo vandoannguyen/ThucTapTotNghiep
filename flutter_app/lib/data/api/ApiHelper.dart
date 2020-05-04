@@ -483,16 +483,18 @@ class ApiHelper implements IApiHelper {
     // TODO: implement deleteCategory
     Completer completer = new Completer();
     http
-        .post("${Common.rootUrlApi}/category/delete",
+        .post("${Common.rootUrlApi}category/delete",
             body: jsonEncode({
               "idCategory": idCategory,
               "idNoCategory": idNoCategory,
               "idShop": idShop
-            }))
+            }),
+            headers: _getHeader())
         .then((value) {
-      if (value.statusCode == 2) {
-        completer.complete({});
+      if (value.statusCode == 200) {
+        completer.complete(jsonDecode(value.body));
       }
+      else completer.completeError(jsonDecode(value.body));
     }).catchError((err) {
       completer.completeError(err);
     });

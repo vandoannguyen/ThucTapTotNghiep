@@ -58,26 +58,26 @@ class Warehouse extends StatelessWidget {
                                 height: 0.5,
                                 color: Colors.grey,
                               ),
-                              Container(
-                                padding: EdgeInsets.only(top: 10, bottom: 10),
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Text("Giá trị tồn kho"),
-                                    ),
-                                    Text(
-                                      "${Common.CURRENCY_FORMAT.format(data.value["total"])} VND",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 18),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: 0.5,
-                                color: Colors.grey,
-                              ),
+//                              Container(
+//                                padding: EdgeInsets.only(top: 10, bottom: 10),
+//                                child: Row(
+//                                  children: <Widget>[
+//                                    Expanded(
+//                                      child: Text("Giá trị tồn kho"),
+//                                    ),
+//                                    Text(
+//                                      "${Common.CURRENCY_FORMAT.format(data.value["total"])} VND",
+//                                      style: TextStyle(
+//                                          fontWeight: FontWeight.w600,
+//                                          fontSize: 18),
+//                                    )
+//                                  ],
+//                                ),
+//                              ),
+//                              Container(
+//                                height: 0.5,
+//                                color: Colors.grey,
+//                              ),
                             ],
                           ),
                         )

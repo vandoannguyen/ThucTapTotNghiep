@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:init_app/common/Common.dart';
-import 'package:init_app/ui/login/Login.dart';
+import 'package:init_app/ui/load_api/LoadApi.dart';
 import 'package:init_app/utils/CallNativeUtils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 20)))),
-      home: Login(),
+      home: LoadApi(),
     );
   }
 

@@ -46,9 +46,16 @@ class CategoryPresenter<V extends CategoryView> extends BasePresenter<V> {
 
   void deldeteCategory(idCategory, idNoCategory) {
     appDataHelper
-        .deleteCategory(
-            idCategory, idNoCategory, Common.selectedShop["'idShop"])
-        .then((value) {})
-        .catchError((onError) {});
+        .deleteCategory(idCategory, idNoCategory, Common.selectedShop["idShop"])
+        .then((value) {
+      print(value);
+      getCategory();
+      baseView.showSnackBar(
+        keyInput: Category.API_SUCCESS,
+        mess: "Xóa thành công",
+      );
+    }).catchError((onError) {
+      baseView.showSnackBar(keyInput: "er", mess: "Xóa không thành công");
+    });
   }
 }

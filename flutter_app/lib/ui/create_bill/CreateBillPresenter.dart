@@ -98,11 +98,12 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
   void showBarcode() async {
     var barcode = await scan.scan();
     var merchandis = _viewmodel.listSanPham.firstWhere(
-        (element) => element["barcode"] == barcode,
+        (element) => element["barcode"] == barcode && element["status"] == 1,
         orElse: () => null);
     if (merchandis != null) {
       if (_viewmodel.listMerchandis
               .where((element) => element["barcode"] == merchandis["barcode"])
+              .toList()
               .length ==
           0) {
         merchandis["countsp"] = 1;

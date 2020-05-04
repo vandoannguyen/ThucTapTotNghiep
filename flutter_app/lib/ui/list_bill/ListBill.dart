@@ -38,6 +38,19 @@ class _ListBillState extends State<ListBill> implements ListBillView {
     return Scaffold(
         key: _viewModel.scaffoldKey,
         appBar: AppBar(
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+              width: 50,
+              height: 50,
+              child: Icon(
+                Icons.arrow_back_ios,
+                size: 17,
+              ),
+            ),
+          ),
           title: Text("Danh sách đơn hàng"),
           centerTitle: true,
         ),

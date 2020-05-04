@@ -31,6 +31,19 @@ class _CategoryState extends State<Category> implements CategoryView {
     return Scaffold(
       key: _viewModel.scaffoldKey,
       appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Container(
+            width: 50,
+            height: 50,
+            child: Icon(
+              Icons.arrow_back_ios,
+              size: 17,
+            ),
+          ),
+        ),
         centerTitle: true,
         title: Text("Loại mặt hàng"),
         actions: <Widget>[
@@ -58,7 +71,14 @@ class _CategoryState extends State<Category> implements CategoryView {
                 ? ListView.builder(
                     itemBuilder: (context, index) => GestureDetector(
                       onLongPress: () {
-                        showDialogDelete(context, index);
+                        if (index !=
+                            _viewModel.danhSachLoaiMatHang.length - 1) {
+                          showDialogDelete(context, index);
+                        } else {
+                          showSnackBar(
+                              keyInput: "err",
+                              mess: "Không thể xóa loại mặt hàng này!");
+                        }
                       },
                       child: itemView(index),
                     ),
@@ -230,8 +250,10 @@ class _CategoryState extends State<Category> implements CategoryView {
               ],
             ));
     if (result) {
-//      _presenter
-//          .deldeteCategory(_viewModel.danhSachLoaiMatHang[index]["idCategory"]);
+      _presenter.deldeteCategory(
+          _viewModel.danhSachLoaiMatHang[index]["idCategory"],
+          _viewModel.danhSachLoaiMatHang[
+              _viewModel.danhSachLoaiMatHang.length - 1]["idCategory"]);
     }
   }
 }

@@ -62,13 +62,11 @@ async function updateMerchandises(req, res) {
             else {
                 req.body["image"] = imageName;
                 merchandiseModel.updateMerchandises(req.body).then((value) => {
-                    res.status = 200,
+                    res.status (200).json({ "success": true, "message": "ok" }),
                         console.log("ok");
-                    res.json({ "success": true, "message": "ok" })
                 }).catch((err) => {
                     console.log(err);
-                    res.status = 500,
-                        res.json({ "success": false, "message": err })
+                    res.status (400).json({ "success": false, "message": err });
                 })
             }
         });

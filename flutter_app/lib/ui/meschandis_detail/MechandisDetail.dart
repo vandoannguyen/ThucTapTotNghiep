@@ -299,7 +299,7 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                               ? false
                               : true,
                           controller: _viewModel.totalMerchandiseController,
-                          keyboardType: TextInputType.phone,
+                          keyboardType: TextInputType.number,
                           style: textStyle(),
                           enabled: _viewModel.isEditing,
                           validator: _validateCount,
@@ -587,10 +587,18 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
   }
 
   String _validatorOutPrice(String value) {
+    if (value != "" && _viewModel.inputPriceController.text != "") {
+      if (int.parse(value) < int.parse(_viewModel.inputPriceController.text))
+        return "Nhập sai giá!";
+    }
     return value == "" ? "Nhập thiếu giá bán!" : null;
   }
 
   String _validatorInPrice(String value) {
+    if (value != "" && _viewModel.outputPriceController.text != "") {
+      if (int.parse(value) > int.parse(_viewModel.outputPriceController.text))
+        return "Nhập sai giá!";
+    }
     return value == "" ? "Nhập thiếu giá nhập!" : null;
   }
 

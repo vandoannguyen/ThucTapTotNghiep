@@ -30,10 +30,11 @@ class SearchSanPhamPresenter extends BasePresenter {
     appDataHelper
         .getMerchandisesByShop(Common.selectedShop["idShop"])
         .then((value) {
-      _viewModel.listSanPham = value;
+      _viewModel.listSanPham =
+          value.where((element) => element["status"] == 1).toList();
       print(value.length);
       if (value.length == 0) showSnackBar();
-      getSink(LIST_MERCHANDISE).add(BlocLoaded(value));
+      getSink(LIST_MERCHANDISE).add(BlocLoaded(_viewModel.listSanPham));
       print(_viewModel.listSanPham);
     }).catchError((err) {
       getSink(LIST_MERCHANDISE).add(BlocFailed(err));

@@ -16,9 +16,12 @@ async function insertCategory(req, res) {
 }
 function deleteCategory(req, res) {
     categoryModel.deleteCategory(req.body["idCategory"],req.body["idNoCategory"],req.body["idShop"]).then((value) => {
-
+        if(value["affectedRows"] > 0){
+            res.status(200).json({"message":"Xóa thành công"})
+        }
+        else res.status(400).json({"message":"Xóa không thành công"})
     }).catch((err) => {
-
+        res.status(400).json({"message":err})
     });
 }
 module.exports = {

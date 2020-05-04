@@ -20,7 +20,7 @@ async function getListMerchandiseByBill(params) {
     console.log("id cua hang ", params);
 
     return new Promise((reslove, reject) => {
-        var sql = "SELECT idBill, refbillmerchandise.barcode, refbillmerchandise.count as countsp, image,outputPrice, nameMerchandise FROM refbillmerchandise, merchandisedetail WHERE refbillmerchandise.barcode = merchandisedetail.barcode AND idBill =? AND idShop=?";
+        var sql = "SELECT idBill, refbillmerchandise.barcode, refbillmerchandise.count as countsp, image,outputPrice, inputPrice, nameMerchandise FROM refbillmerchandise, merchandisedetail WHERE refbillmerchandise.barcode = merchandisedetail.barcode AND idBill =? AND idShop=?";
         console.log(sql);
         pool.query(sql, [params["idBill"], params["idShop"]], (err, rows) => {
             if (err) {
@@ -57,8 +57,6 @@ function createMerchandise(params) {
                     else reject(err);
                 }
                 else {
-                    console.log(
-                        "1234567890", rows);
                     reslove(params);
                 }
             });
@@ -76,7 +74,6 @@ async function getBestSeller(params) {
             pool.query(query, [params["idShop"], params["limits"], params["fromDate"], params["toDate"]], (err, rows) => {
                 if (err) {
                     reject(err);
-                    throw err;
                 }
                 else {
                     console.log(rows[0]);

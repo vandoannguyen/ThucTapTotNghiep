@@ -40,6 +40,19 @@ class _PersonnelState extends State<Personnel> implements PersonnelView {
     return Scaffold(
       key: _viewModel.scaffKey,
       appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Container(
+            width: 50,
+            height: 50,
+            child: Icon(
+              Icons.arrow_back_ios,
+              size: 17,
+            ),
+          ),
+        ),
         centerTitle: true,
         title: Text("Nhân viên"),
         actions: <Widget>[
