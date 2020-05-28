@@ -36,6 +36,7 @@ class _CategoryState extends State<Category> implements CategoryView {
             Navigator.pop(context);
           },
           child: Container(
+            color: Colors.transparent,
             width: 50,
             height: 50,
             child: Icon(
@@ -49,7 +50,7 @@ class _CategoryState extends State<Category> implements CategoryView {
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              setCategory(context);
+              setCategory(context, "", "add");
             },
             icon: Icon(Icons.add),
           )
@@ -80,6 +81,22 @@ class _CategoryState extends State<Category> implements CategoryView {
                               mess: "Không thể xóa loại mặt hàng này!");
                         }
                       },
+                      onTap: () {
+                        if (index !=
+                            _viewModel.danhSachLoaiMatHang.length - 1) {
+                          setCategory(
+                              context,
+                              _viewModel.danhSachLoaiMatHang[index]
+                                  ["nameCategory"],
+                              "update",
+                              idCategory: _viewModel.danhSachLoaiMatHang[index]
+                                  ["idCategory"]);
+                        } else {
+                          showSnackBar(
+                              keyInput: "err",
+                              mess: "Không thể sửa loại mặt hàng này!");
+                        }
+                      },
                       child: itemView(index),
                     ),
                     itemCount: _viewModel.danhSachLoaiMatHang.length,
@@ -93,7 +110,11 @@ class _CategoryState extends State<Category> implements CategoryView {
     );
   }
 
-  void setCategory(context) {
+  void setCategory(context, name, key, {idCategory}) {
+    print("00000000000000000000000000000");
+    if (name != "") {
+      _viewModel.tenLoaiMatHangContrller.text = name;
+    }
     showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -105,7 +126,7 @@ class _CategoryState extends State<Category> implements CategoryView {
               actions: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    dialogPressOk(context);
+                    dialogPressOk(context, key, idCategory: idCategory);
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -163,14 +184,23 @@ class _CategoryState extends State<Category> implements CategoryView {
     setState(() {});
   }
 
-  void dialogPressOk(context) {
+  void dialogPressOk(context, key, {idCategory}) {
     if (_viewModel.tenLoaiMatHangContrller.text != "") {
-      _presenter.addCategory(_viewModel.tenLoaiMatHangContrller.text);
+      if (key == "add") {
+        _presenter.addCategory(_viewModel.tenLoaiMatHangContrller.text);
+      }
+      if (key == "update") {
+        if (idCategory == null) throw ("idCategory not null");
+        print("update");
+        _presenter.update(idCategory, _viewModel.tenLoaiMatHangContrller.text);
+      }
     }
+    _viewModel.tenLoaiMatHangContrller.text = "";
     Navigator.pop(context);
   }
 
   void dialogPressCanncel(context) {
+    _viewModel.tenLoaiMatHangContrller.text = "";
     Navigator.pop(context);
   }
 
@@ -179,6 +209,7 @@ class _CategoryState extends State<Category> implements CategoryView {
       elevation: 4,
       margin: EdgeInsets.only(left: 15, right: 15, top: 15),
       child: Container(
+        color: Colors.transparent,
         width: double.infinity,
         height: 50,
         padding: EdgeInsets.only(left: 15),

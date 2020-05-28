@@ -25,7 +25,7 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
   }
 
   void register() {
-    getSink(LOADING).add(BlocLoaded(""));
+    getSink(LOADING).add(BlocLoading());
     dynamic data = {
       "username": _viewModel.usernameController.text,
       "password": _viewModel.passwordController.text,
@@ -37,16 +37,18 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
     print(data);
     appDataHelper.registerAccount(jsonEncode(data)).then((onvalue) {
       print(onvalue);
-      getSink(LOADING).add(BlocLoading());
+      getSink(LOADING).add(BlocLoaded(""));
       baseView.backView(data);
       print(onvalue);
     }).catchError((err) {
-      getSink(LOADING).add(BlocLoading());
+      getSink(LOADING).add(BlocLoaded(""));
       baseView.showSnackbar(err, "w");
     });
   }
 
   void createPersonnel() {
+    getSink(LOADING).add(new BlocLoading());
+
     dynamic data = {
       "username": _viewModel.usernameController.text,
       "password": _viewModel.passwordController.text,
@@ -60,10 +62,12 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
     print(data);
     appDataHelper.createPersonnel(jsonEncode(data)).then((onvalue) {
       baseView.backView(data);
+      getSink(LOADING).add(new BlocLoaded("value"));
     }).catchError((err) {
+      getSink(LOADING).add(new BlocLoaded("value"));
+
 //      if(err["message"])
       baseView.showSnackbar(err, "w");
-      print(err + "eeeeeeeeeeeeeeeeeeee");
     });
   }
 
@@ -114,6 +118,7 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
   }
 
   void updateUser() {
+    getSink(LOADING).add(BlocLoading());
     dynamic data = {
       "idUser": _viewModel.user != null
           ? _viewModel.user["idPersonnel"]
@@ -130,10 +135,14 @@ class RegisterPresenter<V extends RegisterView> extends BasePresenter<V> {
     };
     appDataHelper.updateUser(jsonEncode(data)).then((onValue) {
       print(onValue);
-      print("1234567890");
-      baseView.showSnackbar("Sửa thông tin thành công.", "");
+      getSink(LOADING).add(BlocLoaded(""));
+      baseView.showSnackbar(
+          _viewModel.user == null
+              ? "Cập nhật thành công!\nThông tin được cập nhật ở lần đăng nhập sau"
+              : "Cập nhật thành công!",
+          "");
     }).catchError((err) {
-      baseView.showSnackbar(err["error"], "w");
+      baseView.showSnackbar(err.toString(), "w");
     });
   }
 }

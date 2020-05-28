@@ -45,6 +45,7 @@ class _RegisterState extends State<Register> implements RegisterView {
         _viewModel.enableEdit = false;
         _viewModel.personnelIsActive = widget.user["status"] == 1;
       } else {
+//        _viewModel.user = Common.user;
         _viewModel.fullNameController.text = Common.user["name"];
         _viewModel.usernameController.text = Common.user["username"];
         _viewModel.passwordController.text = Common.user["password"];
@@ -202,6 +203,7 @@ class _RegisterState extends State<Register> implements RegisterView {
                                 onFieldSubmitted: (value) {
                                   _presenter.emailSummit();
                                 },
+                                keyboardType: TextInputType.emailAddress,
                                 validator: _validateEmail,
                                 style: inputStyle(),
                                 controller: _viewModel.emailController,
@@ -382,12 +384,18 @@ class _RegisterState extends State<Register> implements RegisterView {
           right: 0,
           child: StreamBuilder(
             stream: _presenter.getStream(RegisterPresenter.LOADING),
-            builder: (ctx, snap) => snap.data is BlocLoaded
-                ? Container(
-                    child: Image.asset(
-                      "assets/icons/loading.gif",
-                      width: 30,
-                      height: 30,
+            builder: (ctx, snap) => snap.data is BlocLoading
+                ? GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      height: 80,
+                      color: Colors.transparent,
+                      child: Image.asset(
+                        "assets/icons/loading.gif",
+                        width: 30,
+                        height: 30,
+                      ),
                     ),
                   )
                 : Container(),
@@ -564,7 +572,7 @@ class _RegisterState extends State<Register> implements RegisterView {
     _keyS.currentState.showSnackBar(
       new SnackBar(
         content: Text(mess),
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: 3),
         backgroundColor: status == "w" ? Colors.red : Colors.blue,
       ),
     );

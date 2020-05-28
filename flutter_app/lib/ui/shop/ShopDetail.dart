@@ -263,12 +263,17 @@ class _ShopDetailState extends State<ShopDetail> implements ShopDetailView {
               child: StreamBuilder(
                 stream: _presenter.getStream(ShopDetailPresenter.LOADING),
                 builder: (ctx, snap) => snap.data is BlocLoading
-                    ? Container(
-                        alignment: Alignment.center,
-                        child: Image.asset(
-                          "assets/icons/loading.gif",
-                          width: 30,
-                          height: 30,
+                    ? GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 50,
+                          color: Colors.transparent,
+                          child: Image.asset(
+                            "assets/icons/loading.gif",
+                            width: 30,
+                            height: 30,
+                          ),
                         ),
                       )
                     : Container(),

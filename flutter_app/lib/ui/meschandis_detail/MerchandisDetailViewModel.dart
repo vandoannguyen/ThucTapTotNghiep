@@ -10,7 +10,8 @@ class MerchandiseDetailViewModel {
       descriptionController,
       inputPriceController,
       outputPriceController,
-      totalMerchandiseController;
+      totalMerchandiseController,
+      emailProvider;
   dynamic categories = [];
 
   FileImage avatarImage;
@@ -21,7 +22,10 @@ class MerchandiseDetailViewModel {
   dynamic value = {};
 
   GlobalKey<ScaffoldState> scaffoldKey;
+
+  bool updateSuccess;
   MerchandiseDetailViewModel() {
+    updateSuccess = false;
     scaffoldKey = new GlobalKey();
     formKey = new GlobalKey();
     tenSpControl = new TextEditingController();
@@ -30,5 +34,6 @@ class MerchandiseDetailViewModel {
     inputPriceController = new TextEditingController();
     outputPriceController = new TextEditingController();
     totalMerchandiseController = new TextEditingController();
+    emailProvider = new TextEditingController();
   }
 }

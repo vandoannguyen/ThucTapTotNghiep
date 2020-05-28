@@ -16,7 +16,7 @@ class ListShopViewPresenter<V extends ListShopView> extends BasePresenter<V> {
   static const String LOADING = "LOADING";
   IAppDataHelper dataHelper;
   ListShopViewModel _viewModel;
-
+  IAppDataHelper appDataHelper;
   void deleteShop(context, idShop) async {
     getSink(LOADING).add(new BlocLoading());
     dataHelper.deleteShop(idShop).then((value) {
@@ -57,12 +57,26 @@ class ListShopViewPresenter<V extends ListShopView> extends BasePresenter<V> {
           value: Common.selectedShop,
         ),
         option: IntentAnimationOption.RIGHT_TO_LEFT,
-        duration: Duration(milliseconds: 500));
+        duration: Duration(milliseconds: 500)).then((value){
+      getListShop();
+    });
   }
 
   ListShopViewPresenter(ListShopViewModel _viewModel) : super() {
+    appDataHelper = new AppDataHelper();
     this._viewModel = _viewModel;
     dataHelper = new AppDataHelper();
     addStreamController(LOADING);
+  }
+
+  void getListShop() {
+    getSink(LOADING).add(new BlocLoading());
+    appDataHelper.getListShop(Common.user["idUser"]).then((value) {
+      Common.shops = value;
+      getSink(LOADING).add(new BlocLoaded({}));
+    }).catchError((err) {
+      getSink(LOADING).add(new BlocLoaded({}));
+      print(err);
+    });
   }
 }

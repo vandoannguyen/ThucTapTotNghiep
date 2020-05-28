@@ -202,7 +202,8 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                           height: 10,
                         ),
                         TextFormField(
-                          readOnly: !_viewModel.isEditing,
+                          readOnly: !_viewModel.isEditing ||
+                              widget.inputKey == MerchandiseDetail.DETAIL,
                           controller: _viewModel.barcodeControl,
                           validator: _validatorBarcode,
                           style: textStyle(),
@@ -261,6 +262,21 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
                           textDirection: TextDirection.ltr,
                           decoration: InputDecoration(
                               alignLabelWithHint: true, labelText: "Giá bán"),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextFormField(
+                          readOnly: !_viewModel.isEditing,
+                          controller: _viewModel.emailProvider,
+                          validator: _validatorEmail,
+                          keyboardType: TextInputType.emailAddress,
+                          style: textStyle(),
+                          enabled: _viewModel.isEditing,
+                          textDirection: TextDirection.ltr,
+                          decoration: InputDecoration(
+                              alignLabelWithHint: true,
+                              labelText: "Email nhà cung cấp"),
                         ),
                         SizedBox(
                           height: 10,
@@ -491,6 +507,7 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
           _viewModel.value["count"].toString();
       _viewModel.tenSpControl.text = _viewModel.value["nameMerchandise"];
       _viewModel.barcodeControl.text = _viewModel.value["barcode"];
+      _viewModel.emailProvider.text = _viewModel.value["emailProvider"];
       _viewModel.selectedCategory = _viewModel.categories.firstWhere(
           (element) => element["idCategory"] == _viewModel.value["idCategory"],
           orElse: () => null);
@@ -508,7 +525,7 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
               actions: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    IntentAnimation.intentBack(context: context, result: "ok");
+                    IntentAnimation.intentBack(context: ctx, result: "ok");
                   },
                   child: Card(
                     elevation: 4,
@@ -608,5 +625,15 @@ class _MerchandiseDetailState extends State<MerchandiseDetail>
 
   String _validatorNameMerchandise(String value) {
     return value == "" ? "Nhập thiếu tên sản phẩm!" : null;
+  }
+
+  String _validatorEmail(String value) {
+    if (value.length > 0) if (!RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(value))
+      return "Email không hợp lệ";
+    else
+      return null;
+    return "Nhập thiếu Email";
   }
 }

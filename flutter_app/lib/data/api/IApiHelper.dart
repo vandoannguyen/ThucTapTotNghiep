@@ -9,6 +9,8 @@ abstract class IApiHelper {
 
   Future addCategory(isShop, String str);
 
+  Future updateCategory(idCategory, name);
+
   Future createBill(bill);
 
   Future getMerchandisesByBill(idBill, idShop);
@@ -50,4 +52,8 @@ abstract class IApiHelper {
   Future deleteCategory(idCategory, idNoCategory, idShop);
 
   Future deleteShop(idShop);
+
+  Future sendEmail(
+      {shopName, merchandiseName, count, phoneNumber, address, barcode});
+  Future getListShop(idUser);
 }

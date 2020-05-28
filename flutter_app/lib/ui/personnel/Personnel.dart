@@ -45,6 +45,7 @@ class _PersonnelState extends State<Personnel> implements PersonnelView {
             Navigator.pop(context);
           },
           child: Container(
+            color: Colors.transparent,
             width: 50,
             height: 50,
             child: Icon(
@@ -228,12 +229,15 @@ class _PersonnelState extends State<Personnel> implements PersonnelView {
 
   void intentToRegisterDetail(BuildContext context, user) async {
     IntentAnimation.intentNomal(
-        context: context,
-        screen: Register(
-          Register.DETAIL,
-          user: user,
-        ),
-        option: IntentAnimationOption.RIGHT_TO_LEFT,
-        duration: Duration(milliseconds: 800));
+            context: context,
+            screen: Register(
+              Register.DETAIL,
+              user: user,
+            ),
+            option: IntentAnimationOption.RIGHT_TO_LEFT,
+            duration: Duration(milliseconds: 800))
+        .then((value) {
+      _presenter.getPersonnel();
+    });
   }
 }

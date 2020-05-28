@@ -13,15 +13,18 @@ class MerchandisPage extends StatefulWidget {
 }
 
 class _MerchandisPageState extends State<MerchandisPage> implements BaseView {
+  GlobalKey<ScaffoldState> scaffoldKey;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    scaffoldKey = new GlobalKey();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.blue[400],
         elevation: 4,

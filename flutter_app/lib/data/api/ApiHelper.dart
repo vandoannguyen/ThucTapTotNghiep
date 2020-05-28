@@ -22,7 +22,7 @@ class ApiHelper implements IApiHelper {
       completer.complete(jsonDecode(value.body));
     }).catchError((error) {
       print("32s1df32s1d3f21sd32f1");
-      print(error);
+      print("error${error}");
       completer.completeError(error);
     });
     return completer.future;
@@ -253,7 +253,7 @@ class ApiHelper implements IApiHelper {
       } else
         completer.complete(jsonDecode(value.body));
     }).catchError((err) {
-      print(err);
+      print("err${err}");
       completer.completeError("err");
     });
     return completer.future;
@@ -493,8 +493,8 @@ class ApiHelper implements IApiHelper {
         .then((value) {
       if (value.statusCode == 200) {
         completer.complete(jsonDecode(value.body));
-      }
-      else completer.completeError(jsonDecode(value.body));
+      } else
+        completer.completeError(jsonDecode(value.body));
     }).catchError((err) {
       completer.completeError(err);
     });
@@ -518,6 +518,69 @@ class ApiHelper implements IApiHelper {
     }).catchError((err) {
       print(err);
       completer.completeError("Xóa không thành công");
+    });
+    return completer.future;
+  }
+
+  @override
+  Future sendEmail(
+      {shopName, merchandiseName, count, phoneNumber, address, barcode}) {
+    Completer completer = new Completer();
+    // TODO: implement sendEmail
+    var body = {
+      "shopName": shopName,
+      "merchandiseName": merchandiseName,
+      "count": count,
+      "phoneNumber": phoneNumber,
+      "address": address,
+      "barcode": barcode,
+    };
+    return http
+        .post("${Common.rootUrlApi}email/send",
+            headers: _getHeader(), body: jsonEncode(body))
+        .then((value) {
+      if (value.statusCode == 200) {
+        completer.complete();
+      } else {
+        completer.completeError(value.body);
+      }
+    }).catchError((err) {
+      completer.completeError(err);
+    });
+  }
+
+  @override
+  Future updateCategory(idCategory, name) {
+    // TODO: implement updateCategory
+    Completer completer = new Completer();
+    var data = {"idCategory": idCategory, "nameCategory": name};
+    http
+        .post("${Common.rootUrlApi}category/update",
+            headers: _getHeader(), body: jsonEncode(data))
+        .then((value) {
+      if (value.statusCode == 200) {
+        completer.complete(value.body);
+      } else {
+        completer.completeError({"success": false});
+      }
+    }).catchError((onError) => {completer.completeError(onError)});
+    return completer.future;
+  }
+
+  @override
+  Future getListShop(idUser) {
+    // TODO: implement getListShop
+    Completer completer = new Completer();
+    http
+        .post("${Common.rootUrlApi}shop/listShop",
+            headers: _getHeader(), body: jsonEncode({"idUser": idUser}))
+        .then((value) {
+      if (value.statusCode == 200) {
+        completer.complete(jsonDecode(value.body));
+      } else
+        completer.completeError("can`t not load list shop");
+    }).catchError((err) {
+      completer.completeError(err);
     });
     return completer.future;
   }

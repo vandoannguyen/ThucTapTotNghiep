@@ -1,12 +1,10 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var nodemailer = require('nodemailer');
-var jwt = require('jsonwebtoken');
-
-
+var nodemailer = require("nodemailer");
+var jwt = require("jsonwebtoken");
 /* GET home page. */
-var userController = require("../../controller/UserController")
-router.post('/', userController.createUser);
+var userController = require("../../controller/UserController");
+router.post("/", userController.createUser);
 // {
 //   // console.log(req.body);
 //   userController.createUser(req,res);

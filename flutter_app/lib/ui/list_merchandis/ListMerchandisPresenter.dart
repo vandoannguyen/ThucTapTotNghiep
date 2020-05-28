@@ -103,14 +103,16 @@ class ListMerchandisPresenter<V extends ListMerchandisView>
             option: IntentAnimationOption.RIGHT_TO_LEFT,
             duration: Duration(milliseconds: 500))
         .then((value) {
-      if (value != null && value == "ok") {
-        getData();
-        _viewModel.scaffState.currentState.showSnackBar(new SnackBar(
-          content: Text("Xóa sản phẩm thành công"),
-          elevation: 4,
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.blue,
-        ));
+      getData();
+      if (value != null && value != "") {
+        if (value == "delete") {
+          _viewModel.scaffState.currentState.showSnackBar(new SnackBar(
+            content: Text("Xóa sản phẩm thành công"),
+            elevation: 4,
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.blue,
+          ));
+        }
       }
     });
   }

@@ -66,7 +66,7 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
         "inputPrice": double.parse(_viewModel.inputPriceController.text),
         "outputPrice": double.parse(_viewModel.outputPriceController.text),
         "count": int.parse(_viewModel.totalMerchandiseController.text),
-        "unit": '',
+        "emailProvider": _viewModel.emailProvider.text,
       };
       appDataHelper.createMerchandise(data).then((onValue) {
         baseView.showSnackBar(
@@ -92,8 +92,9 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
         "inputPrice": double.parse(_viewModel.inputPriceController.text),
         "outputPrice": double.parse(_viewModel.outputPriceController.text),
         "count": int.parse(_viewModel.totalMerchandiseController.text),
-        "unit": '',
+        "emailProvider": _viewModel.emailProvider.text,
       };
+      print(data);
       appDataHelper.updateMerchandise(data).then((value) {
         _viewModel.scaffoldKey.currentState.showSnackBar(new SnackBar(
           content: Text("Sửa thông tin thành công"),
@@ -101,6 +102,7 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
           elevation: 4,
           backgroundColor: Colors.blue,
         ));
+        _viewModel.updateSuccess = true;
       }).catchError((err) {
         _viewModel.scaffoldKey.currentState.showSnackBar(new SnackBar(
           content: Text("Sửa thông tin không thành công!"),
@@ -116,7 +118,7 @@ class MerchandiseDetailPresenter<V extends MerchandiseDetailView>
     appDataHelper
         .deleteMerchandise(value["barcode"], value["idShop"])
         .then((value) {
-      Navigator.pop(context, "ok");
+      Navigator.pop(context, "delete");
     }).catchError((onError) {});
   }
 

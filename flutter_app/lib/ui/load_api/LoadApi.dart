@@ -16,6 +16,7 @@ class LoadApi extends StatelessWidget {
       dynamic data = jsonDecode(value.body);
       Common.rootUrlApi = data["rootUrlApi"];
       Common.rootUrl = data["rootUrl"];
+      print(Common.rootUrlApi + "   " + Common.rootUrl);
       IntentAnimation.intentPushReplacement(
           context: context,
           screen: Login(),

@@ -6,6 +6,7 @@ import 'package:init_app/main.dart';
 import 'package:init_app/ui/home/HomeScreen.dart';
 import 'package:init_app/ui/login/LoginView.dart';
 import 'package:init_app/ui/register/Register.dart';
+import 'package:init_app/ui/shop_empty/ShopEmpty.dart';
 import 'package:init_app/utils/BasePresenter.dart';
 import 'package:init_app/utils/BaseView.dart';
 import 'package:init_app/utils/IntentAnimation.dart';
@@ -71,7 +72,11 @@ class LoginPresenter<V extends LoginView> extends BasePresenter<V> {
         } else {
           _viewModel.isLoading = false;
           baseView.updateUI({});
-          baseView.showSnackBar(key: "shop", message: "");
+          IntentAnimation.intentNomal(
+              context: context,
+              screen: ShopEmpty(),
+              option: IntentAnimationOption.RIGHT_TO_LEFT,
+              duration: Duration(milliseconds: 800));
         }
       } else {
         print(value["status"]);

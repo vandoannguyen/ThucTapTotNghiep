@@ -58,4 +58,14 @@ class CategoryPresenter<V extends CategoryView> extends BasePresenter<V> {
       baseView.showSnackBar(keyInput: "er", mess: "Xóa không thành công");
     });
   }
+
+  void update(idCategory, String text) {
+    appDataHelper.updateCategory(idCategory, text).then((value) {
+      baseView.showSnackBar(
+          keyInput: Category.API_SUCCESS, mess: "Sửa thành công");
+      getCategory();
+    }).catchError((err) {
+      print(err);
+    });
+  }
 }

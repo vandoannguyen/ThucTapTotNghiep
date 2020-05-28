@@ -14,6 +14,7 @@ class CreateBill extends StatefulWidget {
   static final KEY_CHECK_IMPORT_MERCHANDISE = "import merchandise";
   static final KEY_CHECK_DETAIL = "detail";
   static final KEY_CHECK_EXPORT_MERCHANDISE = "export merchandis";
+  static final KEY_CHECK_EMAIL_MERCHANDISE = "email merchandis";
   var keyCheck;
   dynamic value;
 

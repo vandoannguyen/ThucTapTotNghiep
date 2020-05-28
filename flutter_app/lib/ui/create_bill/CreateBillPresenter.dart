@@ -245,4 +245,6 @@ class CreateBillPresenter<V extends CreateBillView> extends BasePresenter<V> {
       getSink(PERSONNEL).add(BlocFailed(""));
     });
   }
+
+  void sendEmailMerchandise() {}
 }
