@@ -1,4 +1,4 @@
 {
-"rootUrlApi":"http://192.168.43.9:3000/api/",
-"rootUrl":"http://192.168.43.9:3000/"
+"rootUrlApi":"http://172.20.10.8:3000/api/",
+"rootUrl":"http://172.20.10.8:3000/"
 }
